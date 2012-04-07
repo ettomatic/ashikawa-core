@@ -1,0 +1,6 @@
+{
+	"error": true,
+	"code": 404,
+	"errorNum": 1203,
+	"errorMessage": "unknown collection 'new_collection'"
+}

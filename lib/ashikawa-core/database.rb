@@ -27,15 +27,24 @@ module Ashikawa
       
       def [](collection_identifier)
         server_response = api_request "/collection/#{collection_identifier}"
+        
+        unless server_response['code'] == 200
+          server_response = api_request "/collection/#{collection_identifier}", post: { name: collection_identifier}
+        end
+        
         Ashikawa::Core::Collection.new server_response["name"], id: server_response["id"]
       end
       
       private
       
-      def api_request(path)
+      def api_request(path, method_params = {})
         path.gsub! /^\//,''
         
-        JSON.parse RestClient.get("#{@api_string}/#{path}")
+        if method_params.has_key? :post
+          JSON.parse RestClient.post("#{@api_string}/#{path}", method_params[:post])
+        else
+          JSON.parse RestClient.get("#{@api_string}/#{path}")
+        end
       end
     end
   end
