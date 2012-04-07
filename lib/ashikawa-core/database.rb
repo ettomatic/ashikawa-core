@@ -22,7 +22,12 @@ module Ashikawa
       
       def collections
         server_response = api_request "/collection"
-        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new collection["name"] }
+        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new collection["name"], id: collection["id"] }
+      end
+      
+      def [](collection_identifier)
+        server_response = api_request "/collection/#{collection_identifier}"
+        Ashikawa::Core::Collection.new server_response["name"], id: server_response["id"]
       end
       
       private
