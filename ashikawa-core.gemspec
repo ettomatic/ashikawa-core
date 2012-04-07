@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "httparty", "~> 0.8.1"
+  gem.add_dependency "rest-client", "~> 1.6.7"
   gem.add_development_dependency "rake", "~> 0.9.2.2"
   gem.add_development_dependency "rspec", "~> 2.9.0"
   gem.add_development_dependency "yard", "~> 0.7.5"
