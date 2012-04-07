@@ -20,11 +20,17 @@ module Ashikawa
         @api_string = "#{connection_string}/_api"
       end
       
+      # Returns a list of all collections defined in the database
+      # 
+      # @return [Array<Collection>]
       def collections
         server_response = api_request "/collection"
         server_response["collections"].map { |collection| Ashikawa::Core::Collection.new collection["name"], id: collection["id"] }
       end
       
+      # Get or create a Collection based on name or ID
+      # 
+      # @return [Collection]
       def [](collection_identifier)
         server_response = api_request "/collection/#{collection_identifier}"
         
