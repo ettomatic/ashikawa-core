@@ -18,6 +18,11 @@ module Ashikawa
         @status = raw_collection['status'].to_i if raw_collection.has_key? 'status'
       end
       
+      # Change the name of the collection
+      def name=(new_name)
+        server_response = @database.send_request "/collection/#{id}/rename", put: { "name" => new_name }
+      end
+      
       # Checks if the collection is new born. This is derived from the status code 1.
       def new_born?
         @status == 1
@@ -52,6 +57,11 @@ module Ashikawa
       def wait_for_sync?
         server_response = @database.send_request "/collection/#{id}/parameter"
         server_response["waitForSync"]
+      end
+      
+      # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk.
+      def wait_for_sync=(new_value)
+        server_response = @database.send_request "/collection/#{id}/parameter", put: { "waitForSync" => new_value }
       end
       
       # Returns the number of documents in the collection.

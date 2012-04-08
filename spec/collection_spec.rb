@@ -125,5 +125,19 @@ describe Ashikawa::Core::Collection do
       
       subject.truncate
     end
+    
+    it "should change if it waits for sync" do
+      @database.stub(:send_request).with("/collection/4590/parameter", put: {"waitForSync" => true})
+      @database.should_receive(:send_request).with("/collection/4590/parameter", put: {"waitForSync" => true})
+      
+      subject.wait_for_sync = true
+    end
+    
+    it "should change its name" do
+      @database.stub(:send_request).with("/collection/4590/rename", put: {"name" => "my_new_name"})
+      @database.should_receive(:send_request).with("/collection/4590/rename", put: {"name" => "my_new_name"})
+      
+      subject.name = "my_new_name"
+    end
   end
 end
