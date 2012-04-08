@@ -2,6 +2,20 @@
 
 Ashikawa Core is a Wrapper around the AvocadoDB Rest API. It provides low level access and will be used in different AvocadoDB ODMs.
 
+## How to use it
+
+For a detailed description of Ashikawa::Core please refer to the [documentation](http://rdoc.info/github/triAGENS/ashikawa-core/master/frames). An example:
+
+```ruby
+connection = Connection.new "http://localhost:8529"
+database = Ashikawa::Core::Database.new connection
+
+database["my_collection"] # => Returns the collection my_collection – creates it, if it doesn't exist
+database["my_collection"].name = "new_name"
+database["new_name"].deleted? # => False
+database["new_name"].delete
+database["new_name"].deleted? # => True
+```
 
 ## How to get started developing
 
