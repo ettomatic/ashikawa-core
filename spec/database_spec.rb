@@ -22,24 +22,20 @@ describe Ashikawa::Core::Database do
     subject { Ashikawa::Core::Database.new @connection }
     
     it "should fetch all available collections" do
-      @connection.stub :send_request do |path|
-        server_response("collections/all")
-      end
+      @connection.stub(:send_request) {|path| server_response("collections/all") }
       @connection.should_receive(:send_request).with("/collection")
       
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, "example_1", id: 4588)
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, "example_2", id: 4589)
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/all")["collections"][0])
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/all")["collections"][1])
       
       subject.collections.length.should == 2
     end
     
     it "should fetch a single collection if it exists" do
-      @connection.stub :send_request do |path|
-        server_response("collections/4588")
-      end
+      @connection.stub(:send_request) { |path| server_response("collections/4588") }
       @connection.should_receive(:send_request).with("/collection/4588")
       
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, "example_1", id: 4588)
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/4588"))
       
       subject[4588]
     end
@@ -55,7 +51,7 @@ describe Ashikawa::Core::Database do
       @connection.should_receive(:send_request).with("/collection/new_collection")
       @connection.should_receive(:send_request).with("/collection/new_collection", post: { name: "new_collection"} )
       
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, "new_collection", id: 4590)
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/4590"))
       
       subject['new_collection']
     end

@@ -26,7 +26,7 @@ module Ashikawa
       # @return [Array<Collection>]
       def collections
         server_response = @connection.send_request "/collection"
-        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection["name"], id: collection["id"] }
+        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection }
       end
       
       # Get or create a Collection based on name or ID
@@ -39,7 +39,7 @@ module Ashikawa
           server_response = @connection.send_request "/collection/#{collection_identifier}", post: { name: collection_identifier}
         end
         
-        Ashikawa::Core::Collection.new self, server_response["name"], id: server_response["id"]
+        Ashikawa::Core::Collection.new self, server_response
       end
       
       # Send a request to the connection object
