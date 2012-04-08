@@ -20,7 +20,7 @@ module Ashikawa
       
       # Change the name of the collection
       def name=(new_name)
-        server_response = @database.send_request "/collection/#{id}/rename", put: { "name" => new_name }
+        send_request_for_this_collection "/rename", put: { "name" => new_name }
       end
       
       # Checks if the collection is new born. This is derived from the status code 1.
@@ -55,20 +55,20 @@ module Ashikawa
       
       # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk.
       def wait_for_sync?
-        server_response = @database.send_request "/collection/#{id}/parameter"
+        server_response = send_request_for_this_collection "/parameter"
         server_response["waitForSync"]
       end
       
       # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk.
       def wait_for_sync=(new_value)
-        server_response = @database.send_request "/collection/#{id}/parameter", put: { "waitForSync" => new_value }
+        server_response = send_request_for_this_collection "/parameter", put: { "waitForSync" => new_value }
       end
       
       # Returns the number of documents in the collection.
       # 
       # @return [Fixnum] Number of documents
       def length
-        server_response = @database.send_request "/collection/#{id}/count"
+        server_response = send_request_for_this_collection "/count"
         server_response["count"]
       end
       
@@ -82,39 +82,40 @@ module Ashikawa
       # @param [Symbol] figure_type The figure you want to know
       # @return [Fixnum] The figure you requested
       def figure(figure_type)
-        server_response = @database.send_request "/collection/#{id}/figures"
-        case figure_type
-        when :datafiles_count
-          server_response["figures"]["datafiles"]["count"]
-        when :alive_size
-          server_response["figures"]["alive"]["size"]
-        when :alive_count
-          server_response["figures"]["alive"]["count"]
-        when :dead_size
-          server_response["figures"]["dead"]["size"]
-        when :dead_count
-          server_response["figures"]["dead"]["count"]
-        end
+        server_response = send_request_for_this_collection "/figures"
+        
+        figure_area, figure_name = figure_type.to_s.split "_"
+        server_response["figures"][figure_area][figure_name]
       end
       
       # Deletes the collection
       def delete
-        @database.send_request "/collection/#{id}", delete: {}
+        send_request_for_this_collection "", delete: {}
       end
       
       # Load the collection into memory
       def load
-        @database.send_request "/collection/#{id}/load", put: {}
+        send_request_for_this_collection "/load", put: {}
       end
       
       # Load the collection into memory
       def unload
-        @database.send_request "/collection/#{id}/unload", put: {}
+        send_request_for_this_collection "/unload", put: {}
       end
       
       # Delete all documents from the collection
       def truncate
-        @database.send_request "/collection/#{id}/truncate", put: {}
+        send_request_for_this_collection "/truncate", put: {}
+      end
+      
+      private
+      
+      def send_request_for_this_collection(path, method = {})
+        if method == {}
+          @database.send_request "/collection/#{id}#{path}"
+        else
+          @database.send_request "/collection/#{id}#{path}", method
+        end
       end
       
     end
