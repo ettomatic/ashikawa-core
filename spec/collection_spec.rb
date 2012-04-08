@@ -94,7 +94,36 @@ describe Ashikawa::Core::Collection do
       my_collection.figure(:dead_count).should == 149      
     end
   end
-  # describe "an initialized collection" do
-  #   
-  # end
+  
+  describe "an initialized collection" do
+    subject { Ashikawa::Core::Collection.new @database, { "id" => "4590" } }
+    
+    it "should get deleted" do
+      @database.stub(:send_request).with("/collection/4590", delete: {})
+      @database.should_receive(:send_request).with("/collection/4590", delete: {})
+      
+      subject.delete
+    end
+    
+    it "should get loaded" do
+      @database.stub(:send_request).with("/collection/4590/load", put: {})
+      @database.should_receive(:send_request).with("/collection/4590/load", put: {})
+      
+      subject.load
+    end
+    
+    it "should get unloaded" do
+      @database.stub(:send_request).with("/collection/4590/unload", put: {})
+      @database.should_receive(:send_request).with("/collection/4590/unload", put: {})
+      
+      subject.unload
+    end
+    
+    it "should get truncated" do
+      @database.stub(:send_request).with("/collection/4590/truncate", put: {})
+      @database.should_receive(:send_request).with("/collection/4590/truncate", put: {})
+      
+      subject.truncate
+    end
+  end
 end

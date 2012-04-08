@@ -87,6 +87,26 @@ module Ashikawa
         end
       end
       
+      # Deletes the collection
+      def delete
+        @database.send_request "/collection/#{id}", delete: {}
+      end
+      
+      # Load the collection into memory
+      def load
+        @database.send_request "/collection/#{id}/load", put: {}
+      end
+      
+      # Load the collection into memory
+      def unload
+        @database.send_request "/collection/#{id}/unload", put: {}
+      end
+      
+      # Delete all documents from the collection
+      def truncate
+        @database.send_request "/collection/#{id}/truncate", put: {}
+      end
+      
     end
   end
 end
