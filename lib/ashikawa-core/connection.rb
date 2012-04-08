@@ -3,7 +3,7 @@ require "json"
 
 module Ashikawa
   module Core
-    class RestApi
+    class Connection
       class << self
         # An API connection string, for example http://localhost:8529/_api
         # to be used for every following request as base URL.
@@ -13,15 +13,15 @@ module Ashikawa
       # Sends a request to a given path. Prepends the api_string automatically.
       # Example call: 
       ## GET request:
-      # RestApi.request('/collection/new_collection')
+      # Connection.request('/collection/new_collection')
       ## POST request:
-      # RestApi.request('/collection/new_collection', :post => { :name => 'new_collection' })
+      # Connection.request('/collection/new_collection', :post => { :name => 'new_collection' })
       #
       # @param [String] path the path you wish to send a request to.
       # @param [Hash] method_params additional parameters for your request. Only needed if you want to send something other than a GET request.
       # @option method_params [Hash] :post POST data in case you want to send a POST request.
       # @return [Hash] parsed JSON response from the server
-      def RestApi.request(path, method_params = {})
+      def Connection.request(path, method_params = {})
         path.gsub! /^\//, ''
         
         if method_params.has_key? :post
