@@ -32,6 +32,10 @@ module Ashikawa
         
         if method_params.has_key? :post
           JSON.parse RestClient.post("#{@api_string}/#{path}", method_params[:post])
+        elsif method_params.has_key? :put
+          JSON.parse RestClient.put("#{@api_string}/#{path}", method_params[:put])
+        elsif method_params.has_key? :delete
+          JSON.parse RestClient.delete("#{@api_string}/#{path}", method_params[:delete])
         else
           JSON.parse RestClient.get("#{@api_string}/#{path}")
         end
