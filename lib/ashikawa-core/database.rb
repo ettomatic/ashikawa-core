@@ -4,25 +4,28 @@ require "ashikawa-core/connection"
 module Ashikawa
   module Core
     class Database
+      # Initializes the connection to the database
+      # 
+      # @param [Connection] connection A connection object.
+      def initialize(connection)
+        @connection = connection
+      end
+      
       # The IP of the database
-      attr_reader :ip
+      def ip
+        @connection.ip
+      end
       
       # The Port of the database
-      attr_reader :port
-      
-      # Initializes the connection with a connection string
-      # 
-      # @param [String] connection_string A string in the form of ip:port. For Example: http://localhost:8529
-      def initialize(connection_string)
-        @ip, @port = connection_string.scan(/(\S+):(\d+)/).first
-        Ashikawa::Core::Connection.api_string = "#{connection_string}/_api"
+      def port
+        @connection.port
       end
       
       # Returns a list of all collections defined in the database
       # 
       # @return [Array<Collection>]
       def collections
-        server_response = Ashikawa::Core::Connection.request "/collection"
+        server_response = @connection.send_request "/collection"
         server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection["name"], id: collection["id"] }
       end
       
@@ -30,13 +33,18 @@ module Ashikawa
       # 
       # @return [Collection]
       def [](collection_identifier)
-        server_response = Ashikawa::Core::Connection.request "/collection/#{collection_identifier}"
+        server_response = @connection.send_request "/collection/#{collection_identifier}"
         
         unless server_response['code'] == 200
-          server_response = Ashikawa::Core::Connection.request "/collection/#{collection_identifier}", post: { name: collection_identifier}
+          server_response = @connection.send_request "/collection/#{collection_identifier}", post: { name: collection_identifier}
         end
         
         Ashikawa::Core::Collection.new self, server_response["name"], id: server_response["id"]
+      end
+      
+      # Send a request to the connection object
+      def send_request(path, method_params = {})
+        @connection.send_request path, method_params
       end
     end
   end
