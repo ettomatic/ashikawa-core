@@ -1,3 +1,27 @@
 # Ashikawa Core
 
 Ashikawa Core is a Wrapper around the AvocadoDB Rest API. It provides low level access and will be used in different AvocadoDB ODMs.
+
+
+## How to get started developing
+
+Getting started is easy, just follow these steps.
+
+### In a nutshell
+
+* Clone the project.
+* `cd` into the folder and run `bundle` 
+* `rake` or `rake spec` and see all tests passing.
+* Happy coding!
+
+### Detailed description
+
+Make sure you are running Ruby 1.9.x and clone the latest snapshot into a directory of your choice.
+
+If you use `rvm`, create a gemset for this project: `rvm gemset create ashikawa-core`. You will be asked if you want to switch to this gemset once you `cd` into the directory. If you do not want to use `rvm`, just ignore this step.
+
+Change into the project directory. Run `bundle` to get all dependencies (do a `gem install bundler` before if you don't have bundler installed).
+
+Now you can run `rake` or `rake spec` to see all tests passing (hopefully). Happy coding!
+
+You can also start up yard for documentation: `yard server --reload`
