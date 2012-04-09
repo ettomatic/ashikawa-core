@@ -96,7 +96,7 @@ describe Ashikawa::Core::Collection do
   end
   
   describe "an initialized collection" do
-    subject { Ashikawa::Core::Collection.new @database, { "id" => "4590" } }
+    subject { Ashikawa::Core::Collection.new @database, { "id" => "4590", "name" => "example_1" } }
     
     it "should get deleted" do
       @database.stub(:send_request).with("/collection/4590", delete: {})
@@ -139,5 +139,20 @@ describe Ashikawa::Core::Collection do
       
       subject.name = "my_new_name"
     end
+    
+    it "should list all documents" do
+      @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('documents/all') }
+      @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
+      
+      # Documents need to get initialized:
+      Ashikawa::Core::Document.stub(:new).with("12345/57463", 57463)
+      Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+      
+      Ashikawa::Core::Document.stub(:new).with("12346/3872", 3872)
+      Ashikawa::Core::Document.should_receive(:new).with("12346/3872", 3872)
+      
+      subject.all
+    end
+    
   end
 end

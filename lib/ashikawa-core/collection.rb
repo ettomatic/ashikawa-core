@@ -1,3 +1,5 @@
+require "ashikawa-core/document"
+
 module Ashikawa
   module Core
     class Collection
@@ -106,6 +108,16 @@ module Ashikawa
       # Delete all documents from the collection
       def truncate
         send_request_for_this_collection "/truncate", put: {}
+      end
+      
+      # Retrieves all documents for this collection
+      # @return [Array<Document>]
+      def all
+        server_response = @database.send_request "/simple/all", :put => { "collection" => @name }
+        
+        server_response.collect do |document|
+          Ashikawa::Core::Document.new(document["_id"], document["_rev"])
+        end
       end
       
       private
