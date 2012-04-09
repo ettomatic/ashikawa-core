@@ -6,9 +6,13 @@ module Ashikawa
     class Database
       # Initializes the connection to the database
       # 
-      # @param [Connection] connection A connection object.
+      # @param [Connection, String] connection A Connection object or a String to create a Connection object.
       def initialize(connection)
-        @connection = connection
+        if connection.class == String
+          @connection = Ashikawa::Core::Connection.new connection
+        else
+          @connection = connection
+        end
       end
       
       # The IP of the database

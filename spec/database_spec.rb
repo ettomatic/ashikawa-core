@@ -5,6 +5,7 @@ describe Ashikawa::Core::Database do
   subject { Ashikawa::Core::Database }
   
   before :each do
+    mock(Ashikawa::Core::Connection)
     mock(Ashikawa::Core::Collection)
     @connection = double()
   end
@@ -16,6 +17,13 @@ describe Ashikawa::Core::Database do
     database = subject.new @connection
     database.ip.should == "http://localhost"
     database.port.should == 8529
+  end
+  
+  it "should initialize with a connection string" do
+    Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529").and_return(double())
+    Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529")
+    
+    database = subject.new "http://localhost:8529"
   end
   
   describe "initialized database" do
