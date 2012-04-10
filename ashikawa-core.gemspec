@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rest-client", "~> 1.6.7"
   
   # Runtime Dependencies (JRuby only)
-  if gem.platform.to_s == 'java'
+  if PLATFORM == 'java'
     gem.add_dependency "json", "~> 1.6.6"
     gem.add_dependency "jruby-openssl", "~> 0.7.6.1"
   end
