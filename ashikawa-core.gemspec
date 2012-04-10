@@ -10,7 +10,10 @@ Gem::Specification.new do |gem|
   gem.homepage    = ""
   gem.summary     = "Ashikawa Core is a Wrapper around the AvocadoDB Rest API"
   gem.description = "Ashikawa Core is a Wrapper around the AvocadoDB Rest API. It provides low level access and will be used in different AvocadoDB ODMs."
-
+  
+  gem.required_ruby_version = '>= 1.9.2'
+  gem.requirements << "AvocadoDB"
+  
   gem.rubyforge_project = "ashikawa-core"
 
   gem.files         = `git ls-files`.split("\n")

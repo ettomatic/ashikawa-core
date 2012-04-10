@@ -31,7 +31,7 @@ Getting started is easy, just follow these steps.
 
 ### Detailed description
 
-Make sure you are running Ruby 1.9.x and clone the latest snapshot into a directory of your choice.
+Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice.
 
 If you use `rvm`, create a gemset for this project: `rvm gemset create ashikawa-core`. You will be asked if you want to switch to this gemset once you `cd` into the directory. If you do not want to use `rvm`, just ignore this step.
 
