@@ -140,19 +140,36 @@ describe Ashikawa::Core::Collection do
       subject.name = "my_new_name"
     end
     
-    it "should list all documents" do
-      @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('documents/all') }
-      @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
+    describe "working with documents" do
+      it "should list all documents" do
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('documents/all') }
+        @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
       
-      # Documents need to get initialized:
-      Ashikawa::Core::Document.stub(:new).with("12345/57463", 57463)
-      Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+        # Documents need to get initialized:
+        Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+        Ashikawa::Core::Document.should_receive(:new).with("12346/3872", 3872)
       
-      Ashikawa::Core::Document.stub(:new).with("12346/3872", 3872)
-      Ashikawa::Core::Document.should_receive(:new).with("12346/3872", 3872)
+        subject.all
+      end
       
-      subject.all
-    end
-    
+      it "should limit to a certain amount" do
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1}).and_return { server_response('documents/all_skip') }
+        @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1})
+      
+        Ashikawa::Core::Document.should_receive(:new).with("12346/3872", 3872)
+      
+        subject.all :limit => 1
+      end
+      
+      it "should skip documents" do
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1}).and_return { server_response('documents/all_limit') }
+        @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1})
+      
+        Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+      
+        subject.all :skip => 1
+      end
+      
+    end    
   end
 end

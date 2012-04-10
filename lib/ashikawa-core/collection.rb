@@ -111,9 +111,17 @@ module Ashikawa
       end
       
       # Retrieves all documents for this collection
+      # @param [Hash] options Additional options for this query.
+      # @option options [Integer] :limit limit the maximum number of queried and returned elements.
+      # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Array<Document>]
-      def all
-        server_response = @database.send_request "/simple/all", :put => { "collection" => @name }
+      def all(options={})
+        request_data = { "collection" => @name }
+        
+        request_data["limit"] = options[:limit] if options.has_key? :limit
+        request_data["skip"] = options[:skip] if options.has_key? :skip
+        
+        server_response = @database.send_request "/simple/all", :put => request_data
         
         server_response.collect do |document|
           Ashikawa::Core::Document.new(document["_id"], document["_rev"])
