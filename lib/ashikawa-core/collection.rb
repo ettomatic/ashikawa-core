@@ -124,18 +124,27 @@ module Ashikawa
         
         server_response = @database.send_request "/simple/all", :put => request_data
         
-        server_response.collect do |document|
-          Ashikawa::Core::Document.new(document["_id"], document["_rev"])
-        end
+        documents_from_response(server_response)
       end
       
       private
       
-      def send_request_for_this_collection(path, method = {})
+      def send_request_for_this_collection(path, method={})
         if method == {}
           @database.send_request "/collection/#{id}#{path}"
         else
           @database.send_request "/collection/#{id}#{path}", method
+        end
+      end
+      
+      # Takes JSON returned by the database and collects
+      # Documents from the data.
+      # @param [Array<Hash>] parsed_server_response parsed JSON response from
+      # the server. Should contain document-hashes.
+      # @return [Array<Document>]
+      def documents_from_response(parsed_server_response)
+        parsed_server_response.collect do |document|
+          Ashikawa::Core::Document.new(document["_id"], document["_rev"])
         end
       end
       
