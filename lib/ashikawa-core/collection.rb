@@ -129,9 +129,15 @@ module Ashikawa
       
       # Looks for documents in the collection which match the given criteria.
       # @param [Hash] reference_data a Hash with data similar to the documents you are looking for.
+      # @param [Hash] options Additional options for this query.
+      # @option options [Integer] :limit limit the maximum number of queried and returned elements.
+      # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Array<Document>]
-      def by_example(reference_data)
+      def by_example(reference_data, options={})
         request_data = { "collection" => @name, "example" => reference_data }
+        
+        request_data["limit"] = options[:limit] if options.has_key? :limit
+        request_data["skip"] = options[:skip] if options.has_key? :skip        
         
         server_response = @database.send_request "/simple/by-example", :put => request_data
         

@@ -174,16 +174,37 @@ describe Ashikawa::Core::Collection do
       end
       
       describe "by example" do
+        before(:each) do
+          @search_params = { :hello => "world" }
+        end
+        
         it "should find documents by example" do
           @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
           @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}})
         
           Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
         
-          search_options = { :hello => "world" }
-        
-          subject.by_example(search_options)
+          subject.by_example(@search_params)
         end
+        
+        it "should skip documents" do
+          @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
+          @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}})
+        
+          Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+      
+          subject.by_example @search_params, :skip => 1
+        end
+        
+        it "should limit documents" do
+          @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
+          @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}})
+        
+          Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+      
+          subject.by_example @search_params, :limit => 2
+        end
+        
       end
       
     end    
