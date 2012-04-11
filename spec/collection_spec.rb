@@ -142,7 +142,7 @@ describe Ashikawa::Core::Collection do
     
     describe "working with documents" do
       it "should list all documents" do
-        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('documents/all') }
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('simple-queries/all') }
         @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
       
         # Documents need to get initialized:
@@ -153,7 +153,7 @@ describe Ashikawa::Core::Collection do
       end
       
       it "should limit to a certain amount" do
-        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1}).and_return { server_response('documents/all_skip') }
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1}).and_return { server_response('simple-queries/all_skip') }
         @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1})
       
         Ashikawa::Core::Document.should_receive(:new).with("12346/3872", 3872)
@@ -162,7 +162,7 @@ describe Ashikawa::Core::Collection do
       end
       
       it "should skip documents" do
-        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1}).and_return { server_response('documents/all_limit') }
+        @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1}).and_return { server_response('simple-queries/all_limit') }
         @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1})
       
         Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
@@ -171,7 +171,7 @@ describe Ashikawa::Core::Collection do
       end
       
       it "should find documents by example" do
-        @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}}).and_return { server_response('documents/example') }
+        @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
         @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}})
         
         Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
