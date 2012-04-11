@@ -110,7 +110,8 @@ module Ashikawa
         send_request_for_this_collection "/truncate", put: {}
       end
       
-      # Retrieves all documents for this collection
+      # Retrieves all documents for this collection. It is advised to NOT use
+      # this method due to possible HUGE data amounts requested.
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
