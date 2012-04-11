@@ -170,6 +170,17 @@ describe Ashikawa::Core::Collection do
         subject.all :skip => 1
       end
       
+      it "should find documents by example" do
+        @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}}).and_return { server_response('documents/example') }
+        @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}})
+        
+        Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+        
+        search_options = { :hello => "world" }
+        
+        subject.by_example(search_options)
+      end
+      
     end    
   end
 end

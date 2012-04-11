@@ -127,6 +127,17 @@ module Ashikawa
         documents_from_response(server_response)
       end
       
+      # Looks for documents in the collection which match the given criteria.
+      # @param [Hash] reference_data a Hash with data similar to the documents you are looking for.
+      # @return [Array<Document>]
+      def by_example(reference_data)
+        request_data = { "collection" => @name, "example" => reference_data }
+        
+        server_response = @database.send_request "/simple/by-example", :put => request_data
+        
+        documents_from_response(server_response)
+      end
+      
       private
       
       def send_request_for_this_collection(path, method={})
@@ -139,8 +150,7 @@ module Ashikawa
       
       # Takes JSON returned by the database and collects
       # Documents from the data.
-      # @param [Array<Hash>] parsed_server_response parsed JSON response from
-      # the server. Should contain document-hashes.
+      # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
       # @return [Array<Document>]
       def documents_from_response(parsed_server_response)
         parsed_server_response.collect do |document|
