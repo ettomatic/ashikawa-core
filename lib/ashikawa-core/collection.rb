@@ -35,7 +35,7 @@ module Ashikawa
         send_request_for_this_collection "/rename", put: { "name" => new_name }
       end
       
-      # Checks if the collection is new born (This is derived from the status code 1)
+      # Checks if the collection is new born
       # 
       # @return [Boolean]
       # @api public
@@ -43,7 +43,7 @@ module Ashikawa
         @status == 1
       end
       
-      # Checks if the collection is unloaded (This is derived from the status code 2)
+      # Checks if the collection is unloaded
       # 
       # @return [Boolean]
       # @api public
@@ -51,7 +51,7 @@ module Ashikawa
         @status == 2
       end
       
-      # Checks if the collection is loaded (This is derived from the status code 3)
+      # Checks if the collection is loaded
       # 
       # @return [Boolean]
       # @api public
@@ -59,7 +59,7 @@ module Ashikawa
         @status == 3
       end
       
-      # Checks if the collection is in the process of being unloaded (This is derived from the status code 4)
+      # Checks if the collection is in the process of being unloaded
       # 
       # @return [Boolean]
       # @api public
@@ -67,7 +67,7 @@ module Ashikawa
         @status == 4
       end
       
-      # Checks if the collection is deleted (This is derived from the status code 5)
+      # Checks if the collection is deleted
       # 
       # @return [Boolean]
       # @api public
@@ -75,7 +75,7 @@ module Ashikawa
         @status == 5
       end
       
-      # Checks if the collection is corrupted (This is the case, if the status code is greater than 5)
+      # Checks if the collection is corrupted
       # 
       # @return [Boolean]
       # @api public
