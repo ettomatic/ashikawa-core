@@ -26,13 +26,12 @@ module Ashikawa
         @port = @port.to_i
       end
       
-      # Sends a request to a given path. Prepends the api_string automatically.
-      # Example call: 
-      ## GET request:
-      # connection.send_request('/collection/new_collection')
-      ## POST request:
-      # connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
-      #
+      # Sends a request to a given path (Prepends the api_string automatically)
+      # 
+      # @example get request 
+      #   connection.send_request('/collection/new_collection')
+      # @example post request
+      #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       # @param [String] path the path you wish to send a request to.
       # @param [Hash] method_params additional parameters for your request. Only needed if you want to send something other than a GET request.
       # @option method_params [Hash] :post POST data in case you want to send a POST request.

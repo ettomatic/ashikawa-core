@@ -83,7 +83,7 @@ module Ashikawa
         @status > 5
       end
       
-      # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
+      # Checks if creating or changing a document will wait until the data has been synchronised to disk
       # 
       # @return [Boolean]
       # @api public
@@ -92,7 +92,7 @@ module Ashikawa
         server_response["waitForSync"]
       end
       
-      # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
+      # Change if creating or changing a document will wait until the data has been synchronised to disk
       # 
       # @return [String] Response from the server
       # @api public
