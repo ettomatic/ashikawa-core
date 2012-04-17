@@ -3,10 +3,10 @@ require "ashikawa-core/document"
 module Ashikawa
   module Core
     class Collection
-      # The name of the collection, must be unique.
+      # The name of the collection, must be unique
       attr_reader :name
       
-      # The ID of the collection. Is set by the database and unique.
+      # The ID of the collection. Is set by the database and unique
       attr_reader :id
       
       # Create a new Collection object with a name and an optional ID
@@ -25,48 +25,48 @@ module Ashikawa
         send_request_for_this_collection "/rename", put: { "name" => new_name }
       end
       
-      # Checks if the collection is new born. This is derived from the status code 1.
+      # Checks if the collection is new born (This is derived from the status code 1)
       def new_born?
         @status == 1
       end
       
-      # Checks if the collection is unloaded. This is derived from the status code 2.
+      # Checks if the collection is unloaded (This is derived from the status code 2)
       def unloaded?
         @status == 2
       end
       
-      # Checks if the collection is loaded. This is derived from the status code 3.
+      # Checks if the collection is loaded (This is derived from the status code 3)
       def loaded?
         @status == 3
       end
       
-      # Checks if the collection is in the process of being unloaded. This is derived from the status code 4.
+      # Checks if the collection is in the process of being unloaded (This is derived from the status code 4)
       def being_unloaded?
         @status == 4
       end
       
-      # Checks if the collection is deleted. This is derived from the status code 5.
+      # Checks if the collection is deleted (This is derived from the status code 5)
       def deleted?
         @status == 5
       end
       
-      # Checks if the collection is corrupted. This is the case, if the status code is greater than 5.
+      # Checks if the collection is corrupted (This is the case, if the status code is greater than 5)
       def corrupted?
         @status > 5
       end
       
-      # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk.
+      # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
       def wait_for_sync?
         server_response = send_request_for_this_collection "/parameter"
         server_response["waitForSync"]
       end
       
-      # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk.
+      # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
       def wait_for_sync=(new_value)
         server_response = send_request_for_this_collection "/parameter", put: { "waitForSync" => new_value }
       end
       
-      # Returns the number of documents in the collection.
+      # Returns the number of documents in the collection
       # 
       # @return [Fixnum] Number of documents
       def length
@@ -110,8 +110,9 @@ module Ashikawa
         send_request_for_this_collection "/truncate", put: {}
       end
       
-      # Retrieves all documents for this collection. It is advised to NOT use
-      # this method due to possible HUGE data amounts requested.
+      # Retrieves all documents for this collection
+      # 
+      # @note It is advised to NOT use this method due to possible HUGE data amounts requested
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
@@ -127,7 +128,8 @@ module Ashikawa
         documents_from_response(server_response)
       end
       
-      # Looks for documents in the collection which match the given criteria.
+      # Looks for documents in the collection which match the given criteria
+      # 
       # @param [Hash] reference_data a Hash with data similar to the documents you are looking for.
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
@@ -154,8 +156,8 @@ module Ashikawa
         end
       end
       
-      # Takes JSON returned by the database and collects
-      # Documents from the data.
+      # Takes JSON returned by the database and collects Documents from the data
+      # 
       # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
       # @return [Array<Document>]
       def documents_from_response(parsed_server_response)
