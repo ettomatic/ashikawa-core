@@ -189,9 +189,27 @@ module Ashikawa
         request_data = { "collection" => @name, "example" => reference_data }
         
         request_data["limit"] = options[:limit] if options.has_key? :limit
-        request_data["skip"] = options[:skip] if options.has_key? :skip        
+        request_data["skip"] = options[:skip] if options.has_key? :skip
         
         server_response = @database.send_request "/simple/by-example", :put => request_data
+        
+        documents_from_response(server_response)
+      end
+      
+      # Looks for documents in the collection based on location
+      #
+      # @param [Hash] options Options for this search.
+      # @option options [Integer] :latitude Latitude location for your search.
+      # @option options [Integer] :longitude Longitude location for your search.
+      # @return [Array<Document>]
+      # @api public
+      def near(options={})
+        request_data = { "collection" => @name }
+        
+        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
+        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
+        
+        server_response = @database.send_request "/simple/near", :put => request_data
         
         documents_from_response(server_response)
       end

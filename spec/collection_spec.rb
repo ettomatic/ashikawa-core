@@ -207,6 +207,19 @@ describe Ashikawa::Core::Collection do
         
       end
       
+      describe "near" do
+        it "should look for documents based on latitude/longitude" do
+          @database.stub(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 }).and_return { server_response('simple-queries/near') }
+          @database.should_receive(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 })
+        
+          Ashikawa::Core::Document.should_receive(:new).with("12345/57463", 57463)
+          Ashikawa::Core::Document.should_receive(:new).with("12346/2938", 2938)
+          Ashikawa::Core::Document.should_receive(:new).with("12347/23737", 23737)
+          
+          subject.near :latitude => 0, :longitude => 0
+        end
+      end
+      
     end    
   end
 end
