@@ -5,9 +5,13 @@ module Ashikawa
   module Core
     class Connection
       # The IP for the connection
+      # 
+      # @return [String]
       attr_reader :ip
       
       # The Port for the connection
+      # 
+      # @return [Fixnum]
       attr_reader :port
       
       def initialize(api_string)

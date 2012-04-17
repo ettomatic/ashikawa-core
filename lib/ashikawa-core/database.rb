@@ -16,11 +16,15 @@ module Ashikawa
       end
       
       # The IP of the database
+      # 
+      # @return [String]
       def ip
         @connection.ip
       end
       
       # The Port of the database
+      # 
+      # @return [Fixnum]
       def port
         @connection.port
       end
@@ -47,6 +51,8 @@ module Ashikawa
       end
       
       # Send a request to the connection object
+      # 
+      # @return [String] Server Reponse
       def send_request(path, method_params = {})
         @connection.send_request path, method_params
       end

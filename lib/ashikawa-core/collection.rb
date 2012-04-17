@@ -4,9 +4,13 @@ module Ashikawa
   module Core
     class Collection
       # The name of the collection, must be unique
+      # 
+      # @return [String]
       attr_reader :name
       
       # The ID of the collection. Is set by the database and unique
+      # 
+      # @return [Fixnum]
       attr_reader :id
       
       # Create a new Collection object with a name and an optional ID
@@ -21,47 +25,65 @@ module Ashikawa
       end
       
       # Change the name of the collection
+      # 
+      # @return [String] Response from the server
       def name=(new_name)
         send_request_for_this_collection "/rename", put: { "name" => new_name }
       end
       
       # Checks if the collection is new born (This is derived from the status code 1)
+      # 
+      # @return [Boolean]
       def new_born?
         @status == 1
       end
       
       # Checks if the collection is unloaded (This is derived from the status code 2)
+      # 
+      # @return [Boolean]
       def unloaded?
         @status == 2
       end
       
       # Checks if the collection is loaded (This is derived from the status code 3)
+      # 
+      # @return [Boolean]
       def loaded?
         @status == 3
       end
       
       # Checks if the collection is in the process of being unloaded (This is derived from the status code 4)
+      # 
+      # @return [Boolean]
       def being_unloaded?
         @status == 4
       end
       
       # Checks if the collection is deleted (This is derived from the status code 5)
+      # 
+      # @return [Boolean]
       def deleted?
         @status == 5
       end
       
       # Checks if the collection is corrupted (This is the case, if the status code is greater than 5)
+      # 
+      # @return [Boolean]
       def corrupted?
         @status > 5
       end
       
       # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
+      # 
+      # @return [Boolean]
       def wait_for_sync?
         server_response = send_request_for_this_collection "/parameter"
         server_response["waitForSync"]
       end
       
       # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
+      # 
+      # @return [String] Response from the server
       def wait_for_sync=(new_value)
         server_response = send_request_for_this_collection "/parameter", put: { "waitForSync" => new_value }
       end
@@ -91,21 +113,29 @@ module Ashikawa
       end
       
       # Deletes the collection
+      # 
+      # @return [String] Response from the server
       def delete
         send_request_for_this_collection "", delete: {}
       end
       
       # Load the collection into memory
+      # 
+      # @return [String] Response from the server
       def load
         send_request_for_this_collection "/load", put: {}
       end
       
       # Load the collection into memory
+      # 
+      # @return [String] Response from the server
       def unload
         send_request_for_this_collection "/unload", put: {}
       end
       
       # Delete all documents from the collection
+      # 
+      # @return [String] Response from the server
       def truncate
         send_request_for_this_collection "/truncate", put: {}
       end
@@ -148,6 +178,9 @@ module Ashikawa
       
       private
       
+      # Send a request to the server with the name of the collection prepended
+      # 
+      # @return [String] Response from the server
       def send_request_for_this_collection(path, method={})
         if method == {}
           @database.send_request "/collection/#{id}#{path}"
