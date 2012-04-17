@@ -7,13 +7,19 @@ module Ashikawa
       # The IP for the connection
       # 
       # @return [String]
+      # @api public
       attr_reader :ip
       
       # The Port for the connection
       # 
       # @return [Fixnum]
+      # @api public
       attr_reader :port
       
+      # Initialize a Connection with a given API String
+      # 
+      # @param [String] IP and Port as a String
+      # @api public
       def initialize(api_string)
         @api_string = api_string
         @ip, @port = @api_string.scan(/(\S+):(\d+)/).first
@@ -31,6 +37,7 @@ module Ashikawa
       # @param [Hash] method_params additional parameters for your request. Only needed if you want to send something other than a GET request.
       # @option method_params [Hash] :post POST data in case you want to send a POST request.
       # @return [Hash] parsed JSON response from the server
+      # @api semipublic
       def send_request(path, method_params = {})
         path.gsub! /^\//, ''
         

@@ -6,17 +6,20 @@ module Ashikawa
       # The name of the collection, must be unique
       # 
       # @return [String]
+      # @api public
       attr_reader :name
       
       # The ID of the collection. Is set by the database and unique
       # 
       # @return [Fixnum]
+      # @api public
       attr_reader :id
       
       # Create a new Collection object with a name and an optional ID
       # 
       # @param [Database] database The database the connection belongs to
       # @param [Hash] raw_collection The raw collection returned from the server
+      # @api public
       def initialize(database, raw_collection)
         @database = database
         @name = raw_collection['name'] if raw_collection.has_key? 'name'
@@ -27,6 +30,7 @@ module Ashikawa
       # Change the name of the collection
       # 
       # @return [String] Response from the server
+      # @api public
       def name=(new_name)
         send_request_for_this_collection "/rename", put: { "name" => new_name }
       end
@@ -34,6 +38,7 @@ module Ashikawa
       # Checks if the collection is new born (This is derived from the status code 1)
       # 
       # @return [Boolean]
+      # @api public
       def new_born?
         @status == 1
       end
@@ -41,6 +46,7 @@ module Ashikawa
       # Checks if the collection is unloaded (This is derived from the status code 2)
       # 
       # @return [Boolean]
+      # @api public
       def unloaded?
         @status == 2
       end
@@ -48,6 +54,7 @@ module Ashikawa
       # Checks if the collection is loaded (This is derived from the status code 3)
       # 
       # @return [Boolean]
+      # @api public
       def loaded?
         @status == 3
       end
@@ -55,6 +62,7 @@ module Ashikawa
       # Checks if the collection is in the process of being unloaded (This is derived from the status code 4)
       # 
       # @return [Boolean]
+      # @api public
       def being_unloaded?
         @status == 4
       end
@@ -62,6 +70,7 @@ module Ashikawa
       # Checks if the collection is deleted (This is derived from the status code 5)
       # 
       # @return [Boolean]
+      # @api public
       def deleted?
         @status == 5
       end
@@ -69,6 +78,7 @@ module Ashikawa
       # Checks if the collection is corrupted (This is the case, if the status code is greater than 5)
       # 
       # @return [Boolean]
+      # @api public
       def corrupted?
         @status > 5
       end
@@ -76,6 +86,7 @@ module Ashikawa
       # Checks if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
       # 
       # @return [Boolean]
+      # @api public
       def wait_for_sync?
         server_response = send_request_for_this_collection "/parameter"
         server_response["waitForSync"]
@@ -84,6 +95,7 @@ module Ashikawa
       # Change if the collection waits for sync: If `true` then creating or changing a document will wait until the data has been synchronised to disk
       # 
       # @return [String] Response from the server
+      # @api public
       def wait_for_sync=(new_value)
         server_response = send_request_for_this_collection "/parameter", put: { "waitForSync" => new_value }
       end
@@ -91,6 +103,7 @@ module Ashikawa
       # Returns the number of documents in the collection
       # 
       # @return [Fixnum] Number of documents
+      # @api public
       def length
         server_response = send_request_for_this_collection "/count"
         server_response["count"]
@@ -105,6 +118,7 @@ module Ashikawa
       # 
       # @param [Symbol] figure_type The figure you want to know
       # @return [Fixnum] The figure you requested
+      # @api public
       def figure(figure_type)
         server_response = send_request_for_this_collection "/figures"
         
@@ -115,6 +129,7 @@ module Ashikawa
       # Deletes the collection
       # 
       # @return [String] Response from the server
+      # @api public
       def delete
         send_request_for_this_collection "", delete: {}
       end
@@ -122,6 +137,7 @@ module Ashikawa
       # Load the collection into memory
       # 
       # @return [String] Response from the server
+      # @api public
       def load
         send_request_for_this_collection "/load", put: {}
       end
@@ -129,6 +145,7 @@ module Ashikawa
       # Load the collection into memory
       # 
       # @return [String] Response from the server
+      # @api public
       def unload
         send_request_for_this_collection "/unload", put: {}
       end
@@ -136,6 +153,7 @@ module Ashikawa
       # Delete all documents from the collection
       # 
       # @return [String] Response from the server
+      # @api public
       def truncate
         send_request_for_this_collection "/truncate", put: {}
       end
@@ -147,6 +165,7 @@ module Ashikawa
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Array<Document>]
+      # @api public
       def all(options={})
         request_data = { "collection" => @name }
         
@@ -165,6 +184,7 @@ module Ashikawa
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Array<Document>]
+      # @api public
       def by_example(reference_data, options={})
         request_data = { "collection" => @name, "example" => reference_data }
         
@@ -181,6 +201,7 @@ module Ashikawa
       # Send a request to the server with the name of the collection prepended
       # 
       # @return [String] Response from the server
+      # @api private
       def send_request_for_this_collection(path, method={})
         if method == {}
           @database.send_request "/collection/#{id}#{path}"
@@ -193,6 +214,7 @@ module Ashikawa
       # 
       # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
       # @return [Array<Document>]
+      # @api private
       def documents_from_response(parsed_server_response)
         parsed_server_response.collect do |document|
           Ashikawa::Core::Document.new(document["_id"], document["_rev"])

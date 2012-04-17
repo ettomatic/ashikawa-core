@@ -7,6 +7,7 @@ module Ashikawa
       # Initializes the connection to the database
       # 
       # @param [Connection, String] connection A Connection object or a String to create a Connection object.
+      # @api public
       def initialize(connection)
         if connection.class == String
           @connection = Ashikawa::Core::Connection.new connection
@@ -18,6 +19,7 @@ module Ashikawa
       # The IP of the database
       # 
       # @return [String]
+      # @api public
       def ip
         @connection.ip
       end
@@ -25,6 +27,7 @@ module Ashikawa
       # The Port of the database
       # 
       # @return [Fixnum]
+      # @api public
       def port
         @connection.port
       end
@@ -32,6 +35,7 @@ module Ashikawa
       # Returns a list of all collections defined in the database
       # 
       # @return [Array<Collection>]
+      # @api public
       def collections
         server_response = @connection.send_request "/collection"
         server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection }
@@ -40,6 +44,7 @@ module Ashikawa
       # Get or create a Collection based on name or ID
       # 
       # @return [Collection]
+      # @api public
       def [](collection_identifier)
         server_response = @connection.send_request "/collection/#{collection_identifier}"
         
@@ -53,6 +58,7 @@ module Ashikawa
       # Send a request to the connection object
       # 
       # @return [String] Server Reponse
+      # @api semipublic
       def send_request(path, method_params = {})
         @connection.send_request path, method_params
       end
