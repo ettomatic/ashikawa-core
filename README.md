@@ -40,3 +40,12 @@ Change into the project directory. Run `bundle` to get all dependencies (do a `g
 Now you can run `rake` or `rake spec` to see all tests passing (hopefully). Happy coding!
 
 You can also start up yard for documentation: `yard server --reload`
+
+## Documentation
+
+We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to AvocadoDB. Therefore we want an excellent documentation. [We want to reach 100% code coverage](https://github.com/triAGENS/ashikawa-core/issues/10). There are two tasks for that:
+
+* `rake yard:report`: Measure docs in lib/**/*.rb with yardstick
+* `rake yard:verify`: Verify that yardstick coverage is 100%
+
+As soon as we reached that we want to stay at 100%. Then we will make `yard:verify` part of the build on Travis.
