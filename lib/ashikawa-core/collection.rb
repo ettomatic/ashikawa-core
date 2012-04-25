@@ -29,10 +29,11 @@ module Ashikawa
       
       # Change the name of the collection
       # 
-      # @return [String] Response from the server
+      # @return [String] New Name
       # @api public
       def name=(new_name)
         send_request_for_this_collection "/rename", put: { "name" => new_name }
+        @name = new_name
       end
       
       # Checks if the collection is new born
