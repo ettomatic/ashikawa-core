@@ -53,11 +53,11 @@ describe Ashikawa::Core::Database do
         if method.has_key? :post
           server_response("collections/4590")
         else
-          server_response("collections/not_found")
+          raise RestClient::ResourceNotFound
         end
       end
       @connection.should_receive(:send_request).with("/collection/new_collection")
-      @connection.should_receive(:send_request).with("/collection/new_collection", post: { name: "new_collection"} )
+      @connection.should_receive(:send_request).with("/collection", post: { name: "new_collection"} )
       
       Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/4590"))
       

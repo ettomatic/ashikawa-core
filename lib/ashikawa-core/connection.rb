@@ -41,13 +41,17 @@ module Ashikawa
         path.gsub! /^\//, ''
         
         if method_params.has_key? :post
-          JSON.parse RestClient.post("#{@api_string}/#{path}", method_params[:post])
+          JSON.parse RestClient.post("#{@api_string}/_api/#{path}", method_params[:post].to_json )
         elsif method_params.has_key? :put
-          JSON.parse RestClient.put("#{@api_string}/#{path}", method_params[:put])
+          JSON.parse RestClient.put("#{@api_string}/_api/#{path}", method_params[:put].to_json )
         elsif method_params.has_key? :delete
-          JSON.parse RestClient.delete("#{@api_string}/#{path}", method_params[:delete])
+          if method_params[:delete] = {}
+            JSON.parse RestClient.delete("#{@api_string}/_api/#{path}" )
+          else
+            JSON.parse RestClient.delete("#{@api_string}/_api/#{path}", method_params[:delete].to_json )
+          end
         else
-          JSON.parse RestClient.get("#{@api_string}/#{path}")
+          JSON.parse RestClient.get("#{@api_string}/_api/#{path}")
         end
       end
     end

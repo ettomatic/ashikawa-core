@@ -46,10 +46,10 @@ module Ashikawa
       # @return [Collection]
       # @api public
       def [](collection_identifier)
-        server_response = @connection.send_request "/collection/#{collection_identifier}"
-        
-        unless server_response['code'] == 200
-          server_response = @connection.send_request "/collection/#{collection_identifier}", post: { name: collection_identifier}
+        begin
+          server_response = @connection.send_request "/collection/#{collection_identifier}"
+        rescue RestClient::ResourceNotFound
+          server_response = @connection.send_request "/collection", post: { name: collection_identifier }
         end
         
         Ashikawa::Core::Collection.new self, server_response

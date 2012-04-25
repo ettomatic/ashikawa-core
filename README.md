@@ -13,9 +13,7 @@ database = Ashikawa::Core::Database.new "http://localhost:8529"
 
 database["my_collection"] # => Returns the collection my_collection – creates it, if it doesn't exist
 database["my_collection"].name = "new_name"
-database["new_name"].deleted? # => False
 database["new_name"].delete
-database["new_name"].deleted? # => True
 ```
 
 ## How to get started developing

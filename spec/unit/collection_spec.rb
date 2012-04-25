@@ -51,14 +51,6 @@ describe Ashikawa::Core::Collection do
       my_collection.being_unloaded?.should == false
     end
     
-    it "should know if the collection is deleted" do
-      my_collection = subject.new @database, { "status" => "5" }
-      my_collection.deleted?.should == true
-    
-      my_collection = subject.new @database, { "status" => "200" }
-      my_collection.deleted?.should == false
-    end
-    
     it "should know if the collection is corrupted" do
       my_collection = subject.new @database, { "status" => "6" }
       my_collection.corrupted?.should == true

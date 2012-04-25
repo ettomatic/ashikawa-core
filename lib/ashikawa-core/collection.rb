@@ -67,14 +67,6 @@ module Ashikawa
         @status == 4
       end
       
-      # Checks if the collection is deleted
-      # 
-      # @return [Boolean]
-      # @api public
-      def deleted?
-        @status == 5
-      end
-      
       # Checks if the collection is corrupted
       # 
       # @return [Boolean]
