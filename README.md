@@ -39,6 +39,16 @@ Now you can run `rake spec:all` to see all tests passing (hopefully). Happy codi
 
 You can also start up yard for documentation: `yard server --reload`
 
+## Contributing
+
+When you want to write code for the project, please follow these guidelines:
+
+1. Claim the ticket: Tell us that you want to work on a certain ticket, we will assign it to you (We don't want two people to work on the same thing ;) )
+2. Write an Integration Test: Describe what you want to do (our integration tests touch the database)
+3. Implement it: Write a unit test, check that it fails, make the test pass – repeat (our unit tests don't touch the database)
+4. Write Documentation for it: Check the compatability with our rules via *yardstick*
+5. Send the Pull Request :)
+
 ## Documentation
 
 We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to AvocadoDB. Therefore we want an excellent documentation. [We want to reach 100% documentation coverage](https://github.com/triAGENS/ashikawa-core/issues/10). There are two tasks for that:
