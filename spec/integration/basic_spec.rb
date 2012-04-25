@@ -63,26 +63,43 @@ describe "Basics" do
       my_collection.wait_for_sync?.should be_true
     end
     
-    it "should be possible to get information about the number of documents"
-    # Should use the following:
-    # collection.length
-    # collection.all
-    # collection.truncate
-    # collection.<<
+    it "should be possible to get information about the number of documents" do
+      pending "Document not implemented"
+      
+      empty_collection = subject["empty_collection"]
+      empty_collection.length.should == 0
+      empty_collection << { name: "testname", age: 27}
+      empty_collection << { name: "anderer name", age: 28}
+      empty_collection.length.should == 2
+      empty_collection.truncate
+      empty_collection.length.should == 0
+    end
     
-    it "should be possible to limit and skip results"
-    # Should use the following:
-    # collection.limit
-    # collection.skip
+    it "should return all documents of a collection" do
+      pending "Document not implemented"
+      
+      empty_collection = subject["empty_collection"]
+      empty_collection << { name: "testname", age: 27}
+      empty_collection.all.first["name"].should == "testname"
+    end
     
-    it "should be possible to query documents via geo information"
-    # Should use the following:
-    # collection.near
-    # collection.within
+    it "should be possible to limit and skip results" do
+      pending "Document not implemented"
+      
+      empty_collection = subject["empty_collection"]
+      empty_collection.truncate
+      
+      empty_collection << { name: "test1"}
+      empty_collection << { name: "test2"}
+      empty_collection << { name: "test3"}
+      
+      empty_collection.all(limit: 2).length.should == 2
+      empty_collection.all(skip: 2).length.should == 1
+    end
     
+    it "should be possible to query documents near a certain location"
+    it "should be possible to query documents within a certain range"
     it "should be possible to query documents by example"
-    # Should use the following:
-    # collection.by_example
     
   end
 end
