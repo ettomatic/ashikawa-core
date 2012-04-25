@@ -3,23 +3,32 @@ require "json"
 
 module Ashikawa
   module Core
+    # Represents a Connection via HTTP to a certain host
     class Connection
-      # The IP for the connection
+      # The IP of the connection
       # 
       # @return [String]
       # @api public
+      # @example Get the IP of the connection
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.ip # => "http://localhost"
       attr_reader :ip
       
-      # The Port for the connection
+      # The port of the connection
       # 
       # @return [Fixnum]
       # @api public
+      # @example Get the port of the connection
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.port # => 8529
       attr_reader :port
       
       # Initialize a Connection with a given API String
       # 
-      # @param [String] IP and Port as a String
+      # @param [String] api_string IP and Port as a String
       # @api public
+      # @example Create a new Connection
+      #  connection = Connection.new "http://localhost:8529"
       def initialize(api_string)
         @api_string = api_string
         @ip, @port = @api_string.scan(/(\S+):(\d+)/).first
