@@ -8,8 +8,8 @@ require 'yardstick/rake/verify'
 
 namespace :spec do
   desc "Run the integration tests. Requires AvocadoDB."
+  
   RSpec::Core::RakeTask.new(:integration) do |spec|
-    raise "Could not find avocado. Please install it or check if it is in your path." if `which avocado` == ""
     spec.pattern = "spec/integration/*_spec.rb"
   end
   

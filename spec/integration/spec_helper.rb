@@ -6,6 +6,8 @@ require "json"
 require "ashikawa-core"
 
 RSpec.configure do |config|
+  raise "Could not find avocado. Please install it or check if it is in your path." if `which avocado` == ""
+  
   database_directory = "/tmp/ashikawa-integration"
   avocado_process = false
   
