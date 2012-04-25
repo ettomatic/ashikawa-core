@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'unit/spec_helper'
 require 'ashikawa-core/connection'
 
 describe Ashikawa::Core::Collection do

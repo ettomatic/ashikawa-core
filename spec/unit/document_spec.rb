@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'unit/spec_helper'
 require 'ashikawa-core/document'
 
 describe Ashikawa::Core::Document do
