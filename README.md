@@ -24,7 +24,7 @@ Getting started is easy, just follow these steps.
 
 * Clone the project.
 * `cd` into the folder and run `bundle` 
-* `rake` or `rake spec` and see all tests passing.
+* `rake spec:all` and see all tests passing (you need to have AvocadoDB installed for that).
 * Happy coding!
 
 ### Detailed description
@@ -35,13 +35,13 @@ If you use `rvm`, create a gemset for this project: `rvm gemset create ashikawa-
 
 Change into the project directory. Run `bundle` to get all dependencies (do a `gem install bundler` before if you don't have bundler installed).
 
-Now you can run `rake` or `rake spec` to see all tests passing (hopefully). Happy coding!
+Now you can run `rake spec:all` to see all tests passing (hopefully). Happy coding!
 
 You can also start up yard for documentation: `yard server --reload`
 
 ## Documentation
 
-We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to AvocadoDB. Therefore we want an excellent documentation. [We want to reach 100% code coverage](https://github.com/triAGENS/ashikawa-core/issues/10). There are two tasks for that:
+We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to AvocadoDB. Therefore we want an excellent documentation. [We want to reach 100% documentation coverage](https://github.com/triAGENS/ashikawa-core/issues/10). There are two tasks for that:
 
 * `rake yard:report`: Measure docs in lib/**/*.rb with yardstick
 * `rake yard:verify`: Verify that yardstick coverage is 100%
