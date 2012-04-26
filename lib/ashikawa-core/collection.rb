@@ -398,6 +398,18 @@ module Ashikawa
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Array<Document>]
       # @api public
+      # @example Find all documents in the collection that are red
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.by_example { "color" => "red"} # => [#<Document id=2444 color="red">]
       def by_example(reference_data, options={})
         request_data = { "collection" => @name, "example" => reference_data }
         
@@ -416,6 +428,18 @@ module Ashikawa
       # @option options [Integer] :longitude Longitude location for your search.
       # @return [Array<Document>]
       # @api public
+      # @example Find all documents at Infinite Loop 
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
         request_data = { "collection" => @name }
         
