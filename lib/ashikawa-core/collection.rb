@@ -2,6 +2,7 @@ require "ashikawa-core/document"
 
 module Ashikawa
   module Core
+    # Represents a certain Collection within the Database
     class Collection
       # The name of the collection, must be unique
       # 
