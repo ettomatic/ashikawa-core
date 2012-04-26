@@ -5,4 +5,4 @@ rvm:
   - rbx-19mode
   - ruby-head
   - jruby-head
-script: "rake spec:unit"
+script: "rake ci"

@@ -8,7 +8,6 @@ require 'yardstick/rake/verify'
 
 namespace :spec do
   desc "Run the integration tests. Requires AvocadoDB."
-  
   RSpec::Core::RakeTask.new(:integration) do |spec|
     spec.pattern = "spec/integration/*_spec.rb"
   end
@@ -19,20 +18,36 @@ namespace :spec do
   end
   
   desc "Run all tests. Requires AvocadoDB"
-  task :all => [:integration, :unit] do
-  end
+  task :all => [:integration, :unit]
 end
 
 namespace :yard do
-  desc "Report on the Documentation Quality. Writes report/measurement.txt"
   Yardstick::Rake::Measurement.new(:report) do |measurement|
     measurement.output = 'report/measurement.txt'
   end
   
-  desc "Verifies the documentation"
   Yardstick::Rake::Verify.new(:verify) do |verify|
     verify.threshold = 100
   end
+  
+  desc "generate the documentation"
+  task :generate do
+    `yard`
+  end
+  
+  desc "start the documentation server on port 8808"
+  task :server do
+    `yard server --reload`
+  end
+  
+  desc "get statistics on the yard documentation"
+  task :stats do
+    `yard stats`
+  end
 end
 
-task :default => "spec:unit"
+desc "Run Unit Tests and verify documentation - no AvocadoDB required"
+task :ci => ["spec:unit", "yard:verify"]
+
+desc "Run all tests and verify documentation - AvocadoDB required"
+task :default => ["spec:all", "yard:verify"]
