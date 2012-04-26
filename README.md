@@ -29,9 +29,9 @@ Getting started is easy, just follow these steps.
 
 ### Detailed description
 
-Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also install AvocadoDB to run the integration tests.
+Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure AvocadoDB is installed and accessible via `avocado`.
 
-If you use `rvm`, create a gemset for this project: `rvm gemset create ashikawa-core`. You will be asked if you want to switch to this gemset once you `cd` into the directory. If you do not want to use `rvm`, just ignore this step.
+If you use `rvm` a gemset for the project is created upon changing into the directory. If you do not use `rvm` nothing will happen.
 
 Change into the project directory. Run `bundle` to get all dependencies (do a `gem install bundler` before if you don't have bundler installed).
 

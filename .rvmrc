@@ -1,1 +1,1 @@
-rvm gemset use ashikawa-core
+rvm use @$(basename `pwd`) --create
