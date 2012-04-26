@@ -206,7 +206,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.wait_for_sync? #=> false
       def wait_for_sync?
-        server_response = send_request_for_this_collection "/parameter"
+        server_response = send_request_for_this_collection "/properties"
         server_response["waitForSync"]
       end
       
@@ -227,7 +227,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.wait_for_sync = true
       def wait_for_sync=(new_value)
-        server_response = send_request_for_this_collection "/parameter", put: { "waitForSync" => new_value }
+        server_response = send_request_for_this_collection "/properties", put: { "waitForSync" => new_value }
       end
       
       # Returns the number of documents in the collection

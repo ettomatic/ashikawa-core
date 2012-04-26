@@ -59,15 +59,15 @@ describe Ashikawa::Core::Collection do
   
   describe "attributes of a collection" do
     it "should check if the collection waits for sync" do
-      @database.stub(:send_request).with("/collection/4590/parameter").and_return { server_response("/collections/4590") }
-      @database.should_receive(:send_request).with("/collection/4590/parameter")
+      @database.stub(:send_request).with("/collection/4590/properties").and_return { server_response("/collections/4590") }
+      @database.should_receive(:send_request).with("/collection/4590/properties")
       
       my_collection = subject.new @database, { "id" => "4590" }
       my_collection.wait_for_sync?.should be_true
     end
     
     it "should know how many documents the collection has" do
-      @database.stub(:send_request).with("/collection/4590/count").and_return { server_response("/collections/4590-parameter") }
+      @database.stub(:send_request).with("/collection/4590/count").and_return { server_response("/collections/4590-properties") }
       @database.should_receive(:send_request).with("/collection/4590/count")
       
       my_collection = subject.new @database, { "id" => "4590" }
@@ -119,8 +119,8 @@ describe Ashikawa::Core::Collection do
     end
     
     it "should change if it waits for sync" do
-      @database.stub(:send_request).with("/collection/4590/parameter", put: {"waitForSync" => true})
-      @database.should_receive(:send_request).with("/collection/4590/parameter", put: {"waitForSync" => true})
+      @database.stub(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
+      @database.should_receive(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
       
       subject.wait_for_sync = true
     end
