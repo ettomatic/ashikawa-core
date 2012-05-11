@@ -3,7 +3,7 @@ require "ashikawa-core/connection"
 
 module Ashikawa
   module Core
-    # Represents an AvocadoDB database in Ruby
+    # Represents an ArangoDB database in Ruby
     class Database
       # Initializes the connection to the database
       # 

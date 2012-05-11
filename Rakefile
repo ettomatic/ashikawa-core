@@ -7,7 +7,7 @@ require 'yardstick/rake/verify'
 
 
 namespace :spec do
-  desc "Run the integration tests. Requires AvocadoDB."
+  desc "Run the integration tests. Requires ArangoDB."
   RSpec::Core::RakeTask.new(:integration) do |spec|
     spec.pattern = "spec/integration/*_spec.rb"
   end
@@ -17,7 +17,7 @@ namespace :spec do
     spec.pattern = "spec/unit/*_spec.rb"
   end
   
-  desc "Run all tests. Requires AvocadoDB"
+  desc "Run all tests. Requires ArangoDB"
   task :all => [:integration, :unit]
 end
 
@@ -46,8 +46,8 @@ namespace :yard do
   end
 end
 
-desc "Run Unit Tests and verify documentation - no AvocadoDB required"
+desc "Run Unit Tests and verify documentation - no ArangoDB required"
 task :ci => ["spec:unit", "yard:verify"]
 
-desc "Run all tests and verify documentation - AvocadoDB required"
+desc "Run all tests and verify documentation - ArangoDB required"
 task :default => ["spec:all", "yard:verify"]

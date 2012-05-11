@@ -8,11 +8,11 @@ Gem::Specification.new do |gem|
   gem.authors     = ["moonglum", "EinLama"]
   gem.email       = ["me@moonglum.net", "tobias.eilert@me.com"]
   gem.homepage    = ""
-  gem.summary     = "Ashikawa Core is a Wrapper around the AvocadoDB Rest API"
-  gem.description = "Ashikawa Core is a Wrapper around the AvocadoDB Rest API. It provides low level access and will be used in different AvocadoDB ODMs."
+  gem.summary     = "Ashikawa Core is a Wrapper around the ArangoDB Rest API"
+  gem.description = "Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs."
   
   gem.required_ruby_version = '>= 1.9.2'
-  gem.requirements << "AvocadoDB"
+  gem.requirements << "ArangoDB"
   
   gem.rubyforge_project = "ashikawa-core"
 

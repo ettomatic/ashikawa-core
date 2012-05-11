@@ -2,7 +2,9 @@
 
 [![Build Status](https://secure.travis-ci.org/triAGENS/ashikawa-core.png?branch=master)](http://travis-ci.org/triAGENS/ashikawa-core)
 
-Ashikawa Core is a Wrapper around the AvocadoDB Rest API. It provides low level access and will be used in different AvocadoDB ODMs.
+*ArangoDB is the new name for AvocadoDB. This renaming process is in progress, please be patient.*
+
+Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs.
 
 ## How to use it
 
@@ -24,12 +26,12 @@ Getting started is easy, just follow these steps.
 
 * Clone the project.
 * `cd` into the folder and run `bundle` 
-* `rake` and see all tests passing (you need to have AvocadoDB installed for that)
+* `rake` and see all tests passing (you need to have ArangoDB installed for that)
 * Happy coding!
 
 ### Detailed description
 
-Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure AvocadoDB is installed and accessible via `avocado`.
+Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure ArangoDB is installed and accessible via `arango`.
 
 If you use `rvm` a gemset for the project is created upon changing into the directory. If you do not use `rvm` nothing will happen.
 
@@ -51,7 +53,7 @@ When you want to write code for the project, please follow these guidelines:
 
 ## Documentation
 
-We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to AvocadoDB. Therefore we want an excellent documentation. We created two rake tasks:
+We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to ArangoDB. Therefore we want an excellent documentation. We created two rake tasks:
 
 * `rake yard:report`: Measure docs in lib/**/*.rb with yardstick
 * `rake yard:verify`: Verify that yardstick coverage is 100%

@@ -452,6 +452,10 @@ module Ashikawa
         documents_from_response(server_response)
       end
       
+      def [](document_id)
+        Ashikawa::Core::Document.new "#{@id}/#{document_id}"
+      end
+      
       private
       
       # Send a request to the server with the name of the collection prepended
