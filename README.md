@@ -33,7 +33,7 @@ Getting started is easy, just follow these steps.
 
 Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure ArangoDB is installed and accessible via `arango`.
 
-If you use `rvm` a gemset for the project is created upon changing into the directory. If you do not use `rvm` nothing will happen.
+We encourage you to use [rvm](https://rvm.io/). If you do so, a gemset for the project is created upon changing into the directory. If you do not use `rvm` nothing special will happen in this case. Don't worry about it.
 
 Change into the project directory. Run `bundle` to get all dependencies (do a `gem install bundler` before if you don't have bundler installed).
 
