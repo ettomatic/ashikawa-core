@@ -443,23 +443,43 @@ module Ashikawa
       #   collection.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
         request_data = { "collection" => @name }
-        
+
         request_data["latitude"] = options[:latitude] if options.has_key? :latitude
         request_data["longitude"] = options[:longitude] if options.has_key? :longitude
-        
+
         server_response = @database.send_request "/simple/near", :put => request_data
-        
+
         documents_from_response(server_response)
       end
-      
+
+      # Looks for documents in the collection within a certain radius
+      #
+      # @param [Hash] options Options for this search.
+      # @option options [Integer] :latitude Latitude location for your search.
+      # @option options [Integer] :longitude Longitude location for your search.
+      # @option options [Integer] :radius Radius around the given location you want to search in.
+      # @return [Array<Document>]
+      # @api public
+      def within(options={})
+        request_data = { "collection" => @name }
+
+        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
+        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
+        request_data["radius"] = options[:radius] if options.has_key? :radius
+
+        server_response = @database.send_request "/simple/within", :put => request_data
+
+        documents_from_response(server_response)
+      end
+
       def [](document_id)
         Ashikawa::Core::Document.new "#{@id}/#{document_id}"
       end
-      
+
       private
-      
+
       # Send a request to the server with the name of the collection prepended
-      # 
+      #
       # @return [String] Response from the server
       # @api private
       def send_request_for_this_collection(path, method={})
@@ -469,7 +489,7 @@ module Ashikawa
           @database.send_request "/collection/#{id}#{path}", method
         end
       end
-      
+
       # Takes JSON returned by the database and collects Documents from the data
       # 
       # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
@@ -480,7 +500,6 @@ module Ashikawa
           Ashikawa::Core::Document.new(document["_id"], document["_rev"])
         end
       end
-      
     end
   end
 end
