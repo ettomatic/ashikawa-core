@@ -2,8 +2,6 @@
 
 [![Build Status](https://secure.travis-ci.org/triAGENS/ashikawa-core.png?branch=master)](http://travis-ci.org/triAGENS/ashikawa-core)
 
-*ArangoDB is the new name for AvocadoDB. This renaming process is in progress, please be patient.*
-
 Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs.
 
 ## How to use it

@@ -6,7 +6,7 @@ require "json"
 require "ashikawa-core"
 
 RSpec.configure do |config|
-  raise "Could not find arango. Currently searching for avocado, because the renaming is not done. Please install it or check if it is in your path." if `which avocado` == ""
+  raise "Could not find arangod. Please install it or check if it is in your path." if `which arangod` == ""
   
   database_directory = "/tmp/ashikawa-integration"
   arango_process = false
@@ -16,7 +16,7 @@ RSpec.configure do |config|
     process_id = $$
     
     Dir.mkdir database_directory unless Dir.exists? database_directory
-    arango_process = IO.popen("avocado #{database_directory} --watch-process #{process_id}")
+    arango_process = IO.popen("arangod #{database_directory} --watch-process #{process_id}")
     
     sleep 2 # Wait for Arango to start up
   end
