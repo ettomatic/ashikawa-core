@@ -460,6 +460,18 @@ module Ashikawa
       # @option options [Integer] :radius Radius around the given location you want to search in.
       # @return [Array<Document>]
       # @api public
+      # @example Find all documents within a radius of 100 to Infinite Loop
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
         request_data = { "collection" => @name }
 
@@ -472,6 +484,13 @@ module Ashikawa
         documents_from_response(server_response)
       end
 
+      # Fetch a certain document by its ID
+      # 
+      # @param [Integer] document_id the id of the document
+      # @return Document
+      # @api public
+      # @example Fetch a document with the ID 12345
+      #   document = collection[12345]
       def [](document_id)
         Ashikawa::Core::Document.new "#{@id}/#{document_id}"
       end
