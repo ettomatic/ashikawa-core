@@ -36,4 +36,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "yard", "~> 0.7.5"
   gem.add_development_dependency "webmock", "~> 1.8.6"
   gem.add_development_dependency "yardstick", "~> 0.4.0"
+  gem.add_development_dependency "redcarpet", "~> 2.1.1"
 end
