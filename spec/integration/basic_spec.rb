@@ -69,7 +69,7 @@ describe "Basics" do
       empty_collection << { name: "testname", age: 27}
       empty_collection << { name: "anderer name", age: 28}
       empty_collection.length.should == 2
-      empty_collection.truncate
+      empty_collection.truncate!
       empty_collection.length.should == 0
     end
 
@@ -81,7 +81,7 @@ describe "Basics" do
 
     it "should be possible to limit and skip results" do
       empty_collection = subject["empty_collection"]
-      empty_collection.truncate
+      empty_collection.truncate!
 
       empty_collection << { name: "test1"}
       empty_collection << { name: "test2"}
