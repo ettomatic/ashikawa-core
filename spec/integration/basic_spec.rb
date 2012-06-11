@@ -91,8 +91,6 @@ describe "Basics" do
       empty_collection.all(skip: 2).length.should == 1
     end
 
-    it "should be possible to query documents near a certain location"
-    it "should be possible to query documents within a certain range"
 
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
@@ -103,6 +101,28 @@ describe "Basics" do
 
       collection[document_id] = { name: "Other Dude", bowling: true }
       collection[document_id]["name"].should == "Other Dude"
+    end
+
+    describe "geolocation" do
+      before :each do
+        @places = subject['geo_collection']
+        @places.truncate!
+
+        @places << { name: "cologne", latitude: 50.948045, longitude: 6.961212 }
+        @places << { name: "san francisco", latitude: -122.395899, longitude: 37.793621 }
+      end
+
+      it "should be possible to query documents near a certain location" do
+        near_places = @places.near latitude: -122.395898, longitude: 37.793622
+        near_places.length.should == 1
+        near_places.first.name.should == "san francisco"
+      end
+
+      it "should be possible to query documents within a certain range" do
+        near_places = @places.within latitude: 50.948040, longitude: 6.961210, radius: 2
+        near_places.length.should == 1
+        near_places.first.name.should == "cologne"
+      end
     end
 
     describe "created document" do
