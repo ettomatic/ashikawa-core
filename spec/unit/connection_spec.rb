@@ -15,7 +15,7 @@ describe Ashikawa::Core::Connection do
     subject { Ashikawa::Core::Connection.new "http://localhost:8529" }
     
     it "should send a get request" do
-      stub_request(:get, "http://localhost:8529/_api/my/path").to_return body: "{ \"name\": \"dude\" }"
+      stub_request(:get, "http://localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
       
       subject.send_request "/my/path"
       
