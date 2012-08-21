@@ -37,4 +37,9 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "webmock", "~> 1.8.9"
   # gem.add_development_dependency "yardstick", "~> 0.6.0"
   gem.add_development_dependency "redcarpet", "~> 2.1.1"
+
+  gem.add_development_dependency "guard", "~> 1.3.2"
+  gem.add_development_dependency "guard-rspec", "~> 1.2.1"
+  gem.add_development_dependency "guard-bundler", "~> 1.0.0"
+  gem.add_development_dependency "guard-yard", "~> 2.0.0"
 end

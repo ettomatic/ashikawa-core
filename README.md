@@ -39,6 +39,14 @@ Now you can run `rake` to see all tests passing (hopefully). Happy coding!
 
 You can also start up yard for documentation: `rake yard:server`
 
+### Guard
+
+Guard is a tool for comfortable development. If you want to use it for development, you have to first start an instance of ArangoDB and then start guard with `guard`. This will:
+
+* Run a documentation server on `http://localhost:8808`
+* Run `bundle` whenever you change the dependencies
+* Run the integration and unit tests whenever you change a file in the lib or spec directory
+
 ### Continuous Integration
 
 Our tests are run on Travis CI, the build status is displayed above. **Please note** that it only runs the unit tests and not the integration tests, because that would require ArangoDB to be installed on the Travis CI boxes. *Therefore green doesn't neccessarily mean green* (which is unfortunate).

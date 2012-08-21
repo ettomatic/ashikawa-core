@@ -10,6 +10,10 @@ describe "Basics" do
   describe "initialized database" do
     subject { Ashikawa::Core::Database.new "http://localhost:8529" }
 
+    after :each do
+      subject.collections.each { |collection| collection.delete }
+    end
+
     it "should do what the README describes" do
       subject["my_collection"]
       subject["my_collection"].name = "new_name"
@@ -33,12 +37,12 @@ describe "Basics" do
       my_collection.name.should == "my_new_name"
     end
 
-    it "should be possible to find a collection by ID" do  
+    it "should be possible to find a collection by ID" do
       my_collection = subject["test_collection"]
       subject[my_collection.id].name.should == "test_collection"
     end
 
-    it "should be possible to load and unload collections" do  
+    it "should be possible to load and unload collections" do
       my_collection = subject["test_collection"]
       my_collection.loaded?.should be_true
       my_collection.unload
@@ -47,7 +51,7 @@ describe "Basics" do
       subject[my_id].loaded?.should be_false
     end
 
-    it "should be possible to get figures" do  
+    it "should be possible to get figures" do
       my_collection = subject["test_collection"]
       my_collection.figure(:datafiles_count).class.should == Fixnum
       my_collection.figure(:alive_size).class.should == Fixnum
@@ -58,6 +62,7 @@ describe "Basics" do
 
     it "should change and receive information about waiting for sync" do
       my_collection = subject["my_collection"]
+      my_collection.wait_for_sync = false
       my_collection.wait_for_sync?.should be_false
       my_collection.wait_for_sync = true
       my_collection.wait_for_sync?.should be_true

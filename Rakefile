@@ -9,6 +9,7 @@ require "rspec/core/rake_task"
 namespace :spec do
   desc "Run the integration tests. Requires ArangoDB."
   RSpec::Core::RakeTask.new(:integration) do |spec|
+    spec.rspec_opts = "--require integration/arango_helper.rb"
     spec.pattern = "spec/integration/*_spec.rb"
   end
   
