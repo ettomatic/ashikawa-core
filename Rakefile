@@ -2,8 +2,8 @@
 require "bundler/gem_tasks"
 require "rspec"
 require "rspec/core/rake_task"
-require 'yardstick/rake/measurement'
-require 'yardstick/rake/verify'
+# require 'yardstick/rake/measurement'
+# require 'yardstick/rake/verify'
 
 
 namespace :spec do
@@ -58,9 +58,9 @@ namespace :yard do
 end
 
 desc "Run Unit Tests and verify documentation - no ArangoDB required"
-# task :ci => ["spec:unit", "yard:verify", "dependencies"]
-task :ci => ["spec:unit", "dependencies"]
+# task :ci => ["spec:unit", "yard:verify"]
+task :ci => ["spec:unit"]
 
 desc "Run all tests and verify documentation - ArangoDB required"
-# task :default => ["spec:all", "yard:verify", "dependencies"]
-task :default => ["spec:all", "dependencies"]
+# task :default => ["spec:all", "yard:verify"]
+task :default => ["spec:all"]
