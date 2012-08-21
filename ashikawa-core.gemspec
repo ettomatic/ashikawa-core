@@ -32,9 +32,9 @@ Gem::Specification.new do |gem|
   
   # Development Dependencies
   gem.add_development_dependency "rake", "~> 0.9.2.2"
-  gem.add_development_dependency "rspec", "~> 2.9.0"
-  gem.add_development_dependency "yard", "~> 0.7.5"
-  gem.add_development_dependency "webmock", "~> 1.8.6"
-  gem.add_development_dependency "yardstick", "~> 0.4.0"
+  gem.add_development_dependency "rspec", "~> 2.11.0"
+  gem.add_development_dependency "yard", "~> 0.8.2.1"
+  gem.add_development_dependency "webmock", "~> 1.8.9"
+  # gem.add_development_dependency "yardstick", "~> 0.6.0"
   gem.add_development_dependency "redcarpet", "~> 2.1.1"
 end

@@ -29,7 +29,7 @@ Getting started is easy, just follow these steps.
 
 ### Detailed description
 
-Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure ArangoDB is installed and accessible via `arango`.
+Make sure you are running Ruby 1.9.x (or JRuby/Rubinius in 1.9 mode) and clone the latest snapshot into a directory of your choice. Also make sure ArangoDB is installed and accessible via `arangod` (for example by installing it via `brew install arangodb`).
 
 We encourage you to use [rvm](https://rvm.io/). If you do so, a gemset for the project is created upon changing into the directory. If you do not use `rvm` nothing special will happen in this case. Don't worry about it.
 
@@ -39,6 +39,10 @@ Now you can run `rake` to see all tests passing (hopefully). Happy coding!
 
 You can also start up yard for documentation: `rake yard:server`
 
+### Continuous Integration
+
+Our tests are run on Travis CI, the build status is displayed above. **Please note** that it only runs the unit tests and not the integration tests, because that would require ArangoDB to be installed on the Travis CI boxes. *Therefore green doesn't neccessarily mean green* (which is unfortunate).
+
 ## Contributing
 
 When you want to write code for the project, please follow these guidelines:
@@ -46,7 +50,7 @@ When you want to write code for the project, please follow these guidelines:
 1. Claim the ticket: Tell us that you want to work on a certain ticket, we will assign it to you (We don't want two people to work on the same thing ;) )
 2. Write an Integration Test: Describe what you want to do (our integration tests touch the database)
 3. Implement it: Write a unit test, check that it fails, make the test pass – repeat (our unit tests don't touch the database)
-4. Write Documentation for it: Check the compatability with our rules via *yardstick*
+4. Write Documentation for it: Check the compatibility with our rules via *yardstick*
 5. Check with `rake` that everything is fine and send the Pull Request :)
 
 ## Documentation

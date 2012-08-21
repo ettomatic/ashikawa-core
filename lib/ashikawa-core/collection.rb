@@ -67,7 +67,7 @@ module Ashikawa
       
       # Change the name of the collection
       # 
-      # @param [String] name New Name
+      # @param [String] new_name New Name
       # @return [String] New Name
       # @api public
       # @example Change the name of a collection

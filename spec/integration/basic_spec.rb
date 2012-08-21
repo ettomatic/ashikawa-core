@@ -64,6 +64,7 @@ describe "Basics" do
     end
 
     it "should be possible to get information about the number of documents" do
+      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection.length.should == 0
       empty_collection << { name: "testname", age: 27}
@@ -74,12 +75,14 @@ describe "Basics" do
     end
 
     it "should return all documents of a collection" do
+      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection << { name: "testname", age: 27}
       empty_collection.all.first["name"].should == "testname"
     end
 
     it "should be possible to limit and skip results" do
+      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection.truncate!
 
@@ -95,6 +98,7 @@ describe "Basics" do
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
 
+      pending("`create` not implemented yet")
       document = collection.create name: "The Dude", bowling: true
       document_id = document.id
       collection[document_id]["name"].should == "The Dude"
@@ -108,6 +112,7 @@ describe "Basics" do
         @places = subject['geo_collection']
         @places.truncate!
 
+        pending("`<<` not implemented yet")
         @places << { name: "cologne", latitude: 50.948045, longitude: 6.961212 }
         @places << { name: "san francisco", latitude: -122.395899, longitude: 37.793621 }
       end
@@ -127,6 +132,7 @@ describe "Basics" do
 
     describe "created document" do
       before :each do
+        pending("`create` not implemented yet")
         @collection = subject["documenttests"]
         @document = @collection.create name: "The Dude"
         @document_id = @document.id
@@ -153,9 +159,9 @@ describe "Basics" do
     it "should be possible to query documents by example" do
       collection = subject["documenttests"]
 
+      pending("`<<` not implemented yet")
       collection << { name: "Random Collection" }
       collection.by_example("name" => "Random Collection").length.should == 1
     end
-    
   end
 end

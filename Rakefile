@@ -21,15 +21,26 @@ namespace :spec do
   task :all => [:integration, :unit]
 end
 
+desc "check if gems are up to date"
+task :dependencies do
+  dependency_status = `bundle outdated`
+  if dependency_status.include? "up to date"
+    puts "Dependencies up to date."
+  else
+    puts dependency_status
+    exit(1)
+  end
+end
+
 namespace :yard do
-  Yardstick::Rake::Measurement.new(:report) do |measurement|
-    measurement.output = 'report/measurement.txt'
-  end
+  # Yardstick::Rake::Measurement.new(:report) do |measurement|
+  #   measurement.output = 'report/measurement.txt'
+  # end
   
-  Yardstick::Rake::Verify.new(:verify) do |verify|
-    verify.threshold = 100
-  end
-  
+  # Yardstick::Rake::Verify.new(:verify) do |verify|
+  #   verify.threshold = 100
+  # end
+
   desc "generate the documentation"
   task :generate do
     `yard`
@@ -47,7 +58,9 @@ namespace :yard do
 end
 
 desc "Run Unit Tests and verify documentation - no ArangoDB required"
-task :ci => ["spec:unit", "yard:verify"]
+# task :ci => ["spec:unit", "yard:verify", "dependencies"]
+task :ci => ["spec:unit", "dependencies"]
 
 desc "Run all tests and verify documentation - ArangoDB required"
-task :default => ["spec:all", "yard:verify"]
+# task :default => ["spec:all", "yard:verify", "dependencies"]
+task :default => ["spec:all", "dependencies"]
