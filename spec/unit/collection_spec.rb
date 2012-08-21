@@ -9,9 +9,9 @@ describe Ashikawa::Core::Collection do
   end
   
   it "should have a name" do
-      my_collection = subject.new @database, server_response("/collections/4588")
-      my_collection.name.should == "example_1"
-    end
+    my_collection = subject.new @database, server_response("/collections/4588")
+    my_collection.name.should == "example_1"
+  end
     
   it "should accept an ID" do
     my_collection = subject.new @database, server_response("/collections/4588")
@@ -115,13 +115,13 @@ describe Ashikawa::Core::Collection do
       @database.stub(:send_request).with("/collection/4590/truncate", put: {})
       @database.should_receive(:send_request).with("/collection/4590/truncate", put: {})
       
-      subject.truncate
+      subject.truncate!
     end
     
     it "should change if it waits for sync" do
       @database.stub(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
       @database.should_receive(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
-      
+     
       subject.wait_for_sync = true
     end
     
