@@ -4,7 +4,7 @@ describe "Basics" do
   subject { "http://localhost:8529" }
 
   it "should have booted up an ArangoDB instance" do
-    expect { JSON.parse RestClient.get(subject) }.to raise_error(RestClient::NotImplemented)
+    RestClient.get(subject).should include("Arango")
   end
 
   describe "initialized database" do
