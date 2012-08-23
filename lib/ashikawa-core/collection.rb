@@ -394,7 +394,7 @@ module Ashikawa
 
       # Looks for documents in the collection which match the given criteria
       #
-      # @param [Hash] reference_data a Hash with data similar to the documents you are looking for.
+      # @param [Hash] example a Hash with data matching the documents you are looking for.
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
@@ -412,8 +412,8 @@ module Ashikawa
       #   }
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.by_example { "color" => "red"} # => [#<Document id=2444 color="red">]
-      def by_example(reference_data, options={})
-        request_data = { "collection" => @name, "example" => reference_data }
+      def by_example(example, options={})
+        request_data = { "collection" => @name, "example" => example }
 
         request_data["limit"] = options[:limit] if options.has_key? :limit
         request_data["skip"] = options[:skip] if options.has_key? :skip
@@ -430,7 +430,7 @@ module Ashikawa
       # @option options [Integer] :longitude Longitude location for your search.
       # @return [Array<Document>]
       # @api public
-      # @example Find all documents at Infinite Loop 
+      # @example Find all documents at Infinite Loop
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
       #   raw_collection = {
       #     "name" => "example_1",
@@ -556,7 +556,7 @@ module Ashikawa
 
       # Get all indices
       #
-      # @return Array<Index>
+      # @return [Array<Index>]
       # @api public
       def indices
         server_response = send_request "/index?collection=#{@id}"
