@@ -162,8 +162,12 @@ describe "Basics" do
         @document = @collection.create name: "The Dude"
         @document_id = @document.id
         @collection[@document_id].delete
-        pending("DocumentNotFoundException not implemented yet")
-        expect { @collection[@document_id] }.to raise_exception Ashikawa::DocumentNotFoundException
+        expect { @collection[@document_id] }.to raise_exception Ashikawa::Core::DocumentNotFoundException
+      end
+
+      it "should not be possible to delete a document that doesn't exist" do
+        @collection = subject["documenttests"]
+        expect { @collection[123].delete }.to raise_exception Ashikawa::Core::DocumentNotFoundException
       end
     end
 

@@ -487,12 +487,18 @@ module Ashikawa
       # Fetch a certain document by its ID
       #
       # @param [Integer] document_id the id of the document
+      # @raise [DocumentNotFoundException] If the requested document was not found
       # @return Document
       # @api public
       # @example Fetch a document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        server_response = send_request "/document/#{@id}/#{document_id}"
+        begin
+          server_response = send_request "/document/#{@id}/#{document_id}"
+        rescue RestClient::ResourceNotFound
+          raise Ashikawa::Core::DocumentNotFoundException
+        end
+
         Ashikawa::Core::Document.new self, server_response
       end
 
