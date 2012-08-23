@@ -1,0 +1,22 @@
+{
+  "code": 200,
+  "indexes": [
+    {
+      "fields": [
+        "_id"
+      ],
+      "id": "4590/0",
+      "type": "primary"
+    }
+  ],
+  "error": false,
+  "identifiers": {
+    "176836793/0": {
+      "fields": [
+        "_id"
+      ],
+      "id": "4590/0",
+      "type": "primary"
+    }
+  }
+}

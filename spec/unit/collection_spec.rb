@@ -208,6 +208,44 @@ describe Ashikawa::Core::Collection do
         end
       end
 
+      describe "indices" do
+        it "should add a new index" do
+          @database.stub(:send_request).with("/index?collection=4590", post: {
+            "type" => "hash", "fields" => [ "a", "b" ]
+          }).and_return { server_response('indices/new-hash-index') }
+          @database.should_receive(:send_request).with("/index?collection=4590", post: {
+            "type" => "hash", "fields" => [ "a", "b" ]
+          })
+
+          Ashikawa::Core::Index.should_receive(:new).with(subject,
+            server_response('indices/new-hash-index'))
+
+          subject.add_index :hash, on: [ :a, :b ]
+        end
+
+        it "should get an index by ID" do
+          @database.stub(:send_request).with("/index/4590/168054969",
+            {}
+          ).and_return { server_response('indices/hash-index') }
+
+          Ashikawa::Core::Index.should_receive(:new).with(subject,
+            server_response('indices/hash-index'))
+
+          subject.index 168054969
+        end
+
+        it "should get all indices" do
+          @database.stub(:send_request).with("/index?collection=4590",
+            {}
+          ).and_return { server_response('indices/all') }
+
+          Ashikawa::Core::Index.should_receive(:new).exactly(1).times
+
+          indices = subject.indices
+          indices.length.should == 1
+        end
+      end
+
       describe "by example" do
         before(:each) do
           @search_params = { :hello => "world" }

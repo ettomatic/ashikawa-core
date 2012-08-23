@@ -171,6 +171,30 @@ describe "Basics" do
       end
     end
 
+    describe "setting and deleting indices" do
+      before :each do
+        @collection = subject["documenttests"]
+      end
+
+      it "should be possible to set indices" do
+        @collection.add_index :geo, on: [:latitude, :longitude]
+        @collection.add_index :skiplist, on: [:identifier]
+        @collection.indices.length.should == 3 # primary index is always set
+        @collection.indices[0].class.should == Ashikawa::Core::Index
+      end
+
+      it "should be possible to get an index by ID" do
+        index = @collection.add_index :skiplist, on: [:identifier]
+        @collection.index(index.id).id.should == index.id
+      end
+
+      it "should be possible to remove indices" do
+        index = @collection.add_index :skiplist, on: [:identifier]
+        index.delete
+        @collection.indices.length.should == 1 # primary index is always set
+      end
+    end
+
     it "should be possible to query documents by example" do
       collection = subject["documenttests"]
 

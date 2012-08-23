@@ -1,4 +1,5 @@
 require "ashikawa-core/document"
+require "ashikawa-core/index"
 
 module Ashikawa
   module Core
@@ -515,6 +516,7 @@ module Ashikawa
       #
       # @param [Hash] raw_document
       # @return DocumentHash
+      # @api public
       def create(raw_document)
         server_response = send_request "/document?collection=#{@id}",
           post: raw_document
@@ -523,6 +525,46 @@ module Ashikawa
       end
 
       alias :<< :create
+
+      # Add an index to the collection
+      #
+      # @param [Symbol] type What kind of index?
+      # @option opts [Array<Symbol>] on On which fields?
+      # @return Index
+      # @api public
+      def add_index(type, opts)
+        request = {
+          "type" => type.to_s,
+          "fields" => opts[:on].map { |field| field.to_s }
+        }
+
+        server_response = send_request "/index?collection=#{@id}", post: request
+
+        Ashikawa::Core::Index.new self, server_response
+      end
+
+      # Get an index by ID
+      #
+      # @param [Int] id
+      # @return Index
+      # @api public
+      def index(id)
+        server_response = send_request "/index/#{@id}/#{id}"
+
+        Ashikawa::Core::Index.new self, server_response
+      end
+
+      # Get all indices
+      #
+      # @return Array<Index>
+      # @api public
+      def indices
+        server_response = send_request "/index?collection=#{@id}"
+
+        server_response["indexes"].map do |raw_index|
+          Ashikawa::Core::Index.new self, raw_index
+        end
+      end
 
       # Send a request to the server
       #
