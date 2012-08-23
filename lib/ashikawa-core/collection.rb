@@ -5,7 +5,7 @@ module Ashikawa
     # Represents a certain Collection within the Database
     class Collection
       # The name of the collection, must be unique
-      # 
+      #
       # @return [String]
       # @api public
       # @example Change the name of a collection
@@ -23,9 +23,9 @@ module Ashikawa
       #   collection.name = "example_2"
       #   collection.name # => "example_2"
       attr_reader :name
-      
+
       # The ID of the collection. Is set by the database and unique
-      # 
+      #
       # @return [Fixnum]
       # @api public
       # @example Get the id of the collection
@@ -41,9 +41,9 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.id #=> 4588
       attr_reader :id
-      
+
       # Create a new Collection object with a name and an optional ID
-      # 
+      #
       # @param [Database] database The database the connection belongs to
       # @param [Hash] raw_collection The raw collection returned from the server
       # @api public
@@ -64,9 +64,9 @@ module Ashikawa
         @id  = raw_collection['id'].to_i if raw_collection.has_key? 'id'
         @status = raw_collection['status'].to_i if raw_collection.has_key? 'status'
       end
-      
+
       # Change the name of the collection
-      # 
+      #
       # @param [String] new_name New Name
       # @return [String] New Name
       # @api public
@@ -88,9 +88,9 @@ module Ashikawa
         send_request_for_this_collection "/rename", put: { "name" => new_name }
         @name = new_name
       end
-      
+
       # Checks if the collection is new born
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Is the collection new born?
@@ -108,9 +108,9 @@ module Ashikawa
       def new_born?
         @status == 1
       end
-      
+
       # Checks if the collection is unloaded
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Is the collection unloaded?
@@ -128,9 +128,9 @@ module Ashikawa
       def unloaded?
         @status == 2
       end
-      
+
       # Checks if the collection is loaded
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Is the collection loaded?
@@ -148,9 +148,9 @@ module Ashikawa
       def loaded?
         @status == 3
       end
-      
+
       # Checks if the collection is in the process of being unloaded
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Is the collection unloaded?
@@ -168,9 +168,9 @@ module Ashikawa
       def being_unloaded?
         @status == 4
       end
-      
+
       # Checks if the collection is corrupted
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Is the collection corrupted?
@@ -188,9 +188,9 @@ module Ashikawa
       def corrupted?
         @status > 5
       end
-      
+
       # Does the document wait until the data has been synchronised to disk?
-      # 
+      #
       # @return [Boolean]
       # @api public
       # @example Does the collection wait for file synchronization?
@@ -209,9 +209,9 @@ module Ashikawa
         server_response = send_request_for_this_collection "/properties"
         server_response["waitForSync"]
       end
-      
+
       # Change if the document will wait until the data has been synchronised to disk
-      # 
+      #
       # @return [String] Response from the server
       # @api public
       # @example Tell the collection to wait for file synchronization
@@ -227,11 +227,11 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.wait_for_sync = true
       def wait_for_sync=(new_value)
-        server_response = send_request_for_this_collection "/properties", put: { "waitForSync" => new_value }
+        send_request_for_this_collection "/properties", put: { "waitForSync" => new_value }
       end
-      
+
       # Returns the number of documents in the collection
-      # 
+      #
       # @return [Fixnum] Number of documents
       # @api public
       # @example How many documents are in the collection?
@@ -250,9 +250,9 @@ module Ashikawa
         server_response = send_request_for_this_collection "/count"
         server_response["count"]
       end
-      
+
       # Return a figure for the collection
-      # 
+      #
       # @param [Symbol] figure_type The figure you want to know:
       #     * :datafiles_count - the number of active datafiles
       #     * :alive_size - the total size in bytes used by all living documents
@@ -275,13 +275,13 @@ module Ashikawa
       #   collection.figure :datafiles_count #=> 0
       def figure(figure_type)
         server_response = send_request_for_this_collection "/figures"
-        
+
         figure_area, figure_name = figure_type.to_s.split "_"
         server_response["figures"][figure_area][figure_name]
       end
-      
+
       # Deletes the collection
-      # 
+      #
       # @return [String] Response from the server
       # @api public
       # @example Delete a collection
@@ -299,9 +299,9 @@ module Ashikawa
       def delete
         send_request_for_this_collection "", delete: {}
       end
-      
+
       # Load the collection into memory
-      # 
+      #
       # @return [String] Response from the server
       # @api public
       # @example Load a collection into memory
@@ -319,9 +319,9 @@ module Ashikawa
       def load
         send_request_for_this_collection "/load", put: {}
       end
-      
+
       # Load the collection into memory
-      # 
+      #
       # @return [String] Response from the server
       # @api public
       # @example Unload a collection into memory
@@ -339,9 +339,9 @@ module Ashikawa
       def unload
         send_request_for_this_collection "/unload", put: {}
       end
-      
+
       # Delete all documents from the collection
-      # 
+      #
       # @return [String] Response from the server
       # @api public
       # @example Remove all documents from a collection
@@ -359,9 +359,9 @@ module Ashikawa
       def truncate!
         send_request_for_this_collection "/truncate", put: {}
       end
-      
+
       # Retrieves all documents for this collection
-      # 
+      #
       # @note It is advised to NOT use this method due to possible HUGE data amounts requested
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
@@ -382,17 +382,17 @@ module Ashikawa
       #   collection.all # => [#<Document id=43>]
       def all(options={})
         request_data = { "collection" => @name }
-        
+
         request_data["limit"] = options[:limit] if options.has_key? :limit
         request_data["skip"] = options[:skip] if options.has_key? :skip
-        
-        server_response = @database.send_request "/simple/all", :put => request_data
-        
+
+        server_response = send_request "/simple/all", :put => request_data
+
         documents_from_response(server_response)
       end
-      
+
       # Looks for documents in the collection which match the given criteria
-      # 
+      #
       # @param [Hash] reference_data a Hash with data similar to the documents you are looking for.
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
@@ -413,15 +413,15 @@ module Ashikawa
       #   collection.by_example { "color" => "red"} # => [#<Document id=2444 color="red">]
       def by_example(reference_data, options={})
         request_data = { "collection" => @name, "example" => reference_data }
-        
+
         request_data["limit"] = options[:limit] if options.has_key? :limit
         request_data["skip"] = options[:skip] if options.has_key? :skip
-        
-        server_response = @database.send_request "/simple/by-example", :put => request_data
-        
+
+        server_response = send_request "/simple/by-example", :put => request_data
+
         documents_from_response(server_response)
       end
-      
+
       # Looks for documents in the collection based on location
       #
       # @param [Hash] options Options for this search.
@@ -447,7 +447,7 @@ module Ashikawa
         request_data["latitude"] = options[:latitude] if options.has_key? :latitude
         request_data["longitude"] = options[:longitude] if options.has_key? :longitude
 
-        server_response = @database.send_request "/simple/near", :put => request_data
+        server_response = send_request "/simple/near", :put => request_data
 
         documents_from_response(server_response)
       end
@@ -479,20 +479,52 @@ module Ashikawa
         request_data["longitude"] = options[:longitude] if options.has_key? :longitude
         request_data["radius"] = options[:radius] if options.has_key? :radius
 
-        server_response = @database.send_request "/simple/within", :put => request_data
+        server_response = send_request "/simple/within", :put => request_data
 
         documents_from_response(server_response)
       end
 
       # Fetch a certain document by its ID
-      # 
+      #
       # @param [Integer] document_id the id of the document
       # @return Document
       # @api public
       # @example Fetch a document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        Ashikawa::Core::Document.new "#{@id}/#{document_id}"
+        server_response = send_request "/document/#{@id}/#{document_id}"
+        Ashikawa::Core::Document.new self, server_response
+      end
+
+      # Replace a certain document by its ID
+      #
+      # @param [Integer] document_id the id of the document
+      # @param [Hash] raw_document the data you want to replace it with
+      # @api public
+      def []=(document_id, raw_document)
+        send_request "/document/#{@id}/#{document_id}", put: raw_document
+      end
+
+      # Create a document with given raw data
+      #
+      # @param [Hash] raw_document
+      # @return DocumentHash
+      def create(raw_document)
+        server_response = send_request "/document?collection=#{@id}",
+          post: raw_document
+
+        Ashikawa::Core::Document.new self, server_response
+      end
+
+      alias :<< :create
+
+      # Send a request to the server
+      #
+      # @param [String] path
+      # @param [Object] method
+      # @return [String] Response from the server
+      def send_request(path, method={})
+        @database.send_request path, method
       end
 
       private
@@ -502,21 +534,17 @@ module Ashikawa
       # @return [String] Response from the server
       # @api private
       def send_request_for_this_collection(path, method={})
-        if method == {}
-          @database.send_request "/collection/#{id}#{path}"
-        else
-          @database.send_request "/collection/#{id}#{path}", method
-        end
+        send_request "/collection/#{id}#{path}", method
       end
 
       # Takes JSON returned by the database and collects Documents from the data
-      # 
+      #
       # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
       # @return [Array<Document>]
       # @api private
       def documents_from_response(parsed_server_response)
-        parsed_server_response.collect do |document|
-          Ashikawa::Core::Document.new(document["_id"], document["_rev"])
+        parsed_server_response["result"].collect do |raw_document|
+          Ashikawa::Core::Document.new self, raw_document
         end
       end
     end

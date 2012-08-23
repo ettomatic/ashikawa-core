@@ -69,7 +69,6 @@ describe "Basics" do
     end
 
     it "should be possible to get information about the number of documents" do
-      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection.length.should == 0
       empty_collection << { name: "testname", age: 27}
@@ -80,14 +79,12 @@ describe "Basics" do
     end
 
     it "should return all documents of a collection" do
-      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection << { name: "testname", age: 27}
       empty_collection.all.first["name"].should == "testname"
     end
 
     it "should be possible to limit and skip results" do
-      pending("`<<` not implemented yet")
       empty_collection = subject["empty_collection"]
       empty_collection.truncate!
 
@@ -99,11 +96,20 @@ describe "Basics" do
       empty_collection.all(skip: 2).length.should == 1
     end
 
+    it "should be possible to update the attributes of a document" do
+      collection = subject["documenttests"]
+
+      document = collection.create name: "The Dude", bowling: true
+      document_id = document.id
+      document["name"] = "Other Dude"
+      document.save
+
+      collection[document_id]["name"].should == "Other Dude"
+    end
 
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
 
-      pending("`create` not implemented yet")
       document = collection.create name: "The Dude", bowling: true
       document_id = document.id
       collection[document_id]["name"].should == "The Dude"
@@ -114,12 +120,12 @@ describe "Basics" do
 
     describe "geolocation" do
       before :each do
+        pending "Setting GeoIndices not implemented"
         @places = subject['geo_collection']
         @places.truncate!
 
-        pending("`<<` not implemented yet")
-        @places << { name: "cologne", latitude: 50.948045, longitude: 6.961212 }
-        @places << { name: "san francisco", latitude: -122.395899, longitude: 37.793621 }
+        @places << { "name" => "cologne", "latitude" => 50.948045, "longitude" => 6.961212 }
+        @places << { "name" => "san francisco", "latitude" => -122.395899, "longitude" => 37.793621 }
       end
 
       it "should be possible to query documents near a certain location" do
@@ -137,17 +143,16 @@ describe "Basics" do
 
     describe "created document" do
       before :each do
-        pending("`create` not implemented yet")
         @collection = subject["documenttests"]
         @document = @collection.create name: "The Dude"
         @document_id = @document.id
       end
 
       it "should be possible to manipulate documents and save them" do
-        @document = @collection[document_id]
+        @document = @collection[@document_id]
         @document["name"] = "Jeffrey Lebowski"
         @document["name"].should == "Jeffrey Lebowski"
-        @collection[@document_id].should == "The Dude"
+        @collection[@document_id]["name"].should == "The Dude"
         @document.save
         @collection[@document_id]["name"].should == "Jeffrey Lebowski"
       end
@@ -157,6 +162,7 @@ describe "Basics" do
         @document = @collection.create name: "The Dude"
         @document_id = @document.id
         @collection[@document_id].delete
+        pending("DocumentNotFoundException not implemented yet")
         expect { @collection[@document_id] }.to raise_exception Ashikawa::DocumentNotFoundException
       end
     end
@@ -164,8 +170,7 @@ describe "Basics" do
     it "should be possible to query documents by example" do
       collection = subject["documenttests"]
 
-      pending("`<<` not implemented yet")
-      collection << { name: "Random Collection" }
+      collection << { "name" => "Random Collection" }
       collection.by_example("name" => "Random Collection").length.should == 1
     end
   end

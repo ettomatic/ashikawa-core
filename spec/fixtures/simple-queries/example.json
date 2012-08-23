@@ -1,3 +1,9 @@
-[
-	{ "_id" : "12345/57463", "_rev" : 57463, "hello" : "world" }
-]
+{
+  "code": 201,
+  "hasMore": false,
+  "count": 1,
+  "error": false,
+  "result": [
+    { "_id" : "12345/57463", "_rev" : 57463, "hello" : "world" }
+  ]
+}
