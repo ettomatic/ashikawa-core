@@ -389,7 +389,7 @@ module Ashikawa
 
         server_response = send_request "/simple/all", :put => request_data
 
-        documents_from_response(server_response)
+        documents_from_response server_response
       end
 
       # Looks for documents in the collection which match the given criteria
@@ -414,13 +414,34 @@ module Ashikawa
       #   collection.by_example { "color" => "red"} # => [#<Document id=2444 color="red">]
       def by_example(example, options={})
         request_data = { "collection" => @name, "example" => example }
-
         request_data["limit"] = options[:limit] if options.has_key? :limit
         request_data["skip"] = options[:skip] if options.has_key? :skip
 
         server_response = send_request "/simple/by-example", :put => request_data
+        documents_from_response server_response
+      end
 
-        documents_from_response(server_response)
+      # Looks for one document in the collection which matches the given criteria
+      #
+      # @param [Hash] example a Hash with data matching the document you are looking for.
+      # @return [Document]
+      # @api public
+      # @example Find one document in the collection that is red
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.first_example { "color" => "red"} # => #<Document id=2444 color="red">
+      def first_example(example)
+        request_data = { "collection" => @name, "example" => example }
+        server_response = send_request "/simple/first-example", :put => request_data
+        Ashikawa::Core::Document.new self, server_response
       end
 
       # Looks for documents in the collection based on location
@@ -450,7 +471,7 @@ module Ashikawa
 
         server_response = send_request "/simple/near", :put => request_data
 
-        documents_from_response(server_response)
+        documents_from_response server_response
       end
 
       # Looks for documents in the collection within a certain radius
@@ -482,7 +503,7 @@ module Ashikawa
 
         server_response = send_request "/simple/within", :put => request_data
 
-        documents_from_response(server_response)
+        documents_from_response server_response
       end
 
       # Fetch a certain document by its ID

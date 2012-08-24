@@ -252,17 +252,35 @@ describe Ashikawa::Core::Collection do
         end
 
         it "should find documents by example" do
-          @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "example" => { :hello => "world"}})
+          @database.stub(:send_request).with("/simple/by-example", put:
+            {"collection" => "example_1", "example" => { :hello => "world"}}
+          ).and_return { server_response('simple-queries/example') }
+          @database.should_receive(:send_request).with("/simple/by-example", put:
+            {"collection" => "example_1", "example" => { :hello => "world"}})
 
           Ashikawa::Core::Document.should_receive(:new)
 
           subject.by_example(@search_params)
         end
 
+        it "should find one document by example" do
+          @database.stub(:send_request).with("/simple/first-example", put:
+            {"collection" => "example_1", "example" => { :hello => "world"}}
+          ).and_return { server_response('simple-queries/example') }
+          @database.should_receive(:send_request).with("/simple/first-example", put:
+            {"collection" => "example_1", "example" => { :hello => "world"}})
+
+          Ashikawa::Core::Document.should_receive(:new)
+
+          subject.first_example(@search_params)
+        end
+
         it "should skip documents" do
-          @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}})
+          @database.stub(:send_request).with("/simple/by-example", put:
+            {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}}
+          ).and_return { server_response('simple-queries/example') }
+          @database.should_receive(:send_request).with("/simple/by-example", put:
+            {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}})
 
           Ashikawa::Core::Document.should_receive(:new)
 
