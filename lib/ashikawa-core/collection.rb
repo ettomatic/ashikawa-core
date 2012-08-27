@@ -464,13 +464,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
-        request_data = { "collection" => @name }
-
-        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
-        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
-
+        request_data = parse_geo_options options
         server_response = send_request "/simple/near", :put => request_data
-
         documents_from_response server_response
       end
 
@@ -495,14 +490,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
-        request_data = { "collection" => @name }
-
-        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
-        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
-        request_data["radius"] = options[:radius] if options.has_key? :radius
-
+        request_data = parse_geo_options options
         server_response = send_request "/simple/within", :put => request_data
-
         documents_from_response server_response
       end
 
@@ -615,6 +604,21 @@ module Ashikawa
         parsed_server_response["result"].collect do |raw_document|
           Ashikawa::Core::Document.new self, raw_document
         end
+      end
+
+      # Parse the options given to `near` or `within`
+      #
+      # @param [Hash] options The options given to the method
+      # @return [Hash] The parsed hash for the request
+      # @api private
+      def parse_geo_options(options)
+        request_data = { "collection" => @name }
+
+        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
+        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
+        request_data["radius"] = options[:radius] if options.has_key? :radius
+
+        request_data
       end
     end
   end
