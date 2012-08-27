@@ -6,7 +6,7 @@ module Ashikawa
     # Represents an ArangoDB database in Ruby
     class Database
       # Initializes the connection to the database
-      # 
+      #
       # @param [Connection, String] connection A Connection object or a String to create a Connection object.
       # @api public
       # @example Access a Database by providing the URL
@@ -21,9 +21,9 @@ module Ashikawa
           @connection = connection
         end
       end
-      
+
       # The IP of the database
-      # 
+      #
       # @return [String]
       # @api public
       # @example Get the IP of the connection
@@ -32,9 +32,9 @@ module Ashikawa
       def ip
         @connection.ip
       end
-      
+
       # The Port of the database
-      # 
+      #
       # @return [Fixnum]
       # @api public
       # @example Get the port for the connection
@@ -43,9 +43,9 @@ module Ashikawa
       def port
         @connection.port
       end
-      
+
       # Returns a list of all collections defined in the database
-      # 
+      #
       # @return [Array<Collection>]
       # @api public
       # @example Get an Array containing the Collections in the database
@@ -57,9 +57,9 @@ module Ashikawa
         server_response = @connection.send_request "/collection"
         server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection }
       end
-      
+
       # Get or create a Collection based on name or ID
-      # 
+      #
       # @param [String, Fixnum] collection_identifier The name or ID of the collection
       # @return [Collection]
       # @api public
@@ -75,12 +75,12 @@ module Ashikawa
         rescue RestClient::ResourceNotFound
           server_response = @connection.send_request "/collection", post: { name: collection_identifier }
         end
-        
+
         Ashikawa::Core::Collection.new self, server_response
       end
-      
+
       # Sends a request to a given path (Prepends the api_string automatically)
-      # 
+      #
       # @example Send a get request to the database
       #   connection.send_request('/collection/new_collection')
       # @example Send a post request to the database
