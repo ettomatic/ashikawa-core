@@ -282,7 +282,6 @@ module Ashikawa
       #   collection.figure :datafiles_count #=> 0
       def figure(figure_type)
         server_response = send_request_for_this_collection "/figures"
-
         figure_area, figure_name = figure_type.to_s.split "_"
         server_response["figures"][figure_area][figure_name]
       end
@@ -447,7 +446,7 @@ module Ashikawa
       def first_example(example)
         request_data = { "collection" => @name, "example" => example }
         server_response = send_request "/simple/first-example", :put => request_data
-        Ashikawa::Core::Document.new self, server_response
+        Document.new self, server_response
       end
 
       # Looks for documents in the collection based on location
@@ -513,10 +512,10 @@ module Ashikawa
         begin
           server_response = send_request "/document/#{@id}/#{document_id}"
         rescue RestClient::ResourceNotFound
-          raise Ashikawa::Core::DocumentNotFoundException
+          raise DocumentNotFoundException
         end
 
-        Ashikawa::Core::Document.new self, server_response
+        Document.new self, server_response
       end
 
       # Replace a certain document by its ID
@@ -537,7 +536,7 @@ module Ashikawa
         server_response = send_request "/document?collection=#{@id}",
           post: raw_document
 
-        Ashikawa::Core::Document.new self, server_response
+        Document.new self, server_response
       end
 
       alias :<< :create
@@ -556,7 +555,7 @@ module Ashikawa
 
         server_response = send_request "/index?collection=#{@id}", post: request
 
-        Ashikawa::Core::Index.new self, server_response
+        Index.new self, server_response
       end
 
       # Get an index by ID
@@ -567,7 +566,7 @@ module Ashikawa
       def index(id)
         server_response = send_request "/index/#{@id}/#{id}"
 
-        Ashikawa::Core::Index.new self, server_response
+        Index.new self, server_response
       end
 
       # Get all indices
@@ -578,7 +577,7 @@ module Ashikawa
         server_response = send_request "/index?collection=#{@id}"
 
         server_response["indexes"].map do |raw_index|
-          Ashikawa::Core::Index.new self, raw_index
+          Index.new self, raw_index
         end
       end
 
@@ -599,7 +598,7 @@ module Ashikawa
       # @api private
       def documents_from_response(parsed_server_response)
         parsed_server_response["result"].collect do |raw_document|
-          Ashikawa::Core::Document.new self, raw_document
+          Document.new self, raw_document
         end
       end
 
