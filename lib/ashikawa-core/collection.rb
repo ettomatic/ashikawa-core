@@ -1,10 +1,13 @@
 require "ashikawa-core/document"
 require "ashikawa-core/index"
+require "forwardable"
 
 module Ashikawa
   module Core
     # Represents a certain Collection within the Database
     class Collection
+      extend Forwardable
+
       # The name of the collection, must be unique
       #
       # @return [String]
@@ -42,6 +45,9 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.id #=> 4588
       attr_reader :id
+
+      # Sending requests is delegated to the database
+      delegate send_request: :@database
 
       # Create a new Collection object with a name and an optional ID
       #
@@ -574,15 +580,6 @@ module Ashikawa
         server_response["indexes"].map do |raw_index|
           Ashikawa::Core::Index.new self, raw_index
         end
-      end
-
-      # Send a request to the server
-      #
-      # @param [String] path
-      # @param [Object] method
-      # @return [String] Response from the server
-      def send_request(path, method={})
-        @database.send_request path, method
       end
 
       private

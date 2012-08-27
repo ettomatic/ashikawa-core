@@ -137,7 +137,7 @@ describe Ashikawa::Core::Collection do
       describe "add and get single documents" do
         it "should receive a document by ID" do
           @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
-          @database.should_receive(:send_request).with("/document/4590/333", {})
+          @database.should_receive(:send_request).with("/document/4590/333")
 
           # Documents need to get initialized:
           Ashikawa::Core::Document.should_receive(:new)
@@ -224,8 +224,8 @@ describe Ashikawa::Core::Collection do
         end
 
         it "should get an index by ID" do
-          @database.stub(:send_request).with("/index/4590/168054969",
-            {}
+          @database.stub(:send_request).with(
+            "/index/4590/168054969"
           ).and_return { server_response('indices/hash-index') }
 
           Ashikawa::Core::Index.should_receive(:new).with(subject,
@@ -235,8 +235,8 @@ describe Ashikawa::Core::Collection do
         end
 
         it "should get all indices" do
-          @database.stub(:send_request).with("/index?collection=4590",
-            {}
+          @database.stub(:send_request).with(
+            "/index?collection=4590"
           ).and_return { server_response('indices/all') }
 
           Ashikawa::Core::Index.should_receive(:new).exactly(1).times
