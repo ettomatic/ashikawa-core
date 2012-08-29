@@ -60,18 +60,4 @@ When you want to write code for the project, please follow these guidelines:
 2. Write an Integration Test: Describe what you want to do (our integration tests touch the database)
 3. Implement it: Write a unit test, check that it fails, make the test pass – repeat (our unit tests don't touch the database)
 4. Write Documentation for it.
-<!--: Check the compatibility with our rules via *yardstick*-->
 5. Check with `rake` that everything is fine and send the Pull Request :)
-
-## Documentation
-
-We want `Ashikawa::Core` to be a solid foundation for all Ruby Libraries connecting to ArangoDB.
-
-<!--
-Therefore we want an excellent documentation. We created two rake tasks:
-
-* `rake yard:report`: Measure docs in lib/**/*.rb with yardstick
-* `rake yard:verify`: Verify that yardstick coverage is 100%
-
-The Yardstick coverage will be checked by our CI. Please make sure that the coverage is always at 100%.
-!-->
