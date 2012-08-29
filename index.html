@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ashikawa Core by triAGENS</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/triAGENS/ashikawa-core">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/triAGENS/ashikawa-core/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/triAGENS/ashikawa-core/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Ashikawa Core</h1>
+          <p>Amazing low-level ArangoDB client</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/triAGENS">triAGENS</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Ashikawa Core</h1>
+
+<p>Ashikawa Core is a wrapper around the ArangoDB REST API. It provides low level access and will be used in different ArangoDB ODMs.</p>
+
+<h2>How to install it?</h2>
+
+<pre><code>gem install ashikawa-core
+</code></pre>
+
+<p>or, when using bundler:</p>
+
+<pre><code>gem "ashikawa-core", "~&gt; 0.2"
+</code></pre>
+
+<h2>How to use it?</h2>
+
+<p>For a detailed description of Ashikawa::Core please refer to the <a href="http://rdoc.info/github/triAGENS/ashikawa-core/master/frames">documentation</a>. An example:</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s2">"ashikawa-core"</span>
+
+<span class="n">database</span> <span class="o">=</span> <span class="no">Ashikawa</span><span class="o">::</span><span class="no">Core</span><span class="o">::</span><span class="no">Database</span><span class="o">.</span><span class="n">new</span> <span class="s2">"http://localhost:8529"</span>
+
+<span class="n">database</span><span class="o">[</span><span class="s2">"my_collection"</span><span class="o">]</span> <span class="c1"># =&gt; Returns the collection my_collection – creates it, if it doesn't exist</span>
+<span class="n">database</span><span class="o">[</span><span class="s2">"my_collection"</span><span class="o">].</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"new_name"</span>
+<span class="n">database</span><span class="o">[</span><span class="s2">"new_name"</span><span class="o">].</span><span class="n">delete</span>
+</pre></div>
+
+<h2>Found a bug or do you have any feedback?</h2>
+
+<p>That's great! Leave us a message in <a href="https://github.com/triAGENS/ashikawa-core/issues">our tracker</a>.</p>
+
+<h2>How to contribute?</h2>
+
+<p>This is an open source project :) Just drop by at <a href="https://github.com/triAGENS/ashikawa-core">our repo</a> and send us a pull request!</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
