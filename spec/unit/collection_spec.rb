@@ -6,6 +6,7 @@ describe Ashikawa::Core::Collection do
 
   before :each do
     @database = double()
+    mock { Ashikawa::Core::Cursor }
   end
 
   it "should have a name" do
@@ -183,8 +184,7 @@ describe Ashikawa::Core::Collection do
           @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
 
           # Documents need to get initialized:
-          Ashikawa::Core::Document.should_receive(:new)
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.all
         end
@@ -193,7 +193,7 @@ describe Ashikawa::Core::Collection do
           @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1}).and_return { server_response('simple-queries/all_skip') }
           @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1})
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.all :limit => 1
         end
@@ -202,7 +202,7 @@ describe Ashikawa::Core::Collection do
           @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1}).and_return { server_response('simple-queries/all_limit') }
           @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1})
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.all :skip => 1
         end
@@ -258,7 +258,7 @@ describe Ashikawa::Core::Collection do
           @database.should_receive(:send_request).with("/simple/by-example", put:
             {"collection" => "example_1", "example" => { :hello => "world"}})
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.by_example(@search_params)
         end
@@ -282,7 +282,7 @@ describe Ashikawa::Core::Collection do
           @database.should_receive(:send_request).with("/simple/by-example", put:
             {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}})
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.by_example @search_params, :skip => 1
         end
@@ -291,7 +291,7 @@ describe Ashikawa::Core::Collection do
           @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
           @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}})
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.by_example @search_params, :limit => 2
         end

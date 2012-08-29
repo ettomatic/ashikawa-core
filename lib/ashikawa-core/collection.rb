@@ -1,5 +1,6 @@
 require "ashikawa-core/document"
 require "ashikawa-core/index"
+require "ashikawa-core/cursor"
 require "forwardable"
 
 module Ashikawa
@@ -372,7 +373,7 @@ module Ashikawa
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
-      # @return [Array<Document>]
+      # @return [Cursor]
       # @api public
       # @example Get an array with all documents
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
@@ -385,7 +386,7 @@ module Ashikawa
       #     "code" => 200
       #   }
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.all # => [#<Document id=43>]
+      #   collection.all # => #<Cursor id=33>
       def all(options={})
         request_data = { "collection" => @name }
 
@@ -394,7 +395,7 @@ module Ashikawa
 
         server_response = send_request "/simple/all", :put => request_data
 
-        documents_from_response server_response
+        Cursor.new @database, server_response
       end
 
       # Looks for documents in the collection which match the given criteria
@@ -403,7 +404,7 @@ module Ashikawa
       # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
-      # @return [Array<Document>]
+      # @return [Cursor]
       # @api public
       # @example Find all documents in the collection that are red
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
@@ -416,14 +417,14 @@ module Ashikawa
       #     "code" => 200
       #   }
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.by_example { "color" => "red"} # => [#<Document id=2444 color="red">]
+      #   collection.by_example { "color" => "red"} # => #<Cursor id=2444>
       def by_example(example, options={})
         request_data = { "collection" => @name, "example" => example }
         request_data["limit"] = options[:limit] if options.has_key? :limit
         request_data["skip"] = options[:skip] if options.has_key? :skip
 
         server_response = send_request "/simple/by-example", :put => request_data
-        documents_from_response server_response
+        Cursor.new @database, server_response
       end
 
       # Looks for one document in the collection which matches the given criteria
