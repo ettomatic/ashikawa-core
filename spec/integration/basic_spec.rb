@@ -194,11 +194,32 @@ describe "Basics" do
       end
     end
 
-    it "should be possible to query documents by example" do
-      collection = subject["documenttests"]
+    describe "querying for documents" do
+      it "should be possible to query documents by example" do
+        collection = subject["documenttests"]
 
-      collection << { "name" => "Random Collection" }
-      collection.by_example("name" => "Random Collection").length.should == 1
+        collection << { "name" => "Random Collection" }
+        collection.by_example("name" => "Random Collection").length.should == 1
+      end
+
+      it "should be possible to query documents with AQL" do
+        collection = subject["aqltest"]
+
+        collection << { "name" => "Jeff Lebowski",    "bowling" => true }
+        collection << { "name" => "Walter Sobchak",   "bowling" => true }
+        collection << { "name" => "Donny Kerabatsos", "bowling" => true }
+        collection << { "name" => "Jeffrey Lebowski", "bowling" => false }
+
+        results = subject.query "FOR u IN aqltest FILTER u.bowling == true RETURN u",
+          batch_size: 2,
+          count: true
+
+        results.length.should == 3
+
+        results = results.map { |person| person["name"] }
+        results.should     include "Jeff Lebowski"
+        results.should_not include "Jeffrey Lebowski"
+      end
     end
   end
 end

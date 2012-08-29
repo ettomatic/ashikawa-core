@@ -7,6 +7,7 @@ describe Ashikawa::Core::Database do
   before :each do
     mock(Ashikawa::Core::Connection)
     mock(Ashikawa::Core::Collection)
+    mock(Ashikawa::Core::Cursor)
     @connection = double()
   end
 
@@ -59,7 +60,7 @@ describe Ashikawa::Core::Database do
       @connection.should_receive(:send_request).with("/collection/new_collection")
       @connection.should_receive(:send_request).with("/collection", post: { name: "new_collection"} )
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/4590"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/4590"))
 
       subject['new_collection']
     end
@@ -68,6 +69,20 @@ describe Ashikawa::Core::Database do
       @connection.should_receive(:send_request).with("/my/path", post: { data: "mydata" })
 
       subject.send_request "/my/path", post: { data: "mydata" }
+    end
+
+    describe "handling queries" do
+      it "should send a query to the server" do
+        @connection.stub(:send_request).and_return { server_response("cursor/query") }
+        @connection.should_receive(:send_request).with("/cursor", post: {
+          query: "FOR u IN users LIMIT 2 RETURN u",
+          count: true,
+          batchSize: 2
+        })
+        Ashikawa::Core::Cursor.should_receive(:new).with(subject, server_response("cursor/query"))
+
+        subject.query "FOR u IN users LIMIT 2 RETURN u", count: true, batch_size: 2
+      end
     end
   end
 end

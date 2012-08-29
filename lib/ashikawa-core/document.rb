@@ -20,7 +20,7 @@ module Ashikawa
       #   document.revision # => 3456789
       attr_reader :revision
 
-      # Initialize a Document with an ID and revision
+      # Initialize a Document with the collection and raw data
       #
       # @param [Collection] collection
       # @param [Hash] raw_document
