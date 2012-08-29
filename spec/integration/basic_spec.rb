@@ -140,6 +140,24 @@ describe "Basics" do
       end
     end
 
+    describe "ranges" do
+      before :each do
+        @people = subject['range_collection']
+        @people.truncate!
+
+        @people.add_index :skiplist, on: [:age]
+        @people << { "name" => "Georg", "age" => 12 }
+        @people << { "name" => "Anne", "age" => 21 }
+        @people << { "name" => "Jens", "age" => 49 }
+      end
+
+      it "should be possible to query documents for numbers in a certain range" do
+        found_people = @people.in_range attribute: "age", left: 20, right: 30, closed: true
+        found_people.length.should == 1
+        found_people.first["name"].should == "Anne"
+      end
+    end
+
     describe "created document" do
       before :each do
         @collection = subject["documenttests"]

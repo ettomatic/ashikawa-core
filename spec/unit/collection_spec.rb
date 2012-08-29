@@ -318,6 +318,18 @@ describe Ashikawa::Core::Collection do
           subject.within :latitude => 0, :longitude => 0, :radius => 2
         end
       end
+
+      describe "in range" do
+        it "should look for documents with an attribute within a certain range" do
+          arguments = { "collection" => "example_1", "attribute" => "age", "left" => 50, "right" => 60, "closed" => false}
+          @database.stub(:send_request).with("/simple/range", put: arguments).and_return { server_response('simple-queries/range') }
+          @database.should_receive(:send_request).with("/simple/range" , put: arguments)
+
+          Ashikawa::Core::Cursor.should_receive(:new)
+
+          subject.in_range attribute: "age", left: 50, right: 60, closed: false
+        end
+      end
     end
   end
 end

@@ -387,13 +387,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.all # => #<Cursor id=33>
       def all(options={})
-        request_data = { "collection" => @name }
-
-        request_data["limit"] = options[:limit] if options.has_key? :limit
-        request_data["skip"] = options[:skip] if options.has_key? :skip
-
+        request_data = parse_simple_query_options options
         server_response = send_request "/simple/all", :put => request_data
-
         Cursor.new @database, server_response
       end
 
@@ -417,10 +412,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.by_example { "color" => "red"} # => #<Cursor id=2444>
       def by_example(example, options={})
-        request_data = { "collection" => @name, "example" => example }
-        request_data["limit"] = options[:limit] if options.has_key? :limit
-        request_data["skip"] = options[:skip] if options.has_key? :skip
-
+        request_data = parse_simple_query_options options
+        request_data["example"] = example
         server_response = send_request "/simple/by-example", :put => request_data
         Cursor.new @database, server_response
       end
@@ -502,6 +495,23 @@ module Ashikawa
       def within(options={})
         request_data = parse_geo_options options
         server_response = send_request "/simple/within", :put => request_data
+        Cursor.new @database, server_response
+      end
+
+
+      # Looks for documents in the collection with an attribute between two values
+      #
+      # @option options [Integer] :attribute The attribute path to check.
+      # @option options [Integer] :left The lower bound
+      # @option options [Integer] :right The upper bound
+      # @option options [Integer] :closed If true, use intervall including left and right, otherwise exclude right, but include left.
+      # @option options [Integer] :skip The documents to skip in the query (optional).
+      # @option options [Integer] :limit The maximal amount of documents to return (optional).
+      # @return [Cursor]
+      # @api public
+      def in_range(options={})
+        request_data = parse_skiplist_options options
+        server_response = send_request "/simple/range", :put => request_data
         Cursor.new @database, server_response
       end
 
@@ -594,6 +604,31 @@ module Ashikawa
       # @api private
       def send_request_for_this_collection(path, method={})
         send_request "/collection/#{id}#{path}", method
+      end
+
+      def parse_skiplist_options(options)
+        request_data = { "collection" => @name }
+
+        [:attribute, :left, :right, :closed, :limit, :skip].each do |key|
+          request_data[key.to_s] = options[key] if options.has_key? key
+        end
+
+        request_data
+      end
+
+      # Parse the options given to `all`, `by_example` or `range`
+      #
+      # @param [Hash] options The options given to the method
+      # @return [Hash] The parsed hash for the request
+      # @api private
+      def parse_simple_query_options(options)
+        request_data = { "collection" => @name }
+
+        [:limit, :skip].each do |key|
+          request_data[key.to_s] = options[key] if options.has_key? key
+        end
+
+        request_data
       end
 
       # Parse the options given to `near` or `within`
