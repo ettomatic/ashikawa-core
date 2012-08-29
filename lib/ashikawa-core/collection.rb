@@ -431,8 +431,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example)
-        request_data = { "collection" => @name, "example" => example }
-        server_response = send_request "/simple/first-example", :put => request_data
+        server_response = send_request "/simple/first-example",
+          put: { "collection" => @name, "example" => example }
         Document.new @database, server_response
       end
 
@@ -552,12 +552,10 @@ module Ashikawa
       # @return Index
       # @api public
       def add_index(type, opts)
-        request = {
+        server_response = send_request "/index?collection=#{@id}", post: {
           "type" => type.to_s,
           "fields" => opts[:on].map { |field| field.to_s }
         }
-
-        server_response = send_request "/index?collection=#{@id}", post: request
 
         Index.new self, server_response
       end
@@ -595,7 +593,7 @@ module Ashikawa
         send_request "/collection/#{id}#{path}", method
       end
 
-      # Parse the options given to the method
+      # Send a simple query to the server
       #
       # @param [String] path The path for the request
       # @param [Hash] options The options given to the method
