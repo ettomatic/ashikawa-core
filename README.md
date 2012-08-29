@@ -1,6 +1,7 @@
 # Ashikawa Core
 
 [![Build Status](https://secure.travis-ci.org/triAGENS/ashikawa-core.png?branch=master)](http://travis-ci.org/triAGENS/ashikawa-core)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/triAGENS/ashikawa-core)
 
 Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs.
 
