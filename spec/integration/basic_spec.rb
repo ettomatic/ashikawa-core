@@ -1,14 +1,16 @@
 require 'integration/spec_helper'
 
+ARANGO_HOST = "http://localhost:8529"
+
 describe "Basics" do
-  subject { "http://localhost:8529" }
+  subject { ARANGO_HOST }
 
   it "should have booted up an ArangoDB instance" do
-    RestClient.get(subject).should include("Arango")
+    expect { RestClient.get(subject) }.to_not raise_error
   end
 
   describe "initialized database" do
-    subject { Ashikawa::Core::Database.new "http://localhost:8529" }
+    subject { Ashikawa::Core::Database.new ARANGO_HOST }
 
     after :each do
       subject.collections.each { |collection| collection.delete }
