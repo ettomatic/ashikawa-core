@@ -10,10 +10,10 @@ Gem::Specification.new do |gem|
   gem.homepage    = ""
   gem.summary     = "Ashikawa Core is a Wrapper around the ArangoDB Rest API"
   gem.description = "Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs."
-  
+
   gem.required_ruby_version = '>= 1.9.2'
   gem.requirements << "ArangoDB"
-  
+
   gem.rubyforge_project = "ashikawa-core"
 
   gem.files         = `git ls-files`.split("\n")
@@ -23,20 +23,19 @@ Gem::Specification.new do |gem|
 
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
-  
+
   # Runtime Dependencies (JRuby only)
   if defined? PLATFORM and PLATFORM == 'java'
     gem.add_dependency "json", "~> 1.6.6"
     gem.add_dependency "jruby-openssl", "~> 0.7.6.1"
   end
-  
+
   # Development Dependencies
   gem.add_development_dependency "rake", "~> 0.9.2.2"
   gem.add_development_dependency "rspec", "~> 2.11.0"
   gem.add_development_dependency "yard", "~> 0.8.2.1"
   gem.add_development_dependency "webmock", "~> 1.8.9"
   # gem.add_development_dependency "yardstick", "~> 0.6.0"
-  gem.add_development_dependency "redcarpet", "~> 2.1.1"
 
   gem.add_development_dependency "guard", "~> 1.3.2"
   gem.add_development_dependency "guard-rspec", "~> 1.2.1"
