@@ -1,3 +1,5 @@
+require 'ashikawa-core/exceptions/document_not_found'
+
 module Ashikawa
   module Core
     # Represents a certain Document within a certain Collection
@@ -7,7 +9,7 @@ module Ashikawa
       # @return [Int]
       # @api public
       # @example Get the ID for a Document
-      #   document = Ashikawa::Core::Document.new collection, raw_document
+      #   document = Ashikawa::Core::Document.new database, raw_document
       #   document.id # => 2345678
       attr_reader :id
 
@@ -16,21 +18,24 @@ module Ashikawa
       # @return [Int]
       # @api public
       # @example Get the Revision for a Document
-      #   document = Ashikawa::Core::Document.new collection, raw_document
+      #   document = Ashikawa::Core::Document.new database, raw_document
       #   document.revision # => 3456789
       attr_reader :revision
 
-      # Initialize a Document with the collection and raw data
+      # Initialize a Document with the database and raw data
       #
-      # @param [Collection] collection
+      # @param [Database] database
       # @param [Hash] raw_document
       # @api public
-      # @example The Document 2345678 in the Collection 1234567 in revision 3456789
-      #   document = Ashikawa::Core::Document.new collection, raw_document
-      def initialize(collection, raw_document)
-        @collection = collection
-        @id = raw_document['_id'].split('/')[1].to_i if raw_document.has_key? '_id'
-        @revision = raw_document['_rev'].to_i if raw_document.has_key? '_rev'
+      def initialize(database, raw_document)
+        @database = database
+        @is_persistent = raw_document.has_key?('_id') and raw_document.has_key?('rev')
+
+        if @is_persistent
+          @collection_id, @id = raw_document['_id'].split('/').map { |id| id.to_i }
+          @revision = raw_document['_rev'].to_i
+        end
+
         @content = raw_document.delete_if { |key, value| key[0] == "_" }
       end
 
@@ -47,7 +52,8 @@ module Ashikawa
       #
       # @api public
       def delete
-        @collection.send_request "document/#{@collection.id}/#{@id}", delete: {}
+        raise DocumentNotFoundException unless @is_persistent
+        @database.send_request "document/#{@collection_id}/#{@id}", delete: {}
       end
 
       # Update the value of an attribute (Does not write to database)
@@ -56,6 +62,7 @@ module Ashikawa
       # @param [Object] value
       # @api public
       def []=(attribute_name, value)
+        raise DocumentNotFoundException unless @is_persistent
         @content[attribute_name] = value
       end
 
@@ -63,7 +70,8 @@ module Ashikawa
       #
       # @api public
       def save()
-        @collection.send_request "document/#{@collection.id}/#{@id}", put: @content
+        raise DocumentNotFoundException unless @is_persistent
+        @database.send_request "document/#{@collection_id}/#{@id}", put: @content
       end
     end
   end

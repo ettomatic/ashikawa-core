@@ -446,7 +446,7 @@ module Ashikawa
       def first_example(example)
         request_data = { "collection" => @name, "example" => example }
         server_response = send_request "/simple/first-example", :put => request_data
-        Document.new self, server_response
+        Document.new @database, server_response
       end
 
       # Looks for documents in the collection based on location
@@ -515,7 +515,7 @@ module Ashikawa
           raise DocumentNotFoundException
         end
 
-        Document.new self, server_response
+        Document.new @database, server_response
       end
 
       # Replace a certain document by its ID
@@ -536,7 +536,7 @@ module Ashikawa
         server_response = send_request "/document?collection=#{@id}",
           post: raw_document
 
-        Document.new self, server_response
+        Document.new @database, server_response
       end
 
       alias :<< :create
@@ -598,7 +598,7 @@ module Ashikawa
       # @api private
       def documents_from_response(parsed_server_response)
         parsed_server_response["result"].collect do |raw_document|
-          Document.new self, raw_document
+          Document.new @database, raw_document
         end
       end
 

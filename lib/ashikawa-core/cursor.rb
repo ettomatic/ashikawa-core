@@ -37,7 +37,7 @@ module Ashikawa
       def each(&block)
         begin
           @current.each do |raw_document|
-            block.call Document.new(nil, raw_document)
+            block.call Document.new(@database, raw_document)
           end
         end while next_batch
       end
