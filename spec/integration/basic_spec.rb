@@ -217,7 +217,8 @@ describe "Basics" do
         collection = subject["documenttests"]
 
         collection << { "name" => "Random Collection" }
-        collection.by_example("name" => "Random Collection").length.should == 1
+        result = collection.by_example example: {"name" => "Random Collection"}
+        result.length.should == 1
       end
 
       it "should be possible to query documents with AQL" do

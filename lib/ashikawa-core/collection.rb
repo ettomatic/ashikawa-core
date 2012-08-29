@@ -394,7 +394,7 @@ module Ashikawa
 
       # Looks for documents in the collection which match the given criteria
       #
-      # @param [Hash] example a Hash with data matching the documents you are looking for.
+      # @option options [Hash] :example a Hash with data matching the documents you are looking for.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Cursor]
@@ -410,10 +410,9 @@ module Ashikawa
       #     "code" => 200
       #   }
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.by_example { "color" => "red"} # => #<Cursor id=2444>
-      def by_example(example, options={})
-        request_data = parse_options options, [:limit, :skip]
-        request_data["example"] = example
+      #   collection.by_example example: { "color" => "red"} # => #<Cursor id=2444>
+      def by_example(options={})
+        request_data = parse_options options, [:limit, :skip, :example]
         server_response = send_request "/simple/by-example", :put => request_data
         Cursor.new @database, server_response
       end

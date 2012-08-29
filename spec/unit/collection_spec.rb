@@ -248,7 +248,7 @@ describe Ashikawa::Core::Collection do
 
       describe "by example" do
         before(:each) do
-          @search_params = { :hello => "world" }
+          @example = { :hello => "world" }
         end
 
         it "should find documents by example" do
@@ -260,7 +260,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example(@search_params)
+          subject.by_example example: @example
         end
 
         it "should find one document by example" do
@@ -272,7 +272,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Document.should_receive(:new)
 
-          subject.first_example(@search_params)
+          subject.first_example @example
         end
 
         it "should skip documents" do
@@ -284,7 +284,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example @search_params, :skip => 1
+          subject.by_example example: @example, :skip => 1
         end
 
         it "should limit documents" do
@@ -293,7 +293,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example @search_params, :limit => 2
+          subject.by_example example: @example, :limit => 2
         end
       end
 
