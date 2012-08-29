@@ -387,9 +387,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.all # => #<Cursor id=33>
       def all(options={})
-        request_data = parse_options options, [:limit, :skip]
-        server_response = send_request "/simple/all", :put => request_data
-        Cursor.new @database, server_response
+        send_simple_query "/simple/all", options, [:limit, :skip]
       end
 
       # Looks for documents in the collection which match the given criteria
@@ -412,9 +410,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.by_example example: { "color" => "red"} # => #<Cursor id=2444>
       def by_example(options={})
-        request_data = parse_options options, [:limit, :skip, :example]
-        server_response = send_request "/simple/by-example", :put => request_data
-        Cursor.new @database, server_response
+        send_simple_query "/simple/by-example", options, [:limit, :skip, :example]
       end
 
       # Looks for one document in the collection which matches the given criteria
@@ -463,9 +459,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
-        request_data = parse_options options, [:latitude, :longitude, :distance, :skip, :limit, :geo]
-        server_response = send_request "/simple/near", :put => request_data
-        Cursor.new @database, server_response
+        send_simple_query "/simple/near", options, [:latitude, :longitude, :distance, :skip, :limit, :geo]
       end
 
       # Looks for documents in the collection within a certain radius
@@ -492,9 +486,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
-        request_data = parse_options options, [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
-        server_response = send_request "/simple/within", :put => request_data
-        Cursor.new @database, server_response
+        send_simple_query "/simple/within", options, [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
       end
 
 
@@ -509,9 +501,7 @@ module Ashikawa
       # @return [Cursor]
       # @api public
       def in_range(options={})
-        request_data = parse_options options, [:attribute, :left, :right, :closed, :limit, :skip]
-        server_response = send_request "/simple/range", :put => request_data
-        Cursor.new @database, server_response
+        send_simple_query "/simple/range", options, [:attribute, :left, :right, :closed, :limit, :skip]
       end
 
       # Fetch a certain document by its ID
@@ -607,18 +597,20 @@ module Ashikawa
 
       # Parse the options given to the method
       #
+      # @param [String] path The path for the request
       # @param [Hash] options The options given to the method
       # @param [Array<Symbol>] keys The required keys
       # @return [Hash] The parsed hash for the request
       # @api private
-      def parse_options(options, keys)
+      def send_simple_query(path, options, keys)
         request_data = { "collection" => @name }
 
         keys.each do |key|
           request_data[key.to_s] = options[key] if options.has_key? key
         end
 
-        request_data
+        server_response = send_request path, :put => request_data
+        Cursor.new @database, server_response
       end
     end
   end
