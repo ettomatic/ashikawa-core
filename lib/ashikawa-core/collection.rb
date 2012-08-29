@@ -387,7 +387,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.all # => #<Cursor id=33>
       def all(options={})
-        request_data = parse_simple_query_options options
+        request_data = parse_options options, [:limit, :skip]
         server_response = send_request "/simple/all", :put => request_data
         Cursor.new @database, server_response
       end
@@ -412,7 +412,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.by_example { "color" => "red"} # => #<Cursor id=2444>
       def by_example(example, options={})
-        request_data = parse_simple_query_options options
+        request_data = parse_options options, [:limit, :skip]
         request_data["example"] = example
         server_response = send_request "/simple/by-example", :put => request_data
         Cursor.new @database, server_response
@@ -464,7 +464,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
-        request_data = parse_geo_options options
+        request_data = parse_options options, [:latitude, :longitude, :distance, :skip, :limit, :geo]
         server_response = send_request "/simple/near", :put => request_data
         Cursor.new @database, server_response
       end
@@ -493,7 +493,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
-        request_data = parse_geo_options options
+        request_data = parse_options options, [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
         server_response = send_request "/simple/within", :put => request_data
         Cursor.new @database, server_response
       end
@@ -510,7 +510,7 @@ module Ashikawa
       # @return [Cursor]
       # @api public
       def in_range(options={})
-        request_data = parse_skiplist_options options
+        request_data = parse_options options, [:attribute, :left, :right, :closed, :limit, :skip]
         server_response = send_request "/simple/range", :put => request_data
         Cursor.new @database, server_response
       end
@@ -606,40 +606,16 @@ module Ashikawa
         send_request "/collection/#{id}#{path}", method
       end
 
-      def parse_skiplist_options(options)
-        request_data = { "collection" => @name }
-
-        [:attribute, :left, :right, :closed, :limit, :skip].each do |key|
-          request_data[key.to_s] = options[key] if options.has_key? key
-        end
-
-        request_data
-      end
-
-      # Parse the options given to `all`, `by_example` or `range`
+      # Parse the options given to the method
       #
       # @param [Hash] options The options given to the method
+      # @param [Array<Symbol>] keys The required keys
       # @return [Hash] The parsed hash for the request
       # @api private
-      def parse_simple_query_options(options)
+      def parse_options(options, keys)
         request_data = { "collection" => @name }
 
-        [:limit, :skip].each do |key|
-          request_data[key.to_s] = options[key] if options.has_key? key
-        end
-
-        request_data
-      end
-
-      # Parse the options given to `near` or `within`
-      #
-      # @param [Hash] options The options given to the method
-      # @return [Hash] The parsed hash for the request
-      # @api private
-      def parse_geo_options(options)
-        request_data = { "collection" => @name }
-
-        [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo].each do |key|
+        keys.each do |key|
           request_data[key.to_s] = options[key] if options.has_key? key
         end
 
