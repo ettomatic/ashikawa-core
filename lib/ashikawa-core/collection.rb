@@ -370,7 +370,6 @@ module Ashikawa
       # Retrieves all documents for this collection
       #
       # @note It is advised to NOT use this method due to possible HUGE data amounts requested
-      # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Cursor]
@@ -401,7 +400,6 @@ module Ashikawa
       # Looks for documents in the collection which match the given criteria
       #
       # @param [Hash] example a Hash with data matching the documents you are looking for.
-      # @param [Hash] options Additional options for this query.
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Cursor]
@@ -452,10 +450,13 @@ module Ashikawa
 
       # Looks for documents in the collection based on location
       #
-      # @param [Hash] options Options for this search.
       # @option options [Integer] :latitude Latitude location for your search.
       # @option options [Integer] :longitude Longitude location for your search.
-      # @return [Array<Document>]
+      # @option options [Integer] :skip The documents to skip in the query.
+      # @option options [Integer] :distance If given, the attribute key used to store the distance.
+      # @option options [Integer] :limit The maximal amount of documents to return (default: 100).
+      # @option options [Integer] :geo If given, the identifier of the geo-index to use.
+      # @return [Cursor]
       # @api public
       # @example Find all documents at Infinite Loop
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
@@ -472,16 +473,19 @@ module Ashikawa
       def near(options={})
         request_data = parse_geo_options options
         server_response = send_request "/simple/near", :put => request_data
-        documents_from_response server_response
+        Cursor.new @database, server_response
       end
 
       # Looks for documents in the collection within a certain radius
       #
-      # @param [Hash] options Options for this search.
       # @option options [Integer] :latitude Latitude location for your search.
       # @option options [Integer] :longitude Longitude location for your search.
       # @option options [Integer] :radius Radius around the given location you want to search in.
-      # @return [Array<Document>]
+      # @option options [Integer] :skip The documents to skip in the query.
+      # @option options [Integer] :distance If given, the attribute key used to store the distance.
+      # @option options [Integer] :limit The maximal amount of documents to return (default: 100).
+      # @option options [Integer] :geo If given, the identifier of the geo-index to use.
+      # @return [Cursor]
       # @api public
       # @example Find all documents within a radius of 100 to Infinite Loop
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
@@ -498,7 +502,7 @@ module Ashikawa
       def within(options={})
         request_data = parse_geo_options options
         server_response = send_request "/simple/within", :put => request_data
-        documents_from_response server_response
+        Cursor.new @database, server_response
       end
 
       # Fetch a certain document by its ID
@@ -592,17 +596,6 @@ module Ashikawa
         send_request "/collection/#{id}#{path}", method
       end
 
-      # Takes JSON returned by the database and collects Documents from the data
-      #
-      # @param [Array<Hash>] parsed_server_response parsed JSON response from the server. Should contain document-hashes.
-      # @return [Array<Document>]
-      # @api private
-      def documents_from_response(parsed_server_response)
-        parsed_server_response["result"].collect do |raw_document|
-          Document.new @database, raw_document
-        end
-      end
-
       # Parse the options given to `near` or `within`
       #
       # @param [Hash] options The options given to the method
@@ -611,9 +604,9 @@ module Ashikawa
       def parse_geo_options(options)
         request_data = { "collection" => @name }
 
-        request_data["latitude"] = options[:latitude] if options.has_key? :latitude
-        request_data["longitude"] = options[:longitude] if options.has_key? :longitude
-        request_data["radius"] = options[:radius] if options.has_key? :radius
+        [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo].each do |key|
+          request_data[key.to_s] = options[key] if options.has_key? key
+        end
 
         request_data
       end

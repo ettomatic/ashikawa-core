@@ -302,9 +302,7 @@ describe Ashikawa::Core::Collection do
           @database.stub(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 }).and_return { server_response('simple-queries/near') }
           @database.should_receive(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 })
 
-          Ashikawa::Core::Document.should_receive(:new)
-          Ashikawa::Core::Document.should_receive(:new)
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.near :latitude => 0, :longitude => 0
         end
@@ -315,7 +313,7 @@ describe Ashikawa::Core::Collection do
           @database.stub(:send_request).with("/simple/within", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0, "radius" => 2 }).and_return { server_response('simple-queries/within') }
           @database.should_receive(:send_request).with("/simple/within" , put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0, "radius" => 2 })
 
-          Ashikawa::Core::Document.should_receive(:new)
+          Ashikawa::Core::Cursor.should_receive(:new)
 
           subject.within :latitude => 0, :longitude => 0, :radius => 2
         end
