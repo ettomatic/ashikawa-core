@@ -99,35 +99,33 @@ describe "Basics" do
       collection[document_id] = { name: "Other Dude", bowling: true }
       collection[document_id]["name"].should == "Other Dude"
     end
+  end
 
-    describe "created document" do
-      before :each do
-        @collection = subject["documenttests"]
-        @document = @collection.create name: "The Dude"
-        @document_id = @document.id
-      end
+  describe "created document" do
+    let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
+    let(:collection) { database["documenttests"] }
+    subject { collection.create name: "The Dude" }
+    let(:document_id) { subject.id }
 
-      it "should be possible to manipulate documents and save them" do
-        @document = @collection[@document_id]
-        @document["name"] = "Jeffrey Lebowski"
-        @document["name"].should == "Jeffrey Lebowski"
-        @collection[@document_id]["name"].should == "The Dude"
-        @document.save
-        @collection[@document_id]["name"].should == "Jeffrey Lebowski"
-      end
+    it "should be possible to manipulate documents and save them" do
+      subject["name"] = "Jeffrey Lebowski"
+      subject["name"].should == "Jeffrey Lebowski"
+      collection[document_id]["name"].should == "The Dude"
+      subject.save
+      collection[document_id]["name"].should == "Jeffrey Lebowski"
+    end
 
-      it "should be possible to delete a document" do
-        @collection = subject["documenttests"]
-        @document = @collection.create name: "The Dude"
-        @document_id = @document.id
-        @collection[@document_id].delete
-        expect { @collection[@document_id] }.to raise_exception Ashikawa::Core::DocumentNotFoundException
-      end
+    it "should be possible to delete a document" do
+      collection[document_id].delete
+      expect {
+        collection[document_id]
+      }.to raise_exception Ashikawa::Core::DocumentNotFoundException
+    end
 
-      it "should not be possible to delete a document that doesn't exist" do
-        @collection = subject["documenttests"]
-        expect { @collection[123].delete }.to raise_exception Ashikawa::Core::DocumentNotFoundException
-      end
+    it "should not be possible to delete a document that doesn't exist" do
+      expect {
+        collection[123].delete
+      }.to raise_exception Ashikawa::Core::DocumentNotFoundException
     end
   end
 end
