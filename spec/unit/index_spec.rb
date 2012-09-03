@@ -16,9 +16,10 @@ describe Ashikawa::Core::Index do
       "error" => false
     }
   }
-  subject { Ashikawa::Core::Index}
+  subject { Ashikawa::Core::Index }
 
   it "should initialize an Index" do
+    p subject
     index = subject.new collection, raw_data
     index.type.should == :hash
     index.on.should == [:something]

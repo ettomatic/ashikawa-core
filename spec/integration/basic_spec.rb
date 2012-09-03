@@ -1,7 +1,5 @@
 require 'integration/spec_helper'
 
-ARANGO_HOST = "http://localhost:8529"
-
 describe "Basics" do
   subject { ARANGO_HOST }
 
@@ -80,24 +78,6 @@ describe "Basics" do
       empty_collection.length.should == 0
     end
 
-    it "should return all documents of a collection" do
-      empty_collection = subject["empty_collection"]
-      empty_collection << { name: "testname", age: 27}
-      empty_collection.all.first["name"].should == "testname"
-    end
-
-    it "should be possible to limit and skip results" do
-      empty_collection = subject["empty_collection"]
-      empty_collection.truncate!
-
-      empty_collection << { name: "test1"}
-      empty_collection << { name: "test2"}
-      empty_collection << { name: "test3"}
-
-      empty_collection.all(limit: 2).length.should == 2
-      empty_collection.all(skip: 2).length.should == 1
-    end
-
     it "should be possible to update the attributes of a document" do
       collection = subject["documenttests"]
 
@@ -118,46 +98,6 @@ describe "Basics" do
 
       collection[document_id] = { name: "Other Dude", bowling: true }
       collection[document_id]["name"].should == "Other Dude"
-    end
-
-    describe "geolocation" do
-      before :each do
-        @places = subject['geo_collection']
-        @places.truncate!
-
-        @places.add_index :geo, on: [:latitude, :longitude]
-        @places << { "name" => "cologne", "latitude" => 50.948045, "longitude" => 6.961212 }
-        @places << { "name" => "san francisco", "latitude" => -122.395899, "longitude" => 37.793621 }
-      end
-
-      it "should be possible to query documents near a certain location" do
-        found_places = @places.near latitude: 50, longitude: 6
-        found_places.first["name"].should == "cologne"
-      end
-
-      it "should be possible to query documents within a certain range" do
-        found_places = @places.within latitude: 50.948040, longitude: 6.961210, radius: 2
-        found_places.length.should == 1
-        found_places.first["name"].should == "cologne"
-      end
-    end
-
-    describe "ranges" do
-      before :each do
-        @people = subject['range_collection']
-        @people.truncate!
-
-        @people.add_index :skiplist, on: [:age]
-        @people << { "name" => "Georg", "age" => 12 }
-        @people << { "name" => "Anne", "age" => 21 }
-        @people << { "name" => "Jens", "age" => 49 }
-      end
-
-      it "should be possible to query documents for numbers in a certain range" do
-        found_people = @people.in_range attribute: "age", left: 20, right: 30, closed: true
-        found_people.length.should == 1
-        found_people.first["name"].should == "Anne"
-      end
     end
 
     describe "created document" do
@@ -187,59 +127,6 @@ describe "Basics" do
       it "should not be possible to delete a document that doesn't exist" do
         @collection = subject["documenttests"]
         expect { @collection[123].delete }.to raise_exception Ashikawa::Core::DocumentNotFoundException
-      end
-    end
-
-    describe "setting and deleting indices" do
-      before :each do
-        @collection = subject["documenttests"]
-      end
-
-      it "should be possible to set indices" do
-        @collection.add_index :geo, on: [:latitude, :longitude]
-        @collection.add_index :skiplist, on: [:identifier]
-        @collection.indices.length.should == 3 # primary index is always set
-        @collection.indices[0].class.should == Ashikawa::Core::Index
-      end
-
-      it "should be possible to get an index by ID" do
-        index = @collection.add_index :skiplist, on: [:identifier]
-        @collection.index(index.id).id.should == index.id
-      end
-
-      it "should be possible to remove indices" do
-        index = @collection.add_index :skiplist, on: [:identifier]
-        index.delete
-        @collection.indices.length.should == 1 # primary index is always set
-      end
-    end
-
-    describe "querying for documents" do
-      it "should be possible to query documents by example" do
-        collection = subject["documenttests"]
-
-        collection << { "name" => "Random Collection" }
-        result = collection.by_example example: {"name" => "Random Collection"}
-        result.length.should == 1
-      end
-
-      it "should be possible to query documents with AQL" do
-        collection = subject["aqltest"]
-
-        collection << { "name" => "Jeff Lebowski",    "bowling" => true }
-        collection << { "name" => "Walter Sobchak",   "bowling" => true }
-        collection << { "name" => "Donny Kerabatsos", "bowling" => true }
-        collection << { "name" => "Jeffrey Lebowski", "bowling" => false }
-
-        results = subject.query "FOR u IN aqltest FILTER u.bowling == true RETURN u",
-          batch_size: 2,
-          count: true
-
-        results.length.should == 3
-
-        results = results.map { |person| person["name"] }
-        results.should     include "Jeff Lebowski"
-        results.should_not include "Jeffrey Lebowski"
       end
     end
   end
