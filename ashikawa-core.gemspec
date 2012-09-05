@@ -26,8 +26,8 @@ Gem::Specification.new do |gem|
 
   # Runtime Dependencies (JRuby only)
   if defined? PLATFORM and PLATFORM == 'java'
-    gem.add_dependency "json", "~> 1.6.6"
-    gem.add_dependency "jruby-openssl", "~> 0.7.6.1"
+    gem.add_dependency "json", "~> 1.7.5"
+    gem.add_dependency "jruby-openssl", "~> 0.7.7"
   else
     # RedCarpet is not compatible with JRuby
     # It is only needed to generate the YARD Documentation
