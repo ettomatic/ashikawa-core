@@ -58,6 +58,12 @@ describe Ashikawa::Core::Document do
       subject["last_name"] = "Other"
       subject.save
     end
+
+    it "should be convertable to a hash" do
+      hash = subject.to_hash
+      hash.should be_instance_of Hash
+      hash["first_name"].should == subject["first_name"]
+    end
   end
 
   describe "initialized document without ID" do

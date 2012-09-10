@@ -66,6 +66,14 @@ module Ashikawa
         @content[attribute_name] = value
       end
 
+      # Convert the document into a hash
+      #
+      # @return [Hash]
+      # @api public
+      def to_hash
+        @content
+      end
+
       # Save the changes to the database
       #
       # @api public
