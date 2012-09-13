@@ -4,16 +4,19 @@ require 'ashikawa-core/connection'
 describe Ashikawa::Core::Connection do
   subject { Ashikawa::Core::Connection }
 
-  it "should have an IP and port" do
+  it "should have a scheme, hostname and port" do
     connection = subject.new "http://localhost:8529"
 
-    connection.ip.should == "http://localhost"
+    connection.scheme.should == "http"
+    connection.host.should == "localhost"
     connection.port.should == 8529
   end
 
-  it "should default to localhost and ArangoDB port" do
+  it "should default to HTTP, localhost and ArangoDB port" do
     connection = subject.new
-    connection.ip.should == "http://localhost"
+
+    connection.scheme.should == "http"
+    connection.host.should == "localhost"
     connection.port.should == 8529
   end
 
@@ -58,4 +61,44 @@ describe Ashikawa::Core::Connection do
       subject.send_request("/my/path").should == {"name" => "dude"}
     end
   end
+
+  describe "authentication" do
+    subject { Ashikawa::Core::Connection.new }
+
+    it "should authenticate with username and password" do
+      subject.authenticate_with username: "testuser", password: "testpassword"
+
+      subject.username.should == "testuser"
+      subject.password.should == "testpassword"
+    end
+
+    it "should have authentication turned off by default" do
+      subject.authentication?.should be_false
+    end
+
+    it "should tell if authentication is enabled" do
+      subject.authenticate_with username: "testuser", password: "testpassword"
+      subject.authentication?.should be_true
+    end
+
+    it "should only accept a username & password pairs" do
+      expect {
+        subject.authenticate_with username: "kitty"
+      }.to raise_error(ArgumentError)
+
+      expect {
+        subject.authenticate_with password: "cheezburger?"
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should send the authentication data with every GET request" do
+      stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
+
+      subject.authenticate_with username: "user", password: "pass"
+      subject.send_request "/my/path"
+
+      WebMock.should have_requested(:get, "http://user:pass@localhost:8529/_api/my/path")
+    end
+  end
+
 end
