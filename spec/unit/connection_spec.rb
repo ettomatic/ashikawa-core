@@ -91,6 +91,10 @@ describe Ashikawa::Core::Connection do
       }.to raise_error(ArgumentError)
     end
 
+    it "should allow chaining" do
+      subject.authenticate_with(username: "a", password: "b").should == subject
+    end
+
     it "should send the authentication data with every GET request" do
       stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
 

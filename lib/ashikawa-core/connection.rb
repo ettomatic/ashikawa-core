@@ -66,6 +66,8 @@ module Ashikawa
         else
           raise ArgumentError, 'missing username or password'
         end
+
+        self
       end
 
       # Sends a request to a given path (Prepends the api_string automatically)
@@ -103,7 +105,7 @@ module Ashikawa
 
       def url
         if authentication?
-          "http://#{@username}:#{@password}@#{@host}:#{@port}"
+          "#{@scheme}://#{@username}:#{@password}@#{@host}:#{@port}"
         else
           @api_string
         end

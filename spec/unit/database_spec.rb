@@ -12,11 +12,11 @@ describe Ashikawa::Core::Database do
   end
 
   it "should initialize with a connection" do
-    @connection.stub(:ip) { "http://localhost" }
+    @connection.stub(:host) { "localhost" }
     @connection.stub(:port) { 8529 }
 
     database = subject.new @connection
-    database.ip.should == "http://localhost"
+    database.host.should == "localhost"
     database.port.should == 8529
   end
 
@@ -29,6 +29,12 @@ describe Ashikawa::Core::Database do
 
   describe "initialized database" do
     subject { Ashikawa::Core::Database.new @connection }
+
+    it "should delegate authentication to the connection" do
+      @connection.should_receive(:authenticate_with).with({ username: "user", password: "password" })
+
+      subject.authenticate_with username: "user", password: "password"
+    end
 
     it "should fetch all available collections" do
       @connection.stub(:send_request) {|path| server_response("collections/all") }
