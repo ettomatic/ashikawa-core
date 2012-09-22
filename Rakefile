@@ -12,12 +12,18 @@ namespace :spec do
     spec.rspec_opts = "--require integration/arango_helper.rb"
     spec.pattern = "spec/integration/*_spec.rb"
   end
-  
+
+  desc "Run the authentication integration tests. Requires ArangoDB."
+  RSpec::Core::RakeTask.new(:integration_auth) do |spec|
+    spec.rspec_opts = "--require integration_auth/arango_helper.rb"
+    spec.pattern = "spec/integration_auth/*_spec.rb"
+  end
+
   desc "Run the unit tests"
   RSpec::Core::RakeTask.new(:unit) do |spec|
     spec.pattern = "spec/unit/*_spec.rb"
   end
-  
+
   desc "Run all tests. Requires ArangoDB"
   task :all => [:integration, :unit]
 end
@@ -37,7 +43,7 @@ namespace :yard do
   # Yardstick::Rake::Measurement.new(:report) do |measurement|
   #   measurement.output = 'report/measurement.txt'
   # end
-  
+
   # Yardstick::Rake::Verify.new(:verify) do |verify|
   #   verify.threshold = 100
   # end
@@ -46,12 +52,12 @@ namespace :yard do
   task :generate do
     `yard`
   end
-  
+
   desc "start the documentation server on port 8808"
   task :server do
     `yard server --reload`
   end
-  
+
   desc "get statistics on the yard documentation"
   task :stats do
     `yard stats`
