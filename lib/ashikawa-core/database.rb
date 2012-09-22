@@ -9,10 +9,12 @@ module Ashikawa
     class Database
       extend Forwardable
 
-      # Delegate sending requests and managing IP and port  to the connection
+      # Delegate sending requests to the connection
       delegate send_request: :@connection
-      delegate ip:           :@connection
-      delegate port:         :@connection
+      delegate host: :@connection
+      delegate port: :@connection
+      delegate scheme: :@connection
+      delegate authenticate_with: :@connection
 
       # Initializes the connection to the database
       #
