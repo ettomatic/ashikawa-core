@@ -176,6 +176,16 @@ describe Ashikawa::Core::Collection do
 
           subject << {"name" => "The Dude"}
         end
+
+        it "should raise an exception if a document is not found" do
+          @database.stub(:send_request).with("/document/4590/333") do
+            raise RestClient::ResourceNotFound
+          end
+          @database.should_receive(:send_request).with("/document/4590/333")
+
+          expect { subject[333] }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
+
+        end
       end
 
       describe "list all" do

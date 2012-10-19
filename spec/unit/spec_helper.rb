@@ -1,6 +1,10 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
+require 'simplecov'
+SimpleCov.start
+SimpleCov.minimum_coverage 100
+
 # For HTTP Testing
 require 'webmock/rspec'
 require 'json'
