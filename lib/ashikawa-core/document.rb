@@ -39,6 +39,14 @@ module Ashikawa
         @content = raw_document.delete_if { |key, value| key[0] == "_" }
       end
 
+      # Raises an exception if the document is not persisted
+      #
+      # @raise [DocumentNotFoundException]
+      # @api semi-public
+      def check_if_persisted!
+        raise DocumentNotFoundException unless @is_persistent
+      end
+
       # Get the value of an attribute of the document
       #
       # @param [String] attribute_name
@@ -52,7 +60,7 @@ module Ashikawa
       #
       # @api public
       def delete
-        raise DocumentNotFoundException unless @is_persistent
+        check_if_persisted!
         @database.send_request "document/#{@collection_id}/#{@id}", delete: {}
       end
 
@@ -62,7 +70,7 @@ module Ashikawa
       # @param [Object] value
       # @api public
       def []=(attribute_name, value)
-        raise DocumentNotFoundException unless @is_persistent
+        check_if_persisted!
         @content[attribute_name] = value
       end
 
@@ -78,7 +86,7 @@ module Ashikawa
       #
       # @api public
       def save()
-        raise DocumentNotFoundException unless @is_persistent
+        check_if_persisted!
         @database.send_request "document/#{@collection_id}/#{@id}", put: @content
       end
     end
