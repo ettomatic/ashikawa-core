@@ -270,7 +270,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example example: @example
+          subject.by_example @example
         end
 
         it "should find one document by example" do
@@ -294,7 +294,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example example: @example, :skip => 1
+          subject.by_example @example, :skip => 1
         end
 
         it "should limit documents" do
@@ -303,7 +303,7 @@ describe Ashikawa::Core::Collection do
 
           Ashikawa::Core::Cursor.should_receive(:new)
 
-          subject.by_example example: @example, :limit => 2
+          subject.by_example @example, :limit => 2
         end
       end
 
