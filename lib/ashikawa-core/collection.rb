@@ -463,7 +463,7 @@ module Ashikawa
         send_simple_query "/simple/near", options, [:latitude, :longitude, :distance, :skip, :limit, :geo]
       end
 
-      # Looks for documents in the collection within a certain radius
+      # Looks for documents in the collection within a radius
       #
       # @option options [Integer] :latitude Latitude location for your search.
       # @option options [Integer] :longitude Longitude location for your search.
@@ -523,7 +523,7 @@ module Ashikawa
         Document.new @database, server_response
       end
 
-      # Replace a certain document by its ID
+      # Replace a document by its ID
       #
       # @param [Integer] document_id the id of the document
       # @param [Hash] raw_document the data you want to replace it with
@@ -532,14 +532,14 @@ module Ashikawa
         send_request "/document/#{@id}/#{document_id}", put: raw_document
       end
 
-      # Create a document with given raw data
+      # Create a new document from raw data
       #
-      # @param [Hash] raw_document
+      # @param [Hash] raw_data
       # @return DocumentHash
       # @api public
-      def create(raw_document)
+      def create(raw_data)
         server_response = send_request "/document?collection=#{@id}",
-          post: raw_document
+          post: raw_data
 
         Document.new @database, server_response
       end
@@ -548,10 +548,13 @@ module Ashikawa
 
       # Add an index to the collection
       #
-      # @param [Symbol] type What kind of index?
-      # @option opts [Array<Symbol>] on On which fields?
+      # @param [Symbol] type specify the type of the index, for example `:hash`
+      # @option opts [Array<Symbol>] on fields on which to apply the index
       # @return Index
       # @api public
+      # @example Add a hash-index to the fields :name and :profession of a collection
+      #   people = database['people']
+      #   people.add_index :hash, :on => [:name, :profession]
       def add_index(type, opts)
         server_response = send_request "/index?collection=#{@id}", post: {
           "type" => type.to_s,
@@ -563,7 +566,7 @@ module Ashikawa
 
       # Get an index by ID
       #
-      # @param [Int] id
+      # @param [Integer] id
       # @return Index
       # @api public
       def index(id)
