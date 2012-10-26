@@ -2,6 +2,8 @@
 require "bundler/gem_tasks"
 require "rspec"
 require "rspec/core/rake_task"
+require "roodi"
+require "roodi_task"
 # require 'yardstick/rake/measurement'
 # require 'yardstick/rake/verify'
 
@@ -65,6 +67,8 @@ namespace :yard do
 end
 
 namespace :metrics do
+  metric_tasks = []
+
   begin
     require 'cane/rake_task'
 
@@ -75,11 +79,17 @@ namespace :metrics do
       cane.style_glob = "{app,lib}/**/*.rb"
     end
 
-    task :all => [:cane]
+    metric_tasks << :cane
   rescue LoadError
     warn "cane not available, quality task not provided."
-    task :all => []
   end
+
+  RoodiTask.new do |roodi|
+    roodi.patterns = %w(lib/**/*.rb spec/**/*.rb)
+  end
+  metric_tasks << :roodi
+
+  task :all => metric_tasks
 end
 
 desc "Run Unit Tests - no ArangoDB required"
