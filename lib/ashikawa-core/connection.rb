@@ -1,5 +1,6 @@
 require "rest-client"
 require "json"
+require "uri"
 
 module Ashikawa
   module Core
@@ -49,17 +50,69 @@ module Ashikawa
       # @api public
       # @example Create a new Connection
       #  connection = Connection.new "http://localhost:8529"
-      def initialize(api_string="http://localhost:8529")
-        @api_string = api_string
-
-        require 'uri'
-        uri = URI(@api_string)
-        @host = uri.host
-        @port = uri.port
+      def initialize(api_string = "http://localhost:8529")
+        uri     = URI api_string
+        @host   = uri.host
+        @port   = uri.port
         @scheme = uri.scheme
       end
 
-      def authenticate_with(options={})
+      # Sends a request to a given path returning the parsed result
+      # (Prepends the api_string automatically)
+      #
+      # @example get request
+      #   connection.send_request('/collection/new_collection')
+      # @example post request
+      #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
+      # @param [String] path the path you wish to send a request to.
+      # @option params [Hash] :post POST data in case you want to send a POST request.
+      # @return [Hash] parsed JSON response from the server
+      # @api public
+      def send_request(path, params = {})
+        raw = raw_result_for path, params
+        JSON.parse raw
+      end
+
+      # Sends a request to a given path returning the raw result
+      # (Prepends the api_string automatically)
+      #
+      # @example get request
+      #   connection.raw_result_for('/collection/new_collection')
+      # @example post request
+      #   connection.raw_result_for('/collection/new_collection', :post => { :name => 'new_collection' })
+      # @param [String] path the path you wish to send a request to.
+      # @option params [Hash] :post POST data in case you want to send a POST request.
+      # @return [String] raw response from the server
+      # @api public
+      def raw_result_for(path, params = {})
+        path   = full_path path
+        method = [:post, :put, :delete].find { |method_name|
+          params.has_key? method_name
+        } || :get
+
+        if [:post, :put].include? method
+          RestClient.send method, path, params[method].to_json
+        else
+          RestClient.send method, path
+        end
+      end
+
+      # Checks if authentication for this Connection is active or not
+      #
+      # @return [Boolean]
+      # @api public
+      def authentication?
+        !!@username
+      end
+
+      # Authenticate with given username and password
+      #
+      # @option [String] username
+      # @option [String] password
+      # @return [self]
+      # @raise [ArgumentError] if username or password are missing
+      # @api public
+      def authenticate_with(options = {})
         if options.key? :username and options.key? :password
           @username = options[:username]
           @password = options[:password]
@@ -70,47 +123,20 @@ module Ashikawa
         self
       end
 
-      # Sends a request to a given path (Prepends the api_string automatically)
+      # Return the full path for a given API path
       #
-      # @example get request
-      #   connection.send_request('/collection/new_collection')
-      # @example post request
-      #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
-      # @param [String] path the path you wish to send a request to.
-      # @param [Hash] method_params additional parameters for your request. Only needed if you want to send something other than a GET request.
-      # @option method_params [Hash] :post POST data in case you want to send a POST request.
-      # @return [Hash] parsed JSON response from the server
-      # @api semipublic
-      def send_request(path, method_params = {})
-        path = "#{url}/_api/#{path.gsub(/^\//, '')}"
-
-        answer = if method_params.has_key? :post
-          RestClient.post path, method_params[:post].to_json
-        elsif method_params.has_key? :put
-          RestClient.put path, method_params[:put].to_json
-        elsif method_params.has_key? :delete
-          RestClient.delete path
-        else
-          RestClient.get path
-        end
-
-        JSON.parse answer
-      end
-
-      def authentication?
-        !!@username
-      end
-
-      private
-
-      def url
-        if authentication?
+      # @param [String] path The API path
+      # @return [String] Full path
+      # @api public
+      def full_path(path)
+        prefix = if authentication?
           "#{@scheme}://#{@username}:#{@password}@#{@host}:#{@port}"
         else
-          @api_string
+          "#{@scheme}://#{@host}:#{@port}"
         end
-      end
 
+        "#{prefix}/_api/#{path.gsub(/^\//, '')}"
+      end
     end
   end
 end
