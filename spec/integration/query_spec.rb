@@ -21,7 +21,7 @@ describe "Simple Queries" do
 
   it "should be possible to query documents by example" do
     subject << { "name" => "Random Document" }
-    result = subject.by_example example: {"name" => "Random Document"}
+    result = subject.by_example name: "Random Document"
     result.length.should == 1
   end
 
