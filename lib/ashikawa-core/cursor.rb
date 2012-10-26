@@ -24,10 +24,7 @@ module Ashikawa
       # @api public
       def initialize(database, raw_cursor)
         @database = database
-        @id       = raw_cursor['id'].to_i if raw_cursor.has_key? 'id'
-        @has_more = raw_cursor['hasMore']
-        @length   = raw_cursor['count'].to_i if raw_cursor.has_key? 'count'
-        @current  = raw_cursor['result']
+        parse_raw_cursor raw_cursor
       end
 
       # Iterate over the documents found by the cursor
@@ -43,22 +40,31 @@ module Ashikawa
       end
 
       # Delete the cursor
+      # @api public
       def delete
         @database.send_request "/cursor/#{@id}", delete: {}
       end
 
       private
 
+      # Pull the raw data from the cursor into this object
+      #
+      # @api private
+      def parse_raw_cursor(raw_cursor)
+        @id       = raw_cursor['id'].to_i if raw_cursor.has_key? 'id'
+        @has_more = raw_cursor['hasMore']
+        @length   = raw_cursor['count'].to_i if raw_cursor.has_key? 'count'
+        @current  = raw_cursor['result']
+      end
+
       # Get a new batch from the server
       #
       # @return [Boolean] Is there a next batch?
+      # @api private
       def next_batch
-        return @false unless @has_more
+        return false unless @has_more
         raw_cursor = @database.send_request "/cursor/#{@id}", put: {}
-        @id       = raw_cursor['id']
-        @has_more = raw_cursor['hasMore']
-        @length   = raw_cursor['count']
-        @current  = raw_cursor['result']
+        parse_raw_cursor raw_cursor
       end
     end
   end
