@@ -64,10 +64,28 @@ namespace :yard do
   end
 end
 
-desc "Run Unit Tests and verify documentation - no ArangoDB required"
+namespace :metrics do
+  begin
+    require 'cane/rake_task'
+
+    desc "Run cane to check quality metrics"
+    Cane::RakeTask.new(:cane) do |cane|
+      cane.abc_max = 10
+      cane.style_measure = 140
+      cane.style_glob = "{app,lib}/**/*.rb"
+    end
+
+    task :all => [:cane]
+  rescue LoadError
+    warn "cane not available, quality task not provided."
+    task :all => []
+  end
+end
+
+desc "Run Unit Tests - no ArangoDB required"
 # task :ci => ["spec:unit", "yard:verify"]
-task :ci => ["spec:unit"]
+task :ci => ["spec:unit", "metrics:all"]
 
 desc "Run all tests and verify documentation - ArangoDB required"
 # task :default => ["spec:all", "yard:verify"]
-task :default => ["spec:all"]
+task :default => ["spec:all", "metrics:all"]

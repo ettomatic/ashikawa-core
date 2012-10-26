@@ -29,13 +29,8 @@ module Ashikawa
       # @api public
       def initialize(database, raw_document)
         @database = database
-        @is_persistent = raw_document.has_key?('_id') and raw_document.has_key?('rev')
-
-        if @is_persistent
-          @collection_id, @id = raw_document['_id'].split('/').map { |id| id.to_i }
-          @revision = raw_document['_rev'].to_i
-        end
-
+        @collection_id, @id = raw_document['_id'].split('/').map { |id| id.to_i } unless raw_document['_id'].nil?
+        @revision = raw_document['_rev'].to_i unless raw_document['_rev'].nil?
         @content = raw_document.delete_if { |key, value| key[0] == "_" }
       end
 
@@ -44,7 +39,7 @@ module Ashikawa
       # @raise [DocumentNotFoundException]
       # @api semi-public
       def check_if_persisted!
-        raise DocumentNotFoundException unless @is_persistent
+        raise DocumentNotFoundException if @id.nil?
       end
 
       # Get the value of an attribute of the document
