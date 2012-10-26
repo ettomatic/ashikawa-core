@@ -43,6 +43,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "simplecov", "~> 0.7.1"
   gem.add_development_dependency "cane", "~> 2.4.0"
   gem.add_development_dependency "roodi1.9", "~> 2.0.1"
+  gem.add_development_dependency "ruby_parser", "~> 2.3.1"
 
   gem.add_development_dependency "guard", "~> 1.4.0"
   gem.add_development_dependency "guard-rspec", "~> 2.1.0"
