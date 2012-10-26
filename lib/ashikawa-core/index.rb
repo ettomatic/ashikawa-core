@@ -25,15 +25,15 @@ module Ashikawa
       # Create a new Index
       #
       # @param [Collection] collection The collection the index is defined on
-      # @param [Hash] raw_cursor The JSON representation of the index
+      # @param [Hash] raw_index The JSON representation of the index
       # @return [Index]
       # @api
-      def initialize(collection, raw_cursor)
+      def initialize(collection, raw_index)
         @collection = collection
-        @id = raw_cursor["id"].split("/")[1].to_i if raw_cursor.has_key? "id"
-        @on = raw_cursor["fields"].map { |field| field.to_sym } if raw_cursor.has_key? "fields"
-        @type = raw_cursor["type"].to_sym if raw_cursor.has_key? "type"
-        @unique = raw_cursor["unique"] if raw_cursor.has_key? "unique"
+        @id = raw_index["id"].split("/")[1].to_i if raw_index.has_key? "id"
+        @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key? "fields"
+        @type = raw_index["type"].to_sym if raw_index.has_key? "type"
+        @unique = raw_index["unique"] if raw_index.has_key? "unique"
       end
 
       # Remove the index from the collection

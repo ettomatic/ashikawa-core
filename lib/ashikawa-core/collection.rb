@@ -534,12 +534,12 @@ module Ashikawa
 
       # Create a new document from raw data
       #
-      # @param [Hash] raw_data
+      # @param [Hash] raw_document
       # @return DocumentHash
       # @api public
-      def create(raw_data)
+      def create(raw_document)
         server_response = send_request "/document?collection=#{@id}",
-          post: raw_data
+          post: raw_document
 
         Document.new @database, server_response
       end
