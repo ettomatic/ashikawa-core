@@ -1,4 +1,6 @@
 language: ruby
+before_script:
+  - ./spec/setup/arangodb.sh
 rvm:
   - 1.9.2
   - 1.9.3

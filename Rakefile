@@ -9,6 +9,11 @@ require "roodi_task"
 
 
 namespace :spec do
+  desc "Run the integration tests. Requires ArangoDB to be running."
+  RSpec::Core::RakeTask.new(:integration_with_running_arangodb) do |spec|
+    spec.pattern = "spec/integration/*_spec.rb"
+  end
+
   desc "Run the integration tests. Requires ArangoDB."
   RSpec::Core::RakeTask.new(:integration) do |spec|
     spec.rspec_opts = "--require integration/arango_helper.rb"
@@ -94,7 +99,7 @@ end
 
 desc "Run Unit Tests - no ArangoDB required"
 # task :ci => ["spec:unit", "yard:verify"]
-task :ci => ["spec:unit", "metrics:all"]
+task :ci => ["spec:unit", "spec:integration_with_running_arangodb", "metrics:all"]
 
 desc "Run all tests and verify documentation - ArangoDB required"
 # task :default => ["spec:all", "yard:verify"]
