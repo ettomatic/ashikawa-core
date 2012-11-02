@@ -6,7 +6,6 @@ describe Ashikawa::Core::Collection do
 
   before :each do
     @database = double()
-    mock { Ashikawa::Core::Cursor }
   end
 
   it "should have a name" do
@@ -17,6 +16,16 @@ describe Ashikawa::Core::Collection do
   it "should accept an ID" do
     my_collection = subject.new @database, server_response("/collections/4588")
     my_collection.id.should == 4588
+  end
+
+  it "should create a query" do
+    my_collection = subject.new @database, server_response("/collections/4588")
+
+    mock Ashikawa::Core::Query
+    Ashikawa::Core::Query.stub(:new).with({collection: my_collection})
+    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with({collection: my_collection})
+
+    my_collection.query
   end
 
   describe "the status code" do
@@ -225,7 +234,6 @@ describe Ashikawa::Core::Collection do
           indices.length.should == 1
         end
       end
-
     end
   end
 end

@@ -1,6 +1,7 @@
 require "ashikawa-core/document"
 require "ashikawa-core/index"
 require "ashikawa-core/cursor"
+require "ashikawa-core/query"
 require "restclient/exceptions"
 require "forwardable"
 
@@ -448,6 +449,14 @@ module Ashikawa
         server_response["indexes"].map do |raw_index|
           Index.new self, raw_index
         end
+      end
+
+      # Return a Query initialized with this collection
+      #
+      # @return [Query]
+      # @api public
+      def query
+        Query.new collection: self
       end
 
       private
