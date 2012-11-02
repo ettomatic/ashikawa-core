@@ -27,6 +27,16 @@ describe Ashikawa::Core::Database do
     database = subject.new "http://localhost:8529"
   end
 
+  it "should create a query" do
+    database = subject.new @connection
+
+    mock Ashikawa::Core::Query
+    Ashikawa::Core::Query.stub(:new)
+    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with({database: database})
+
+    database.query
+  end
+
   describe "initialized database" do
     subject { Ashikawa::Core::Database.new @connection }
 

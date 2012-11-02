@@ -131,7 +131,8 @@ module Ashikawa
         parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
 
         server_response = send_request "/cursor", post: parameter
-        Cursor.new self, server_response
+        database = @database.nil? ? @collection.database : @database
+        Cursor.new database, server_response
       end
 
       # Test if an AQL query is valid
@@ -144,8 +145,14 @@ module Ashikawa
       #   query.valid? "FOR u IN users LIMIT 2" # => true
       def valid?(query)
         parameter = { query: query }
-        server_response = send_request "/query", post: parameter
-        !server_response["error"]
+
+        begin
+          send_request "/query", post: parameter
+        rescue RestClient::BadRequest
+          return false
+        end
+
+        true
       end
 
       private

@@ -6,7 +6,6 @@ describe "Queries" do
 
   describe "AQL query via the database" do
     it "should return the documents" do
-      pending
       collection << { "name" => "Jeff Lebowski",    "bowling" => true }
       collection << { "name" => "Walter Sobchak",   "bowling" => true }
       collection << { "name" => "Donny Kerabatsos", "bowling" => true }
@@ -22,7 +21,6 @@ describe "Queries" do
     end
 
     it "should be possible to validate" do
-      pending
       valid_query = "FOR u IN my_collection FILTER u.bowling == true RETURN u"
       database.query.valid?(valid_query).should be_true
 

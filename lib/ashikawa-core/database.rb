@@ -67,6 +67,14 @@ module Ashikawa
 
         Ashikawa::Core::Collection.new self, server_response
       end
+
+      # Return a Query initialized with this database
+      #
+      # @return [Query]
+      # @api public
+      def query
+        Query.new database: self
+      end
     end
   end
 end

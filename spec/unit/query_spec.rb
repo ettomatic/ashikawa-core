@@ -149,13 +149,14 @@ describe Ashikawa::Core::Query do
 
     describe "with an AQL query" do
       it "should be able to execute it" do
+        collection.stub(:database).and_return double
         collection.stub(:send_request).and_return { server_response("cursor/query") }
         collection.should_receive(:send_request).with("/cursor", post: {
           query: "FOR u IN users LIMIT 2 RETURN u",
           count: true,
           batchSize: 2
         })
-        Ashikawa::Core::Cursor.should_receive(:new).with(subject, server_response("cursor/query"))
+        Ashikawa::Core::Cursor.should_receive(:new).with(collection.database, server_response("cursor/query"))
 
         subject.execute "FOR u IN users LIMIT 2 RETURN u", count: true, batch_size: 2
       end
@@ -174,7 +175,9 @@ describe Ashikawa::Core::Query do
       it "should return false when asked if an invalid query is valid" do
         query = "FOR u IN users LIMIT 2"
 
-        collection.stub(:send_request).and_return { server_response("query/invalid") }
+        collection.stub(:send_request) do
+          raise RestClient::BadRequest
+        end
         collection.should_receive(:send_request).with("/query", post: {
           query: query
         })
@@ -201,7 +204,7 @@ describe Ashikawa::Core::Query do
           count: true,
           batchSize: 2
         })
-        Ashikawa::Core::Cursor.should_receive(:new).with(subject, server_response("cursor/query"))
+        Ashikawa::Core::Cursor.should_receive(:new).with(database, server_response("cursor/query"))
 
         subject.execute "FOR u IN users LIMIT 2 RETURN u", count: true, batch_size: 2
       end
@@ -220,7 +223,9 @@ describe Ashikawa::Core::Query do
       it "should return false when asked if an invalid query is valid" do
         query = "FOR u IN users LIMIT 2"
 
-        database.stub(:send_request).and_return { server_response("query/invalid") }
+        database.stub(:send_request) do
+          raise RestClient::BadRequest
+        end
         database.should_receive(:send_request).with("/query", post: {
           query: query
         })
