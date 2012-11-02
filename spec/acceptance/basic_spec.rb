@@ -1,4 +1,4 @@
-require 'integration/spec_helper'
+require 'acceptance/spec_helper'
 
 describe "Basics" do
   subject { ARANGO_HOST }

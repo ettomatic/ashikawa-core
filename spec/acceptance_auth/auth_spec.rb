@@ -1,4 +1,4 @@
-require 'integration/spec_helper'
+require 'acceptance_auth/spec_helper'
 
 describe "authenticated database" do
   subject { ARANGO_HOST }

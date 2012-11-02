@@ -1,7 +1,7 @@
 RSpec.configure do |config|
   raise "Could not find arangod. Please install it or check if it is in your path." if `which arangod` == ""
 
-  database_directory = "/tmp/ashikawa-integration-auth"
+  database_directory = "/tmp/ashikawa-acceptance-auth"
   arango_process = false
 
   config.before(:suite) do

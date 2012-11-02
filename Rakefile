@@ -9,21 +9,21 @@ require "roodi_task"
 
 
 namespace :spec do
-  desc "Run the integration tests. Requires ArangoDB to be running."
-  RSpec::Core::RakeTask.new(:integration_with_running_arangodb) do |spec|
-    spec.pattern = "spec/integration/*_spec.rb"
+  desc "Run the acceptance tests. Requires ArangoDB to be running."
+  RSpec::Core::RakeTask.new(:acceptance_with_running_arangodb) do |spec|
+    spec.pattern = "spec/acceptance/*_spec.rb"
   end
 
-  desc "Run the integration tests. Requires ArangoDB."
-  RSpec::Core::RakeTask.new(:integration) do |spec|
-    spec.rspec_opts = "--require integration/arango_helper.rb"
-    spec.pattern = "spec/integration/*_spec.rb"
+  desc "Run the acceptance tests. Requires ArangoDB."
+  RSpec::Core::RakeTask.new(:acceptance) do |spec|
+    spec.rspec_opts = "--require acceptance/arango_helper.rb"
+    spec.pattern = "spec/acceptance/*_spec.rb"
   end
 
-  desc "Run the authentication integration tests. Requires ArangoDB."
-  RSpec::Core::RakeTask.new(:integration_auth) do |spec|
-    spec.rspec_opts = "--require integration_auth/arango_helper.rb"
-    spec.pattern = "spec/integration_auth/*_spec.rb"
+  desc "Run the authentication acceptance tests. Requires ArangoDB."
+  RSpec::Core::RakeTask.new(:acceptance_auth) do |spec|
+    spec.rspec_opts = "--require acceptance_auth/arango_helper.rb"
+    spec.pattern = "spec/acceptance_auth/*_spec.rb"
   end
 
   desc "Run the unit tests"
@@ -32,7 +32,7 @@ namespace :spec do
   end
 
   desc "Run all tests. Requires ArangoDB"
-  task :all => [:integration, :unit]
+  task :all => [:acceptance, :unit]
 end
 
 desc "check if gems are up to date"
@@ -99,7 +99,7 @@ end
 
 desc "Run Unit Tests - no ArangoDB required"
 # task :ci => ["spec:unit", "yard:verify"]
-task :ci => ["spec:unit", "spec:integration_with_running_arangodb", "metrics:all"]
+task :ci => ["spec:unit", "spec:acceptance_with_running_arangodb", "metrics:all"]
 
 desc "Run all tests and verify documentation - ArangoDB required"
 # task :default => ["spec:all", "yard:verify"]

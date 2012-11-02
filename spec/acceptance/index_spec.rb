@@ -1,4 +1,4 @@
-require 'integration/spec_helper'
+require 'acceptance/spec_helper'
 
 describe "Indices" do
   let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
