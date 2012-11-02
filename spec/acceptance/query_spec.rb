@@ -4,24 +4,34 @@ describe "Queries" do
   let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
   let(:collection) { database["my_collection"] }
 
-  it "should be possible to query documents with AQL" do
-    collection << { "name" => "Jeff Lebowski",    "bowling" => true }
-    collection << { "name" => "Walter Sobchak",   "bowling" => true }
-    collection << { "name" => "Donny Kerabatsos", "bowling" => true }
-    collection << { "name" => "Jeffrey Lebowski", "bowling" => false }
+  describe "AQL query via the database" do
+    it "should return the documents" do
+      pending
+      collection << { "name" => "Jeff Lebowski",    "bowling" => true }
+      collection << { "name" => "Walter Sobchak",   "bowling" => true }
+      collection << { "name" => "Donny Kerabatsos", "bowling" => true }
+      collection << { "name" => "Jeffrey Lebowski", "bowling" => false }
 
-    results = database.query "FOR u IN my_collection FILTER u.bowling == true RETURN u",
-      batch_size: 2,
-      count: true
+      query = "FOR u IN my_collection FILTER u.bowling == true RETURN u"
+      results = database.query.execute query, batch_size: 2, count: true
 
-    results.length.should == 3
+      results.length.should == 3
+      results = results.map { |person| person["name"] }
+      results.should     include "Jeff Lebowski"
+      results.should_not include "Jeffrey Lebowski"
+    end
 
-    results = results.map { |person| person["name"] }
-    results.should     include "Jeff Lebowski"
-    results.should_not include "Jeffrey Lebowski"
+    it "should be possible to validate" do
+      pending
+      valid_query = "FOR u IN my_collection FILTER u.bowling == true RETURN u"
+      database.query.valid?(valid_query).should be_true
+
+      invalid_query = "FOR u IN my_collection FILTER u.bowling == true"
+      database.query.valid?(invalid_query).should be_false
+    end
   end
 
-  describe "Simple Queries via collection object" do
+  describe "simple query via collection object" do
     subject { collection }
     before(:each) { subject.truncate! }
 
