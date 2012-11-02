@@ -188,36 +188,6 @@ describe Ashikawa::Core::Collection do
         end
       end
 
-      describe "list all" do
-        it "should list all documents" do
-          @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1"}).and_return { server_response('simple-queries/all') }
-          @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1"})
-
-          # Documents need to get initialized:
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.all
-        end
-
-        it "should limit to a certain amount" do
-          @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1}).and_return { server_response('simple-queries/all_skip') }
-          @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "limit" => 1})
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.all :limit => 1
-        end
-
-        it "should skip documents" do
-          @database.stub(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1}).and_return { server_response('simple-queries/all_limit') }
-          @database.should_receive(:send_request).with("/simple/all", put: {"collection" => "example_1", "skip" => 1})
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.all :skip => 1
-        end
-      end
-
       describe "indices" do
         it "should add a new index" do
           @database.stub(:send_request).with("/index?collection=4590", post: {
@@ -256,90 +226,6 @@ describe Ashikawa::Core::Collection do
         end
       end
 
-      describe "by example" do
-        before(:each) do
-          @example = { :hello => "world" }
-        end
-
-        it "should find documents by example" do
-          @database.stub(:send_request).with("/simple/by-example", put:
-            {"collection" => "example_1", "example" => { :hello => "world"}}
-          ).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/by-example", put:
-            {"collection" => "example_1", "example" => { :hello => "world"}})
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.by_example @example
-        end
-
-        it "should find one document by example" do
-          @database.stub(:send_request).with("/simple/first-example", put:
-            {"collection" => "example_1", "example" => { :hello => "world"}}
-          ).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/first-example", put:
-            {"collection" => "example_1", "example" => { :hello => "world"}})
-
-          Ashikawa::Core::Document.should_receive(:new)
-
-          subject.first_example @example
-        end
-
-        it "should skip documents" do
-          @database.stub(:send_request).with("/simple/by-example", put:
-            {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}}
-          ).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/by-example", put:
-            {"collection" => "example_1", "skip" => 1, "example" => { :hello => "world"}})
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.by_example @example, :skip => 1
-        end
-
-        it "should limit documents" do
-          @database.stub(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}}).and_return { server_response('simple-queries/example') }
-          @database.should_receive(:send_request).with("/simple/by-example", put: {"collection" => "example_1", "limit" => 2, "example" => { :hello => "world"}})
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.by_example @example, :limit => 2
-        end
-      end
-
-      describe "near" do
-        it "should look for documents based on latitude/longitude" do
-          @database.stub(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 }).and_return { server_response('simple-queries/near') }
-          @database.should_receive(:send_request).with("/simple/near", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0 })
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.near :latitude => 0, :longitude => 0
-        end
-      end
-
-      describe "within" do
-        it "should look for documents within a certain radius" do
-          @database.stub(:send_request).with("/simple/within", put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0, "radius" => 2 }).and_return { server_response('simple-queries/within') }
-          @database.should_receive(:send_request).with("/simple/within" , put: { "collection" => "example_1", "latitude" => 0, "longitude" => 0, "radius" => 2 })
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.within :latitude => 0, :longitude => 0, :radius => 2
-        end
-      end
-
-      describe "in range" do
-        it "should look for documents with an attribute within a certain range" do
-          arguments = { "collection" => "example_1", "attribute" => "age", "left" => 50, "right" => 60, "closed" => false}
-          @database.stub(:send_request).with("/simple/range", put: arguments).and_return { server_response('simple-queries/range') }
-          @database.should_receive(:send_request).with("/simple/range" , put: arguments)
-
-          Ashikawa::Core::Cursor.should_receive(:new)
-
-          subject.in_range attribute: "age", left: 50, right: 60, closed: false
-        end
-      end
     end
   end
 end
