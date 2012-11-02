@@ -31,7 +31,7 @@ Gem::Specification.new do |gem|
   else
     # RedCarpet is not compatible with JRuby
     # It is only needed to generate the YARD Documentation
-    gem.add_development_dependency "redcarpet", "~> 2.2.1"
+    gem.add_development_dependency "redcarpet", "~> 2.2.2"
   end
 
   # Development Dependencies
@@ -45,8 +45,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "roodi1.9", "~> 2.0.1"
   gem.add_development_dependency "ruby_parser", "~> 2.3.1"
 
-  gem.add_development_dependency "guard", "~> 1.4.0"
-  gem.add_development_dependency "guard-rspec", "~> 2.1.0"
+  gem.add_development_dependency "guard", "~> 1.5.3"
+  gem.add_development_dependency "guard-rspec", "~> 2.1.1"
   gem.add_development_dependency "guard-bundler", "~> 1.0.0"
   gem.add_development_dependency "guard-yard", "~> 2.0.0"
   gem.add_development_dependency "rb-fsevent", "~> 0.9.1"
