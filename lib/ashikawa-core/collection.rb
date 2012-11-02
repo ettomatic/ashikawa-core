@@ -49,6 +49,12 @@ module Ashikawa
       #   collection.id #=> 4588
       attr_reader :id
 
+      # The database the collection belongs to
+      #
+      # @return [Database]
+      # @api public
+      attr_reader :database
+
       # Sending requests is delegated to the database
       delegate send_request: :@database
 

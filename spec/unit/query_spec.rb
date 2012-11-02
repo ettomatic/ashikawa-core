@@ -3,11 +3,29 @@ require 'ashikawa-core/query'
 
 describe Ashikawa::Core::Query do
   let(:collection) { double }
+  let(:database) { double }
+
+  describe "initialization" do
+    it "should work if you provide a collection" do
+      expect { Ashikawa::Core::Query.new collection: collection}.not_to raise_error ArgumentError
+    end
+
+    it "should work if you provide a database" do
+      expect { Ashikawa::Core::Query.new database: database}.not_to raise_error ArgumentError
+    end
+
+    it "should not work with neither collection nor database" do
+      expect { Ashikawa::Core::Query.new }.to raise_error ArgumentError
+    end
+  end
 
   describe "initialized with collection" do
     subject { Ashikawa::Core::Query.new collection: collection }
 
-    before { collection.stub(:name).and_return "example_1" }
+    before do
+      collection.stub(:name).and_return "example_1"
+      collection.stub(:database).and_return double
+    end
 
     describe "get all" do
       it "should list all documents" do
@@ -158,6 +176,52 @@ describe Ashikawa::Core::Query do
 
         collection.stub(:send_request).and_return { server_response("query/invalid") }
         collection.should_receive(:send_request).with("/query", post: {
+          query: query
+        })
+
+        subject.valid?(query).should be_false
+      end
+    end
+  end
+
+  describe "initialized with database" do
+    subject { Ashikawa::Core::Query.new database: database}
+
+    it "should throw an exception when a simple query is executed" do
+      [:all, :by_example, :first_example, :near, :within, :in_range].each do |method|
+        expect { subject.send method }.to raise_error Ashikawa::Core::NoCollectionProvidedException
+      end
+    end
+
+    describe "with an AQL query" do
+      it "should be able to execute it" do
+        database.stub(:send_request).and_return { server_response("cursor/query") }
+        database.should_receive(:send_request).with("/cursor", post: {
+          query: "FOR u IN users LIMIT 2 RETURN u",
+          count: true,
+          batchSize: 2
+        })
+        Ashikawa::Core::Cursor.should_receive(:new).with(subject, server_response("cursor/query"))
+
+        subject.execute "FOR u IN users LIMIT 2 RETURN u", count: true, batch_size: 2
+      end
+
+      it "should return true when asked if a valid query is valid" do
+        query = "FOR u IN users LIMIT 2 RETURN u"
+
+        database.stub(:send_request).and_return { server_response("query/valid") }
+        database.should_receive(:send_request).with("/query", post: {
+          query: query
+        })
+
+        subject.valid?(query).should be_true
+      end
+
+      it "should return false when asked if an invalid query is valid" do
+        query = "FOR u IN users LIMIT 2"
+
+        database.stub(:send_request).and_return { server_response("query/invalid") }
+        database.should_receive(:send_request).with("/query", post: {
           query: query
         })
 

@@ -1,5 +1,6 @@
 require 'ashikawa-core/cursor'
 require 'ashikawa-core/document'
+require 'ashikawa-core/exceptions/no_collection_provided'
 
 module Ashikawa
   module Core
@@ -8,9 +9,12 @@ module Ashikawa
       # Initializes a Query
       #
       # @option options [Collection] collection
+      # @raise [ArgumentError] if neither collection nor database was provided
       # @return [Query]
       def initialize(options={})
-        @collection = options[:collection]
+        @collection = options[:collection] if options.has_key? :collection
+        @database   = options[:database] if options.has_key? :database
+        raise ArgumentError if @collection.nil? and @database.nil?
       end
 
       # Retrieves all documents for a collection
@@ -50,7 +54,9 @@ module Ashikawa
       # @example Find one document in a collection that is red
       #   query = Ashikawa::Core::Query.new collection
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
-      def first_example(example)
+      def first_example(example = {})
+        raise NoCollectionProvidedException if @collection.nil?
+
         server_response = @collection.send_request "/simple/first-example",
           put: { "collection" => @collection.name, "example" => example }
         Document.new @collection.database, server_response
@@ -124,7 +130,7 @@ module Ashikawa
         parameter[:count] = opts[:count] if opts.has_key? :count
         parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
 
-        server_response = @collection.send_request "/cursor", post: parameter
+        server_response = send_request "/cursor", post: parameter
         Cursor.new self, server_response
       end
 
@@ -138,7 +144,7 @@ module Ashikawa
       #   query.valid? "FOR u IN users LIMIT 2" # => true
       def valid?(query)
         parameter = { query: query }
-        server_response = @collection.send_request "/query", post: parameter
+        server_response = send_request "/query", post: parameter
         !server_response["error"]
       end
 
@@ -152,6 +158,8 @@ module Ashikawa
       # @return [Hash] The parsed hash for the request
       # @api private
       def send_simple_query(path, options, keys)
+        raise NoCollectionProvidedException if @collection.nil?
+
         request_data = { "collection" => @collection.name }
 
         keys.each do |key|
@@ -159,7 +167,13 @@ module Ashikawa
         end
 
         server_response = @collection.send_request path, :put => request_data
-        Cursor.new @database, server_response
+        Cursor.new @collection.database, server_response
+      end
+
+      # Send a request to the server either via the collection or the database
+      def send_request(*args)
+        connection = @database.nil? ? @collection : @database
+        connection.send_request(*args)
       end
     end
   end
