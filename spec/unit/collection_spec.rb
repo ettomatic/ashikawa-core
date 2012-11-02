@@ -142,59 +142,55 @@ describe Ashikawa::Core::Collection do
       subject.name = "my_new_name"
     end
 
-    describe "working with documents" do
+    describe "add and get single documents" do
+      it "should receive a document by ID" do
+        @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
+        @database.should_receive(:send_request).with("/document/4590/333")
 
-      describe "add and get single documents" do
-        it "should receive a document by ID" do
-          @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
-          @database.should_receive(:send_request).with("/document/4590/333")
+        # Documents need to get initialized:
+        Ashikawa::Core::Document.should_receive(:new)
 
-          # Documents need to get initialized:
-          Ashikawa::Core::Document.should_receive(:new)
+        subject[333]
+      end
 
-          subject[333]
+      it "should replace a document by ID" do
+        @database.stub(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
+        @database.should_receive(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
+
+        subject[333] = {"name" => "The Dude"}
+      end
+
+      it "should create a new document" do
+        @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
+          server_response('documents/new-4590-333')
         end
+        @database.stub(:send_request).with("/document/4590/333", post: { "name" => "The Dude" }).and_return { server_response('documents/4590-333') }
 
-        it "should replace a document by ID" do
-          @database.stub(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
-          @database.should_receive(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
+        # Documents need to get initialized:
+        Ashikawa::Core::Document.should_receive(:new)
 
-          subject[333] = {"name" => "The Dude"}
+        subject.create({"name" => "The Dude"})
+      end
+
+      it "should create a new document with `<<`" do
+        @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
+          server_response('documents/new-4590-333')
         end
+        @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
 
-        it "should create a new document" do
-          @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
-            server_response('documents/new-4590-333')
-          end
-          @database.stub(:send_request).with("/document/4590/333", post: { "name" => "The Dude" }).and_return { server_response('documents/4590-333') }
+        # Documents need to get initialized:
+        Ashikawa::Core::Document.should_receive(:new)
 
-          # Documents need to get initialized:
-          Ashikawa::Core::Document.should_receive(:new)
+        subject << {"name" => "The Dude"}
+      end
 
-          subject.create({"name" => "The Dude"})
+      it "should raise an exception if a document is not found" do
+        @database.stub(:send_request).with("/document/4590/333") do
+          raise RestClient::ResourceNotFound
         end
+        @database.should_receive(:send_request).with("/document/4590/333")
 
-        it "should create a new document with `<<`" do
-          @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
-            server_response('documents/new-4590-333')
-          end
-          @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
-
-          # Documents need to get initialized:
-          Ashikawa::Core::Document.should_receive(:new)
-
-          subject << {"name" => "The Dude"}
-        end
-
-        it "should raise an exception if a document is not found" do
-          @database.stub(:send_request).with("/document/4590/333") do
-            raise RestClient::ResourceNotFound
-          end
-          @database.should_receive(:send_request).with("/document/4590/333")
-
-          expect { subject[333] }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
-
-        end
+        expect { subject[333] }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
       end
 
       describe "indices" do

@@ -128,5 +128,41 @@ describe Ashikawa::Core::Query do
         subject.in_range attribute: "age", left: 50, right: 60, closed: false
       end
     end
+
+    describe "with an AQL query" do
+      it "should be able to execute it" do
+        collection.stub(:send_request).and_return { server_response("cursor/query") }
+        collection.should_receive(:send_request).with("/cursor", post: {
+          query: "FOR u IN users LIMIT 2 RETURN u",
+          count: true,
+          batchSize: 2
+        })
+        Ashikawa::Core::Cursor.should_receive(:new).with(subject, server_response("cursor/query"))
+
+        subject.execute "FOR u IN users LIMIT 2 RETURN u", count: true, batch_size: 2
+      end
+
+      it "should return true when asked if a valid query is valid" do
+        query = "FOR u IN users LIMIT 2 RETURN u"
+
+        collection.stub(:send_request).and_return { server_response("query/valid") }
+        collection.should_receive(:send_request).with("/query", post: {
+          query: query
+        })
+
+        subject.valid?(query).should be_true
+      end
+
+      it "should return false when asked if an invalid query is valid" do
+        query = "FOR u IN users LIMIT 2"
+
+        collection.stub(:send_request).and_return { server_response("query/invalid") }
+        collection.should_receive(:send_request).with("/query", post: {
+          query: query
+        })
+
+        subject.valid?(query).should be_false
+      end
+    end
   end
 end

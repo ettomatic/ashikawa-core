@@ -67,21 +67,6 @@ module Ashikawa
 
         Ashikawa::Core::Collection.new self, server_response
       end
-
-      # Send a query to the database
-      #
-      # @param [String] query
-      # @option opts [Integer] :count Should the number of results be counted?
-      # @option opts [Integer] :batch_size Set the number of results returned at once
-      def query(query, opts = {})
-        parameter = { query: query }
-
-        parameter[:count] = opts[:count] if opts.has_key? :count
-        parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
-
-        server_response = send_request "/cursor", post: parameter
-        Cursor.new self, server_response
-      end
     end
   end
 end

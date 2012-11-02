@@ -108,6 +108,40 @@ module Ashikawa
         send_simple_query "/simple/range", options, [:attribute, :left, :right, :closed, :limit, :skip]
       end
 
+      # Send an AQL query to the database
+      #
+      # @param [String] query
+      # @option opts [Integer] :count Should the number of results be counted?
+      # @option opts [Integer] :batch_size Set the number of results returned at once
+      # @return [Cursor]
+      # @api public
+      # @example Send an AQL query to the database
+      #   query = Ashikawa::Core::Query.new collection
+      #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
+      def execute(query, opts = {})
+        parameter = { query: query }
+
+        parameter[:count] = opts[:count] if opts.has_key? :count
+        parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
+
+        server_response = @collection.send_request "/cursor", post: parameter
+        Cursor.new self, server_response
+      end
+
+      # Test if an AQL query is valid
+      #
+      # @param [String] query
+      # @return [Boolean]
+      # @api public
+      # @example Validate an AQL query
+      #   query = Ashikawa::Core::Query.new collection
+      #   query.valid? "FOR u IN users LIMIT 2" # => true
+      def valid?(query)
+        parameter = { query: query }
+        server_response = @collection.send_request "/query", post: parameter
+        !server_response["error"]
+      end
+
       private
 
       # Send a simple query to the server
