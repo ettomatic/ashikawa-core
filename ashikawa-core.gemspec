@@ -38,16 +38,19 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 0.9.2.2"
   gem.add_development_dependency "rspec", "~> 2.11.0"
   gem.add_development_dependency "yard", "~> 0.8.3"
-  gem.add_development_dependency "webmock", "~> 1.8.9"
+  gem.add_development_dependency "webmock", "~> 1.9.0"
   # gem.add_development_dependency "yardstick", "~> 0.6.0"
   gem.add_development_dependency "simplecov", "~> 0.7.1"
   gem.add_development_dependency "cane", "~> 2.4.0"
   gem.add_development_dependency "roodi1.9", "~> 2.0.1"
+
+  # Do not update to version 3, it is currently not compatible with roodi1.9
+  # see grsmv/roodi1.9#1
   gem.add_development_dependency "ruby_parser", "~> 2.3.1"
 
   gem.add_development_dependency "guard", "~> 1.5.3"
   gem.add_development_dependency "guard-rspec", "~> 2.1.1"
   gem.add_development_dependency "guard-bundler", "~> 1.0.0"
-  gem.add_development_dependency "guard-yard", "~> 2.0.0"
-  gem.add_development_dependency "rb-fsevent", "~> 0.9.1"
+  gem.add_development_dependency "guard-yard", "~> 2.0.1"
+  gem.add_development_dependency "rb-fsevent", "~> 0.9.2"
 end
