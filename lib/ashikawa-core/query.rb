@@ -1,6 +1,7 @@
 require 'ashikawa-core/cursor'
 require 'ashikawa-core/document'
 require 'ashikawa-core/exceptions/no_collection_provided'
+require 'forwardable'
 
 module Ashikawa
   module Core
@@ -31,7 +32,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.all # => #<Cursor id=33>
       def all(options={})
-        send_simple_query "/simple/all", options, [:limit, :skip]
+        simple_query_request "/simple/all",
+          options,
+          [:limit, :skip]
       end
 
       # Looks for documents in a collection which match the given criteria
@@ -47,7 +50,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.by_example { "color" => "red" }, :options => { :limit => 1 } # => #<Cursor id=2444>
       def by_example(example={}, options={})
-        send_simple_query "/simple/by-example", { example: example }.merge(options), [:limit, :skip, :example]
+        simple_query_request "/simple/by-example",
+          { example: example }.merge(options),
+          [:limit, :skip, :example]
       end
 
       # Looks for one document in a collection which matches the given criteria
@@ -60,7 +65,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example = {})
-        response = send_simple_query "/simple/first-example", { example: example }, [:example]
+        response = simple_query_request "/simple/first-example",
+          { example: example },
+          [:example]
         response.first
       end
 
@@ -79,7 +86,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
-        send_simple_query "/simple/near", options, [:latitude, :longitude, :distance, :skip, :limit, :geo]
+        simple_query_request "/simple/near",
+          options,
+          [:latitude, :longitude, :distance, :skip, :limit, :geo]
       end
 
       # Looks for documents in a collection within a radius
@@ -98,7 +107,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
-        send_simple_query "/simple/within", options, [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
+        simple_query_request "/simple/within",
+          options,
+          [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
       end
 
       # Looks for documents in a collection with an attribute between two values
@@ -116,7 +127,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def in_range(options={})
-        send_simple_query "/simple/range", options, [:attribute, :left, :right, :closed, :limit, :skip]
+        simple_query_request "/simple/range",
+          options,
+          [:attribute, :left, :right, :closed, :limit, :skip]
       end
 
       # Send an AQL query to the database
@@ -169,20 +182,6 @@ module Ashikawa
         @connection
       end
 
-      # Send a simple query to the server
-      #
-      # @param [String] path The path for the request
-      # @param [Hash] options The options given to the method
-      # @param [Array<Symbol>] keys The required keys
-      # @return [Hash] The parsed hash for the request
-      # @raise [NoCollectionProvidedException] If you provided a database, no collection
-      # @api private
-      def send_simple_query(path, options, keys)
-        options = allowed_options options, keys
-        request_data = { collection: collection.name }.merge options
-        put_request path, prepare_request_data(request_data)
-      end
-
       # Removes the keys that are not allowed from an object
       #
       # @param [Hash] options
@@ -202,6 +201,20 @@ module Ashikawa
         Hash[request_data.map { |key, value|
           [key.to_s.gsub(/_(.)/) { $1.upcase }, value]
         }].reject { |_, value| value.nil? }
+      end
+
+      # Send a simple query to the server
+      #
+      # @param [String] path The path for the request
+      # @param [Hash] options The options given to the method
+      # @param [Array<Symbol>] keys The required keys
+      # @return [Hash] The parsed hash for the request
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
+      # @api private
+      def simple_query_request(path, options, keys)
+        options = allowed_options options, keys
+        request_data = { collection: collection.name }.merge options
+        put_request path, prepare_request_data(request_data)
       end
 
       # Perform a put request
