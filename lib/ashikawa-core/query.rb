@@ -6,6 +6,11 @@ module Ashikawa
   module Core
     # Formulate a Query on a collection or on a database
     class Query
+      extend Forwardable
+
+      # Delegate sending requests to the connection
+      delegate send_request: :@connection
+
       # Initializes a Query
       #
       # @param [Collection, Database] connection
@@ -20,6 +25,7 @@ module Ashikawa
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Cursor]
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Get an array with all documents
       #   query = Ashikawa::Core::Query.new collection
@@ -35,6 +41,7 @@ module Ashikawa
       # @option options [Integer] :limit limit the maximum number of queried and returned elements.
       # @option options [Integer] :skip skip the first <n> documents of the query.
       # @return [Cursor]
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents in a collection that are red
       #   query = Ashikawa::Core::Query.new collection
@@ -47,16 +54,14 @@ module Ashikawa
       #
       # @param [Hash] example a Hash with data matching the document you are looking for.
       # @return [Document]
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find one document in a collection that is red
       #   query = Ashikawa::Core::Query.new collection
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example = {})
-        raise NoCollectionProvidedException unless @connection.respond_to?(:database)
-
-        server_response = @connection.send_request "/simple/first-example",
-          put: { "collection" => @connection.name, "example" => example }
-        Document.new @connection.database, server_response
+        response = send_simple_query "/simple/first-example", { example: example }, [:example]
+        response.first
       end
 
       # Looks for documents in a collection based on location
@@ -68,6 +73,7 @@ module Ashikawa
       # @option options [Integer] :limit The maximal amount of documents to return (default: 100).
       # @option options [Integer] :geo If given, the identifier of the geo-index to use.
       # @return [Cursor]
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents at Infinite Loop
       #   query = Ashikawa::Core::Query.new collection
@@ -87,6 +93,7 @@ module Ashikawa
       # @option options [Integer] :geo If given, the identifier of the geo-index to use.
       # @return [Cursor]
       # @api public
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @example Find all documents within a radius of 100 to Infinite Loop
       #   query = Ashikawa::Core::Query.new collection
       #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
@@ -103,6 +110,7 @@ module Ashikawa
       # @option options [Integer] :skip The documents to skip in the query (optional).
       # @option options [Integer] :limit The maximal amount of documents to return (optional).
       # @return [Cursor]
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents within a radius of 100 to Infinite Loop
       #   query = Ashikawa::Core::Query.new collection
@@ -114,22 +122,16 @@ module Ashikawa
       # Send an AQL query to the database
       #
       # @param [String] query
-      # @option opts [Integer] :count Should the number of results be counted?
-      # @option opts [Integer] :batch_size Set the number of results returned at once
+      # @option options [Integer] :count Should the number of results be counted?
+      # @option options [Integer] :batch_size Set the number of results returned at once
       # @return [Cursor]
       # @api public
       # @example Send an AQL query to the database
       #   query = Ashikawa::Core::Query.new collection
       #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
-      def execute(query, opts = {})
-        parameter = { query: query }
-
-        parameter[:count] = opts[:count] if opts.has_key? :count
-        parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
-
-        server_response = send_request "/cursor", post: parameter
-        database = @connection.respond_to?(:database) ? @connection.database : @connection
-        Cursor.new database, server_response
+      def execute(query, options = {})
+        options = allowed_options options, [:count, :batch_size]
+        post_request "/cursor", options.merge({ query: query })
       end
 
       # Test if an AQL query is valid
@@ -141,18 +143,31 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.valid? "FOR u IN users LIMIT 2" # => true
       def valid?(query)
-        parameter = { query: query }
-
         begin
-          send_request "/query", post: parameter
+          !!post_request("/query", { query: query })
         rescue RestClient::BadRequest
-          return false
+          false
         end
-
-        true
       end
 
       private
+
+      # The database object
+      #
+      # @return [Database]
+      # @api private
+      def database
+        @connection.respond_to?(:database) ? @connection.database : @connection
+      end
+
+      # The collection object
+      #
+      # @return [collection]
+      # @api private
+      def collection
+        raise NoCollectionProvidedException unless @connection.respond_to? :database
+        @connection
+      end
 
       # Send a simple query to the server
       #
@@ -160,23 +175,57 @@ module Ashikawa
       # @param [Hash] options The options given to the method
       # @param [Array<Symbol>] keys The required keys
       # @return [Hash] The parsed hash for the request
+      # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api private
       def send_simple_query(path, options, keys)
-        raise NoCollectionProvidedException unless @connection.respond_to?(:database)
-
-        request_data = { "collection" => @connection.name }
-
-        keys.each do |key|
-          request_data[key.to_s] = options[key] if options.has_key? key
-        end
-
-        server_response = @connection.send_request path, :put => request_data
-        Cursor.new @connection.database, server_response
+        options = allowed_options options, keys
+        request_data = { collection: collection.name }.merge options
+        put_request path, prepare_request_data(request_data)
       end
 
-      # Send a request to the server either via the collection or the database
-      def send_request(*args)
-        @connection.send_request(*args)
+      # Removes the keys that are not allowed from an object
+      #
+      # @param [Hash] options
+      # @param [Array<Symbol>] allowed_keys
+      # @return [Hash] The filtered Hash
+      # @api private
+      def allowed_options(options, allowed_keys)
+        options.keep_if { |key, _| allowed_keys.include? key }
+      end
+
+      # Transforms the keys into strings, camelizes them and removes pairs without a value
+      #
+      # @param [Hash] request_data
+      # @return [Hash] Cleaned request data
+      # @api private
+      def prepare_request_data(request_data)
+        Hash[request_data.map { |key, value|
+          [key.to_s.gsub(/_(.)/) { $1.upcase }, value]
+        }].reject { |_, value| value.nil? }
+      end
+
+      # Perform a put request
+      #
+      # @param [String] path
+      # @param [Hash] request_data
+      # @return [String] Server response
+      # @api private
+      def put_request(path, request_data)
+        request_data = prepare_request_data request_data
+        server_response = send_request path, :put => request_data
+        Cursor.new database, server_response
+      end
+
+      # Perform a post request
+      #
+      # @param [String] path
+      # @param [Hash] request_data
+      # @return [Cursor]
+      # @api private
+      def post_request(path, request_data)
+        request_data = prepare_request_data request_data
+        server_response = send_request path, :post => request_data
+        Cursor.new database, server_response
       end
     end
   end
