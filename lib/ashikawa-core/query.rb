@@ -8,13 +8,10 @@ module Ashikawa
     class Query
       # Initializes a Query
       #
-      # @option options [Collection] collection
-      # @raise [ArgumentError] if neither collection nor database was provided
+      # @param [Collection, Database] connection
       # @return [Query]
-      def initialize(options={})
-        @collection = options[:collection] if options.has_key? :collection
-        @database   = options[:database] if options.has_key? :database
-        raise ArgumentError if @collection.nil? and @database.nil?
+      def initialize(connection)
+        @connection = connection
       end
 
       # Retrieves all documents for a collection
@@ -55,11 +52,11 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example = {})
-        raise NoCollectionProvidedException if @collection.nil?
+        raise NoCollectionProvidedException unless @connection.respond_to?(:database)
 
-        server_response = @collection.send_request "/simple/first-example",
-          put: { "collection" => @collection.name, "example" => example }
-        Document.new @collection.database, server_response
+        server_response = @connection.send_request "/simple/first-example",
+          put: { "collection" => @connection.name, "example" => example }
+        Document.new @connection.database, server_response
       end
 
       # Looks for documents in a collection based on location
@@ -131,7 +128,7 @@ module Ashikawa
         parameter[:batchSize] = opts[:batch_size] if opts.has_key? :batch_size
 
         server_response = send_request "/cursor", post: parameter
-        database = @database.nil? ? @collection.database : @database
+        database = @connection.respond_to?(:database) ? @connection.database : @connection
         Cursor.new database, server_response
       end
 
@@ -165,22 +162,21 @@ module Ashikawa
       # @return [Hash] The parsed hash for the request
       # @api private
       def send_simple_query(path, options, keys)
-        raise NoCollectionProvidedException if @collection.nil?
+        raise NoCollectionProvidedException unless @connection.respond_to?(:database)
 
-        request_data = { "collection" => @collection.name }
+        request_data = { "collection" => @connection.name }
 
         keys.each do |key|
           request_data[key.to_s] = options[key] if options.has_key? key
         end
 
-        server_response = @collection.send_request path, :put => request_data
-        Cursor.new @collection.database, server_response
+        server_response = @connection.send_request path, :put => request_data
+        Cursor.new @connection.database, server_response
       end
 
       # Send a request to the server either via the collection or the database
       def send_request(*args)
-        connection = @database.nil? ? @collection : @database
-        connection.send_request(*args)
+        @connection.send_request(*args)
       end
     end
   end

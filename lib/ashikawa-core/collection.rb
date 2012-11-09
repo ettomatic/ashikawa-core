@@ -462,7 +462,7 @@ module Ashikawa
       # @return [Query]
       # @api public
       def query
-        Query.new collection: self
+        Query.new self
       end
 
       private

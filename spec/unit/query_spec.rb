@@ -5,22 +5,8 @@ describe Ashikawa::Core::Query do
   let(:collection) { double }
   let(:database) { double }
 
-  describe "initialization" do
-    it "should work if you provide a collection" do
-      expect { Ashikawa::Core::Query.new collection: collection}.not_to raise_error ArgumentError
-    end
-
-    it "should work if you provide a database" do
-      expect { Ashikawa::Core::Query.new database: database}.not_to raise_error ArgumentError
-    end
-
-    it "should not work with neither collection nor database" do
-      expect { Ashikawa::Core::Query.new }.to raise_error ArgumentError
-    end
-  end
-
   describe "initialized with collection" do
-    subject { Ashikawa::Core::Query.new collection: collection }
+    subject { Ashikawa::Core::Query.new collection }
 
     before do
       collection.stub(:name).and_return "example_1"
@@ -188,7 +174,7 @@ describe Ashikawa::Core::Query do
   end
 
   describe "initialized with database" do
-    subject { Ashikawa::Core::Query.new database: database}
+    subject { Ashikawa::Core::Query.new database}
 
     it "should throw an exception when a simple query is executed" do
       [:all, :by_example, :first_example, :near, :within, :in_range].each do |method|

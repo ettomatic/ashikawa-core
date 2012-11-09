@@ -73,7 +73,7 @@ module Ashikawa
       # @return [Query]
       # @api public
       def query
-        Query.new database: self
+        Query.new self
       end
     end
   end

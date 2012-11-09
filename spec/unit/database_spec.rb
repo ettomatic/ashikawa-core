@@ -32,7 +32,7 @@ describe Ashikawa::Core::Database do
 
     mock Ashikawa::Core::Query
     Ashikawa::Core::Query.stub(:new)
-    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with({database: database})
+    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with(database)
 
     database.query
   end

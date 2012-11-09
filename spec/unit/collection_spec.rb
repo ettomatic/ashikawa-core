@@ -19,13 +19,13 @@ describe Ashikawa::Core::Collection do
   end
 
   it "should create a query" do
-    my_collection = subject.new @database, server_response("/collections/4588")
+    collection = subject.new @database, server_response("/collections/4588")
 
     mock Ashikawa::Core::Query
-    Ashikawa::Core::Query.stub(:new).with({collection: my_collection})
-    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with({collection: my_collection})
+    Ashikawa::Core::Query.stub(:new)
+    Ashikawa::Core::Query.should_receive(:new).exactly(1).times.with(collection)
 
-    my_collection.query
+    collection.query
   end
 
   describe "the status code" do
