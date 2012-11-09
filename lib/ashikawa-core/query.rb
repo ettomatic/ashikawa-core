@@ -143,8 +143,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def execute(query, options = {})
-        options = allowed_options options, [:count, :batch_size]
-        post_request "/cursor", options.merge({ query: query })
+        post_request "/cursor",
+          options.merge({ query: query }),
+          [:query, :count, :batch_size]
       end
 
       # Test if an AQL query is valid
@@ -206,24 +207,27 @@ module Ashikawa
       # Send a simple query to the server
       #
       # @param [String] path The path for the request
-      # @param [Hash] options The options given to the method
-      # @param [Array<Symbol>] keys The required keys
-      # @return [Hash] The parsed hash for the request
+      # @param [Hash] request_data The data send to the database
+      # @param [Array<Symbol>] keys The keys allowed for this request
+      # @return [String] Server response
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api private
-      def simple_query_request(path, options, keys)
-        options = allowed_options options, keys
-        request_data = { collection: collection.name }.merge options
-        put_request path, prepare_request_data(request_data)
+      def simple_query_request(path, request_data, allowed_keys)
+        request_data = request_data.merge({ collection: collection.name })
+        put_request path,
+          request_data,
+          allowed_keys << :collection
       end
 
       # Perform a put request
       #
-      # @param [String] path
-      # @param [Hash] request_data
-      # @return [String] Server response
+      # @param [String] path The path for the request
+      # @param [Hash] request_data The data send to the database
+      # @param [Array] allowed_keys Keys allowed in request_data, if nil: All keys are allowed
+      # @return [Cursor]
       # @api private
-      def put_request(path, request_data)
+      def put_request(path, request_data, allowed_keys = nil)
+        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
         request_data = prepare_request_data request_data
         server_response = send_request path, :put => request_data
         Cursor.new database, server_response
@@ -231,11 +235,13 @@ module Ashikawa
 
       # Perform a post request
       #
-      # @param [String] path
-      # @param [Hash] request_data
+      # @param [String] path The path for the request
+      # @param [Hash] request_data The data send to the database
+      # @param [Array] allowed_keys Keys allowed in request_data, if nil: All keys are allowed
       # @return [Cursor]
       # @api private
-      def post_request(path, request_data)
+      def post_request(path, request_data, allowed_keys = nil)
+        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
         request_data = prepare_request_data request_data
         server_response = send_request path, :post => request_data
         Cursor.new database, server_response
