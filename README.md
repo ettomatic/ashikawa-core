@@ -14,7 +14,7 @@ All tests run on Travis CI for the following versions of Ruby:
 
 We also run on JRuby and MRI Head. MRI-head is currently not passing, because some dependencies are not compatible.
 
-Please note that the `master` branch is always the stable version released on Ruby Gems (*This is actually a lie, but we are currently converting to this model ;) The next release will implement this*). If you want the most recent version, please refer to the `development` branch.
+Please note that the `master` branch is always the stable version released on Ruby Gems. If you want the most recent version, please refer to the `development` branch.
 
 ## How to use it
 
