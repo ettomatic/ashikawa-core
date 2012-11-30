@@ -3,6 +3,7 @@ require "ashikawa-core/index"
 require "ashikawa-core/cursor"
 require "ashikawa-core/query"
 require "ashikawa-core/status"
+require "ashikawa-core/figure"
 require "restclient/exceptions"
 require "forwardable"
 
@@ -187,15 +188,9 @@ module Ashikawa
         server_response["count"]
       end
 
-      # Return a figure for the collection
+      # Return a Figure initialized with current data for the collection
       #
-      # @param [Symbol] figure_type The figure you want to know:
-      #     * :datafiles_count - the number of active datafiles
-      #     * :alive_size - the total size in bytes used by all living documents
-      #     * :alive_count - the number of living documents
-      #     * :dead_size - the total size in bytes used by all dead documents
-      #     * :dead_count - the number of dead documents
-      # @return [Fixnum] The figure you requested
+      # @return [Figure]
       # @api public
       # @example Get the datafile count for a collection
       #   database = Ashikawa::Core::Database.new "http://localhost:8529"
@@ -208,11 +203,10 @@ module Ashikawa
       #     "code" => 200
       #   }
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.figure :datafiles_count #=> 0
-      def figure(figure_type)
+      #   collection.figure.datafiles_count #=> 0
+      def figure
         server_response = send_request_for_this_collection "/figures"
-        figure_area, figure_name = figure_type.to_s.split "_"
-        server_response["figures"][figure_area][figure_name]
+        Figure.new server_response["figures"]
       end
 
       # Deletes the collection

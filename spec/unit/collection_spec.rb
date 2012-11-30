@@ -49,12 +49,12 @@ describe Ashikawa::Core::Collection do
       @database.stub(:send_request).with("/collection/73482/figures", {}).and_return { server_response("/collections/73482-figures") }
       @database.should_receive(:send_request).with("/collection/73482/figures", {}).at_least(1).times
 
+      mock Ashikawa::Core::Figure
+      Ashikawa::Core::Figure.stub(:new)
+      Ashikawa::Core::Figure.should_receive(:new).exactly(1).times.with(server_response("/collections/73482-figures")["figures"])
+
       my_collection = subject.new @database, { "id" => "73482" }
-      my_collection.figure(:datafiles_count).should == 1
-      my_collection.figure(:alive_size).should      == 0
-      my_collection.figure(:alive_count).should     == 0
-      my_collection.figure(:dead_size).should       == 2384
-      my_collection.figure(:dead_count).should      == 149
+      my_collection.figure
     end
   end
 
