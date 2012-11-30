@@ -44,11 +44,11 @@ describe "Basics" do
 
     it "should be possible to load and unload collections" do
       my_collection = subject["test_collection"]
-      my_collection.loaded?.should be_true
+      my_collection.status.loaded?.should be_true
       my_collection.unload
       my_id = my_collection.id
       my_collection = subject[my_id]
-      subject[my_id].loaded?.should be_false
+      subject[my_id].status.loaded?.should be_false
     end
 
     it "should be possible to get figures" do

@@ -2,6 +2,7 @@ require "ashikawa-core/document"
 require "ashikawa-core/index"
 require "ashikawa-core/cursor"
 require "ashikawa-core/query"
+require "ashikawa-core/status"
 require "restclient/exceptions"
 require "forwardable"
 
@@ -49,6 +50,25 @@ module Ashikawa
       #   collection.id #=> 4588
       attr_reader :id
 
+      # A wrapper around the status of the collection
+      #
+      # @return [Status]
+      # @api public
+      # @example
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.status.loaded? #=> true
+      #   collection.status.new_born? #=> false
+      attr_reader :status
+
       # The database the collection belongs to
       #
       # @return [Database]
@@ -78,7 +98,7 @@ module Ashikawa
         @database = database
         @name = raw_collection['name'] if raw_collection.has_key? 'name'
         @id  = raw_collection['id'].to_i if raw_collection.has_key? 'id'
-        @status = raw_collection['status'].to_i if raw_collection.has_key? 'status'
+        @status = Status.new raw_collection['status'].to_i if raw_collection.has_key? 'status'
       end
 
       # Change the name of the collection
@@ -103,106 +123,6 @@ module Ashikawa
       def name=(new_name)
         send_request_for_this_collection "/rename", put: { "name" => new_name }
         @name = new_name
-      end
-
-      # Checks if the collection is new born
-      #
-      # @return [Boolean]
-      # @api public
-      # @example Is the collection new born?
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
-      #   raw_collection = {
-      #     "name" => "example_1",
-      #     "waitForSync" => true,
-      #     "id" => 4588,
-      #     "status" => 3,
-      #     "error" => false,
-      #     "code" => 200
-      #   }
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.new_born? #=> false
-      def new_born?
-        @status == 1
-      end
-
-      # Checks if the collection is unloaded
-      #
-      # @return [Boolean]
-      # @api public
-      # @example Is the collection unloaded?
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
-      #   raw_collection = {
-      #     "name" => "example_1",
-      #     "waitForSync" => true,
-      #     "id" => 4588,
-      #     "status" => 3,
-      #     "error" => false,
-      #     "code" => 200
-      #   }
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.unloaded? #=> false
-      def unloaded?
-        @status == 2
-      end
-
-      # Checks if the collection is loaded
-      #
-      # @return [Boolean]
-      # @api public
-      # @example Is the collection loaded?
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
-      #   raw_collection = {
-      #     "name" => "example_1",
-      #     "waitForSync" => true,
-      #     "id" => 4588,
-      #     "status" => 3,
-      #     "error" => false,
-      #     "code" => 200
-      #   }
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.loaded? #=> true
-      def loaded?
-        @status == 3
-      end
-
-      # Checks if the collection is in the process of being unloaded
-      #
-      # @return [Boolean]
-      # @api public
-      # @example Is the collection unloaded?
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
-      #   raw_collection = {
-      #     "name" => "example_1",
-      #     "waitForSync" => true,
-      #     "id" => 4588,
-      #     "status" => 3,
-      #     "error" => false,
-      #     "code" => 200
-      #   }
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.being_unloaded? #=> false
-      def being_unloaded?
-        @status == 4
-      end
-
-      # Checks if the collection is corrupted
-      #
-      # @return [Boolean]
-      # @api public
-      # @example Is the collection corrupted?
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
-      #   raw_collection = {
-      #     "name" => "example_1",
-      #     "waitForSync" => true,
-      #     "id" => 4588,
-      #     "status" => 3,
-      #     "error" => false,
-      #     "code" => 200
-      #   }
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   collection.corrupted? #=> false
-      def corrupted?
-        @status > 5
       end
 
       # Does the document wait until the data has been synchronised to disk?

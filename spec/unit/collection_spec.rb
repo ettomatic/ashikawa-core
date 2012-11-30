@@ -28,45 +28,6 @@ describe Ashikawa::Core::Collection do
     collection.query
   end
 
-  describe "the status code" do
-    it "should know if the collection is new born" do
-      my_collection = subject.new @database, { "status" => "1" }
-      my_collection.new_born?.should == true
-
-      my_collection = subject.new @database, { "status" => "200" }
-      my_collection.new_born?.should == false
-    end
-
-    it "should know if the collection is unloaded" do
-      my_collection = subject.new @database, { "status" => "2" }
-      my_collection.unloaded?.should == true
-
-      my_collection = subject.new @database, { "status" => "200" }
-      my_collection.unloaded?.should == false
-    end
-
-    it "should know if the collection is loaded" do
-      my_collection = subject.new @database, { "status" => "3" }
-      my_collection.loaded?.should == true
-
-      my_collection = subject.new @database, { "status" => "200" }
-      my_collection.loaded?.should == false
-    end
-
-    it "should know if the collection is being unloaded" do
-      my_collection = subject.new @database, { "status" => "4" }
-      my_collection.being_unloaded?.should == true
-
-      my_collection = subject.new @database, { "status" => "200" }
-      my_collection.being_unloaded?.should == false
-    end
-
-    it "should know if the collection is corrupted" do
-      my_collection = subject.new @database, { "status" => "6" }
-      my_collection.corrupted?.should == true
-    end
-  end
-
   describe "attributes of a collection" do
     it "should check if the collection waits for sync" do
       @database.stub(:send_request).with("/collection/4590/properties", {}).and_return { server_response("/collections/4590") }
