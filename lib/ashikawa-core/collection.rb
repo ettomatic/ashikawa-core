@@ -97,9 +97,9 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       def initialize(database, raw_collection)
         @database = database
-        @name = raw_collection['name'] if raw_collection.has_key? 'name'
-        @id  = raw_collection['id'].to_i if raw_collection.has_key? 'id'
-        @status = Status.new raw_collection['status'].to_i if raw_collection.has_key? 'status'
+        @name     = raw_collection['name']
+        @id       = raw_collection['id'].to_i                if raw_collection.has_key? 'id'
+        @status   = Status.new raw_collection['status'].to_i if raw_collection.has_key? 'status'
       end
 
       # Change the name of the collection
@@ -122,7 +122,7 @@ module Ashikawa
       #   collection.name = "example_2"
       #   collection.name # => "example_2"
       def name=(new_name)
-        send_request_for_this_collection "/rename", put: { "name" => new_name }
+        send_information_to_server :rename, :name, new_name
         @name = new_name
       end
 
@@ -143,8 +143,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.wait_for_sync? #=> false
       def wait_for_sync?
-        server_response = send_request_for_this_collection "/properties"
-        server_response["waitForSync"]
+        get_information_from_server :properties, :waitForSync
       end
 
       # Change if the document will wait until the data has been synchronised to disk
@@ -164,7 +163,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.wait_for_sync = true
       def wait_for_sync=(new_value)
-        send_request_for_this_collection "/properties", put: { "waitForSync" => new_value }
+        send_information_to_server :properties, :waitForSync, new_value
       end
 
       # Returns the number of documents in the collection
@@ -184,8 +183,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.length # => 0
       def length
-        server_response = send_request_for_this_collection "/count"
-        server_response["count"]
+        get_information_from_server :count, :count
       end
 
       # Return a Figure initialized with current data for the collection
@@ -205,8 +203,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.figure.datafiles_count #=> 0
       def figure
-        server_response = send_request_for_this_collection "/figures"
-        Figure.new server_response["figures"]
+        raw_figure = get_information_from_server :figures, :figures
+        Figure.new raw_figure
       end
 
       # Deletes the collection
@@ -246,7 +244,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.load
       def load
-        send_request_for_this_collection "/load", put: {}
+        send_command_to_server :load
       end
 
       # Load the collection into memory
@@ -266,7 +264,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.unload
       def unload
-        send_request_for_this_collection "/unload", put: {}
+        send_command_to_server :unload
       end
 
       # Delete all documents from the collection
@@ -286,7 +284,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.truncate!
       def truncate!
-        send_request_for_this_collection "/truncate", put: {}
+        send_command_to_server :truncate
       end
 
       # Fetch a certain document by its ID
@@ -322,9 +320,7 @@ module Ashikawa
       # @return DocumentHash
       # @api public
       def create(raw_document)
-        server_response = send_request "/document?collection=#{@id}",
-          post: raw_document
-
+        server_response = send_request "/document?collection=#{@id}", post: raw_document
         Document.new @database, server_response
       end
 
@@ -355,7 +351,6 @@ module Ashikawa
       # @api public
       def index(id)
         server_response = send_request "/index/#{@id}/#{id}"
-
         Index.new self, server_response
       end
 
@@ -380,6 +375,37 @@ module Ashikawa
       end
 
       private
+
+      # Send a put request with a given key and value to the server
+      #
+      # @param [Symbol] path
+      # @param [Symbol] key
+      # @param [Symbol] valu
+      # @return [Object] The result
+      # @api private
+      def send_information_to_server(path, key, value)
+        send_request_for_this_collection "/#{path}", put: { key.to_s => value }
+      end
+
+      # Send a put request to a given path
+      #
+      # @param [Symbol] path The path without trailing slash
+      # @return [Object] The result
+      # @api private
+      def send_command_to_server(command)
+        send_request_for_this_collection "/#{command}", put: {}
+      end
+
+      # Send a get request to the server and return a certain attribute
+      #
+      # @param [Symbol] path The path without trailing slash
+      # @param [Symbol] attribute The attribute of the answer that should be returned
+      # @return [Object] The result
+      # @api private
+      def get_information_from_server(path, attribute)
+        server_response = send_request_for_this_collection "/#{path}"
+        server_response[attribute.to_s]
+      end
 
       # Send a request to the server with the name of the collection prepended
       #
