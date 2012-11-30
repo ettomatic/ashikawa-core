@@ -219,7 +219,22 @@ module Ashikawa
           allowed_keys << :collection
       end
 
-      # Perform a put request
+      # Perform a wrapped request
+      #
+      # @param [String] path The path for the request
+      # @param [Symbol] request_method The request method to perform
+      # @param [Hash] request_data The data send to the database
+      # @param [Array] allowed_keys Keys allowed in request_data, if nil: All keys are allowed
+      # @return [Cursor]
+      # @api private
+      def wrapped_request(path, request_method, request_data, allowed_keys)
+        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
+        request_data = prepare_request_data request_data
+        server_response = send_request path, { request_method => request_data }
+        Cursor.new database, server_response
+      end
+
+      # Perform a wrapped put request
       #
       # @param [String] path The path for the request
       # @param [Hash] request_data The data send to the database
@@ -227,13 +242,10 @@ module Ashikawa
       # @return [Cursor]
       # @api private
       def put_request(path, request_data, allowed_keys = nil)
-        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
-        request_data = prepare_request_data request_data
-        server_response = send_request path, :put => request_data
-        Cursor.new database, server_response
+        wrapped_request path, :put, request_data, allowed_keys
       end
 
-      # Perform a post request
+      # Perform a wrapped post request
       #
       # @param [String] path The path for the request
       # @param [Hash] request_data The data send to the database
@@ -241,10 +253,7 @@ module Ashikawa
       # @return [Cursor]
       # @api private
       def post_request(path, request_data, allowed_keys = nil)
-        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
-        request_data = prepare_request_data request_data
-        server_response = send_request path, :post => request_data
-        Cursor.new database, server_response
+        wrapped_request path, :post, request_data, allowed_keys
       end
     end
   end
