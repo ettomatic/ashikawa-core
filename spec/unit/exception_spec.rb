@@ -1,5 +1,6 @@
 require "ashikawa-core/exceptions/document_not_found"
 require "ashikawa-core/exceptions/collection_not_found"
+require "ashikawa-core/exceptions/index_not_found"
 require "ashikawa-core/exceptions/no_collection_provided"
 require "ashikawa-core/exceptions/unknown_path"
 
@@ -10,6 +11,12 @@ describe Ashikawa::Core::DocumentNotFoundException do
 end
 
 describe Ashikawa::Core::CollectionNotFoundException do
+  it "should have a good explanation" do
+    subject.to_s.should include "does not exist"
+  end
+end
+
+describe Ashikawa::Core::IndexNotFoundException do
   it "should have a good explanation" do
     subject.to_s.should include "does not exist"
   end

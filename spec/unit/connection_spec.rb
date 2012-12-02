@@ -122,6 +122,13 @@ describe Ashikawa::Core::Connection do
       expect { subject.send_request "/collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
     end
 
+    it "should raise an exception if an index is not found" do
+      stub_request(:get, "http://localhost:8529/_api/index/4590/333").to_return do
+        raise RestClient::ResourceNotFound
+      end
+      expect { subject.send_request "/index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
+    end
+
     it "should raise an exception for unknown pathes" do
       stub_request(:get, "http://localhost:8529/_api/unknown_path/4590/333").to_return do
         raise RestClient::ResourceNotFound

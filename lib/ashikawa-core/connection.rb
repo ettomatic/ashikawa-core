@@ -1,7 +1,9 @@
 require "rest-client"
 require "json"
 require "uri"
+require "ashikawa-core/exceptions/index_not_found"
 require "ashikawa-core/exceptions/document_not_found"
+require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/exceptions/unknown_path"
 
 module Ashikawa
@@ -86,6 +88,7 @@ module Ashikawa
         raise case resource
           when "document" then DocumentNotFoundException
           when "collection" then CollectionNotFoundException
+          when "index" then IndexNotFoundException
           else UnknownPath
         end
       end
