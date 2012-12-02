@@ -105,4 +105,28 @@ describe Ashikawa::Core::Connection do
     end
   end
 
+  describe "exception handling" do
+    subject { Ashikawa::Core::Connection.new }
+
+    it "should raise an exception if a document is not found" do
+      stub_request(:get, "http://localhost:8529/_api/document/4590/333").to_return do
+        raise RestClient::ResourceNotFound
+      end
+      expect { subject.send_request "/document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
+    end
+
+    it "should raise an exception if a collection is not found" do
+      stub_request(:get, "http://localhost:8529/_api/collection/4590").to_return do
+        raise RestClient::ResourceNotFound
+      end
+      expect { subject.send_request "/collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
+    end
+
+    it "should raise an exception for unknown pathes" do
+      stub_request(:get, "http://localhost:8529/_api/unknown_path/4590/333").to_return do
+        raise RestClient::ResourceNotFound
+      end
+      expect { subject.send_request "/unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+    end
+  end
 end

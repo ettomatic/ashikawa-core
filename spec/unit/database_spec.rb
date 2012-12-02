@@ -70,7 +70,7 @@ describe Ashikawa::Core::Database do
         if method.has_key? :post
           server_response("collections/4590")
         else
-          raise RestClient::ResourceNotFound
+          raise Ashikawa::Core::CollectionNotFoundException
         end
       end
       @connection.should_receive(:send_request).with("/collection/new_collection")

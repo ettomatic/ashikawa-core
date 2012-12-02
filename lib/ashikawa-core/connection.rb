@@ -1,6 +1,8 @@
 require "rest-client"
 require "json"
 require "uri"
+require "ashikawa-core/exceptions/document_not_found"
+require "ashikawa-core/exceptions/unknown_path"
 
 module Ashikawa
   module Core
@@ -69,8 +71,23 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api public
       def send_request(path, params = {})
-        raw = raw_result_for path, params
+        begin
+          raw = raw_result_for path, params
+        rescue RestClient::ResourceNotFound
+          resource_not_found_for path
+        end
         JSON.parse raw
+      end
+
+      def resource_not_found_for(path)
+        path = path.split("/").delete_if { |e| e == "" }
+        resource = path.first
+
+        raise case resource
+          when "document" then DocumentNotFoundException
+          when "collection" then CollectionNotFoundException
+          else UnknownPath
+        end
       end
 
       # Sends a request to a given path returning the raw result

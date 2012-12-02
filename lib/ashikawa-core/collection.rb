@@ -4,7 +4,6 @@ require "ashikawa-core/cursor"
 require "ashikawa-core/query"
 require "ashikawa-core/status"
 require "ashikawa-core/figure"
-require "restclient/exceptions"
 require "forwardable"
 
 module Ashikawa
@@ -296,12 +295,7 @@ module Ashikawa
       # @example Fetch a document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        begin
-          server_response = send_request "/document/#{@id}/#{document_id}"
-        rescue RestClient::ResourceNotFound
-          raise DocumentNotFoundException
-        end
-
+        server_response = send_request "/document/#{@id}/#{document_id}"
         Document.new @database, server_response
       end
 

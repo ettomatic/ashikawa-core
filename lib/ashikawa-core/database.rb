@@ -1,3 +1,4 @@
+require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/collection"
 require "ashikawa-core/connection"
 require "ashikawa-core/cursor"
@@ -61,7 +62,7 @@ module Ashikawa
       def [](collection_identifier)
         begin
           server_response = send_request "/collection/#{collection_identifier}"
-        rescue RestClient::ResourceNotFound
+        rescue CollectionNotFoundException
           server_response = send_request "/collection", post: { name: collection_identifier }
         end
 
