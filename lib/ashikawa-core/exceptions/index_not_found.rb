@@ -3,6 +3,10 @@ module Ashikawa
     # This Exception is thrown when an index was requested from
     # the server that does not exist.
     class IndexNotFoundException < RuntimeError
+      # String representation of the exception
+      #
+      # @return String
+      # @api public
       def to_s
         "You requested an index from the server that does not exist"
       end

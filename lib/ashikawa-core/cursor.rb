@@ -30,6 +30,7 @@ module Ashikawa
       # Iterate over the documents found by the cursor
       #
       # @yield [document]
+      # @return nil
       # @api public
       def each(&block)
         begin
@@ -37,9 +38,11 @@ module Ashikawa
             block.call Document.new(@database, raw_document)
           end
         end while next_batch
+        nil
       end
 
       # Delete the cursor
+      # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
         @database.send_request "/cursor/#{@id}", delete: {}
@@ -49,12 +52,14 @@ module Ashikawa
 
       # Pull the raw data from the cursor into this object
       #
+      # @return self
       # @api private
       def parse_raw_cursor(raw_cursor)
         @id       = raw_cursor['id'].to_i if raw_cursor.has_key? 'id'
         @has_more = raw_cursor['hasMore']
         @length   = raw_cursor['count'].to_i if raw_cursor.has_key? 'count'
         @current  = raw_cursor['result']
+        self
       end
 
       # Get a new batch from the server

@@ -39,7 +39,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec", "~> 2.11.0"
   gem.add_development_dependency "yard", "~> 0.8.3"
   gem.add_development_dependency "webmock", "~> 1.9.0"
-  # gem.add_development_dependency "yardstick", "~> 0.6.0"
+  gem.add_development_dependency "yardstick", "~> 0.8.0"
   gem.add_development_dependency "simplecov", "~> 0.7.1"
   gem.add_development_dependency "cane", "~> 2.4.0"
   gem.add_development_dependency "roodi1.9", "~> 2.0.1"

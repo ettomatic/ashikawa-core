@@ -37,16 +37,20 @@ module Ashikawa
       #   connection.port # => 8529
       attr_reader :port
 
-      # Username and password of the connection
+      # Username of the connection if using authentication
+      # @note you can set these properties with the `authenticate_with` method
       #
-      # Needed if the database is running with HTTP base authentication
-      # enabled. Username and password are sent with every request to
-      # authenticate against the database.
-      #
-      # You can set these properties with the `authenticate_with` method
-      #
+      # @return String
       # @api public
-      attr_reader :username, :password
+
+      attr_reader :username
+
+      # Password of the connection if using authentication
+      # @note you can set these properties with the `authenticate_with` method
+      #
+      # @return String
+      # @api public
+      attr_reader :password
 
       # Initialize a Connection with a given API String
       #
@@ -62,7 +66,7 @@ module Ashikawa
       end
 
       # Sends a request to a given path returning the parsed result
-      # (Prepends the api_string automatically)
+      # @note prepends the api_string automatically
       #
       # @example get request
       #   connection.send_request('/collection/new_collection')
@@ -81,6 +85,11 @@ module Ashikawa
         JSON.parse raw
       end
 
+      # Raise the fitting ResourceNotFoundException
+      #
+      # @raise [DocumentNotFoundException, CollectionNotFoundException, IndexNotFoundException]
+      # @return nil
+      # @api private
       def resource_not_found_for(path)
         path = path.split("/").delete_if { |e| e == "" }
         resource = path.first
@@ -94,7 +103,7 @@ module Ashikawa
       end
 
       # Sends a request to a given path returning the raw result
-      # (Prepends the api_string automatically)
+      # @note prepends the api_string automatically
       #
       # @example get request
       #   connection.raw_result_for('/collection/new_collection')

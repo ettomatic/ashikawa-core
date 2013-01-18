@@ -4,8 +4,8 @@ require "rspec"
 require "rspec/core/rake_task"
 require "roodi"
 require "roodi_task"
-# require 'yardstick/rake/measurement'
-# require 'yardstick/rake/verify'
+require "yardstick/rake/measurement"
+require "yardstick/rake/verify"
 
 
 namespace :spec do
@@ -47,13 +47,13 @@ task :dependencies do
 end
 
 namespace :yard do
-  # Yardstick::Rake::Measurement.new(:report) do |measurement|
-  #   measurement.output = 'report/measurement.txt'
-  # end
+  Yardstick::Rake::Measurement.new(:report) do |measurement|
+    measurement.output = 'report/measurement.txt'
+  end
 
-  # Yardstick::Rake::Verify.new(:verify) do |verify|
-  #   verify.threshold = 100
-  # end
+  Yardstick::Rake::Verify.new(:verify) do |verify|
+    verify.threshold = 100
+  end
 
   desc "generate the documentation"
   task :generate do

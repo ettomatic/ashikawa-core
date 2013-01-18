@@ -303,6 +303,7 @@ module Ashikawa
       #
       # @param [Integer] document_id the id of the document
       # @param [Hash] raw_document the data you want to replace it with
+      # @return [Hash] parsed JSON response from the server
       # @api public
       def []=(document_id, raw_document)
         send_request "/document/#{@id}/#{document_id}", put: raw_document
@@ -311,7 +312,7 @@ module Ashikawa
       # Create a new document from raw data
       #
       # @param [Hash] raw_document
-      # @return DocumentHash
+      # @return [Document] The created document
       # @api public
       def create(raw_document)
         server_response = send_request "/document?collection=#{@id}", post: raw_document
@@ -374,16 +375,16 @@ module Ashikawa
       #
       # @param [Symbol] path
       # @param [Symbol] key
-      # @param [Symbol] valu
+      # @param [Symbol] value
       # @return [Object] The result
       # @api private
       def send_information_to_server(path, key, value)
         send_request_for_this_collection "/#{path}", put: { key.to_s => value }
       end
 
-      # Send a put request to a given path
+      # Send a put request with the given command
       #
-      # @param [Symbol] path The path without trailing slash
+      # @param [Symbol] command The command you want to execute
       # @return [Object] The result
       # @api private
       def send_command_to_server(command)

@@ -16,6 +16,7 @@ module Ashikawa
       #
       # @param [Collection, Database] connection
       # @return [Query]
+      # @api public
       def initialize(connection)
         @connection = connection
       end
@@ -193,7 +194,7 @@ module Ashikawa
         options.keep_if { |key, _| allowed_keys.include? key }
       end
 
-      # Transforms the keys into strings, camelizes them and removes pairs without a value
+      # Transforms the keys into the required format
       #
       # @param [Hash] request_data
       # @return [Hash] Cleaned request data
@@ -208,7 +209,7 @@ module Ashikawa
       #
       # @param [String] path The path for the request
       # @param [Hash] request_data The data send to the database
-      # @param [Array<Symbol>] keys The keys allowed for this request
+      # @param [Array<Symbol>] allowed_keys The keys allowed for this request
       # @return [String] Server response
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api private

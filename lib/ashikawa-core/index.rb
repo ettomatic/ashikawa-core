@@ -27,7 +27,7 @@ module Ashikawa
       # @param [Collection] collection The collection the index is defined on
       # @param [Hash] raw_index The JSON representation of the index
       # @return [Index]
-      # @api
+      # @api public
       def initialize(collection, raw_index)
         @collection = collection
         @id = raw_index["id"].split("/")[1].to_i if raw_index.has_key? "id"
@@ -38,6 +38,7 @@ module Ashikawa
 
       # Remove the index from the collection
       #
+      # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
         @collection.send_request("index/#{@collection.id}/#{@id}", delete: {})

@@ -37,7 +37,8 @@ module Ashikawa
       # Raises an exception if the document is not persisted
       #
       # @raise [DocumentNotFoundException]
-      # @api semi-public
+      # @return nil
+      # @api semipublic
       def check_if_persisted!
         raise DocumentNotFoundException if @id.nil?
       end
@@ -53,6 +54,7 @@ module Ashikawa
 
       # Remove the document from the database
       #
+      # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
         check_if_persisted!
@@ -63,6 +65,7 @@ module Ashikawa
       #
       # @param [String] attribute_name
       # @param [Object] value
+      # @return [Object] The value
       # @api public
       def []=(attribute_name, value)
         check_if_persisted!
@@ -79,6 +82,7 @@ module Ashikawa
 
       # Save the changes to the database
       #
+      # @return [Hash] parsed JSON response from the server
       # @api public
       def save()
         check_if_persisted!

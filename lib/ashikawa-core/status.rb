@@ -2,6 +2,10 @@ module Ashikawa
   module Core
     # Wrapper around the status of a collection
     class Status
+      # Create a wrapper around a given status
+      #
+      # @param [Fixnum] code
+      # @api public
       def initialize(code)
         @code = code
       end
