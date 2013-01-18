@@ -1,8 +1,9 @@
 # Ashikawa Core
 
+[![Gem Version](https://badge.fury.io/rb/ashikawa-core.png)](http://badge.fury.io/rb/ashikawa-core)
 [![Build Status](https://secure.travis-ci.org/triAGENS/ashikawa-core.png?branch=master)](http://travis-ci.org/triAGENS/ashikawa-core)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/triAGENS/ashikawa-core)
 [![Dependency Status](https://gemnasium.com/triAGENS/ashikawa-core.png)](https://gemnasium.com/triAGENS/ashikawa-core)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/triAGENS/ashikawa-core)
 
 Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs.
 
@@ -12,9 +13,9 @@ All tests run on Travis CI for the following versions of Ruby:
 * Rubinius 1.9 mode
 * JRuby 1.9 mode
 
-We also run on JRuby and MRI Head. MRI-head is currently not passing, because some dependencies are not compatible.
+It does not run on Ruby 1.8 and is not supposed to do so. We also run on JRuby and MRI Head, but they are allowed failures (Please see [Travis](http://travis-ci.org/triAGENS/ashikawa-core) for their build status).
 
-Please note that the `master` branch is always the stable version released on Ruby Gems. If you want the most recent version, please refer to the `development` branch.
+Please note that the `master` branch is always the stable version released on Ruby Gems and documented on RDoc. If you want the most recent version, please refer to the `development` branch.
 
 ## How to use it
 
