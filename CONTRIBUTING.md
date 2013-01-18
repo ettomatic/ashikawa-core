@@ -7,7 +7,7 @@ When you want to write code for the project, please follow these guidelines:
 3. Write an acceptance test: Describe what you want to do (our integration tests touch the database)
 4. Implement it: Write a unit test, check that it fails, make the test pass – repeat (our unit tests don't touch the database)
 5. Write documentation for it.
-6. Check with `rake` that everything is fine and send the pull request to the `development` branch :)
+6. Check with `bundle exec rake` that everything is fine and send the pull request to the `development` branch :)
 
 ## How to get started developing
 
@@ -17,7 +17,7 @@ Getting started is easy, just follow these steps.
 
 * Clone the project.
 * `cd` into the folder and run `bundle` 
-* `rake` and see all tests passing (you need to have ArangoDB installed for that)
+* `bundle exec rake` and see all tests passing (you need to have ArangoDB installed for that)
 * Happy coding!
 
 ### Detailed description
@@ -28,13 +28,13 @@ We encourage you to use [rvm](https://rvm.io/). If you do so, a gemset for the p
 
 Change into the project directory. Run `bundle` to get all dependencies (do a `gem install bundler` before if you don't have bundler installed).
 
-Now you can run `rake` to see all tests passing (hopefully). Happy coding!
+Now you can run `bundle exec rake` to see all tests passing (hopefully). Happy coding!
 
-You can also start up yard for documentation: `rake yard:server`
+You can also start up yard for documentation: `bundle exec rake yard:server`
 
 ### Guard
 
-Guard is a tool for comfortable development. If you want to use it for development, you have to first start an instance of ArangoDB and then start guard with `guard`. This will:
+Guard is a tool for comfortable development. If you want to use it for development, you have to first start an instance of ArangoDB and then start guard with `bundle exec guard`. This will:
 
 * Run a documentation server on `http://localhost:8808`
 * Run `bundle` whenever you change the dependencies
