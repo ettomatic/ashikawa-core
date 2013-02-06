@@ -32,10 +32,10 @@ module Ashikawa
       # @yield [document]
       # @return nil
       # @api public
-      def each(&block)
+      def each
         begin
           @current.each do |raw_document|
-            block.call Document.new(@database, raw_document)
+            yield Document.new(@database, raw_document)
           end
         end while next_batch
         nil
