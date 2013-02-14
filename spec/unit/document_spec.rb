@@ -44,7 +44,7 @@ describe Ashikawa::Core::Document do
 
     it "should be deletable" do
       database.should_receive(:send_request).with("document/#{raw_data['_id']}",
-        { delete: {} }
+        { :delete => {} }
       )
 
       subject.delete
@@ -52,7 +52,7 @@ describe Ashikawa::Core::Document do
 
     it "should store changes to the database" do
       database.should_receive(:send_request).with("document/#{raw_data['_id']}",
-        { put: { "first_name" => "The", "last_name" => "Other" } }
+        { :put => { "first_name" => "The", "last_name" => "Other" } }
       )
 
       subject["last_name"] = "Other"

@@ -41,7 +41,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
-        @collection.send_request("index/#{@collection.id}/#{@id}", delete: {})
+        @collection.send_request("index/#{@collection.id}/#{@id}", :delete => {})
       end
     end
   end

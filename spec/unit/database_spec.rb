@@ -41,9 +41,9 @@ describe Ashikawa::Core::Database do
     subject { Ashikawa::Core::Database.new @connection }
 
     it "should delegate authentication to the connection" do
-      @connection.should_receive(:authenticate_with).with({ username: "user", password: "password" })
+      @connection.should_receive(:authenticate_with).with({ :username => "user", :password => "password" })
 
-      subject.authenticate_with username: "user", password: "password"
+      subject.authenticate_with :username => "user", :password => "password"
     end
 
     it "should fetch all available collections" do
@@ -74,7 +74,7 @@ describe Ashikawa::Core::Database do
         end
       end
       @connection.should_receive(:send_request).with("/collection/new_collection")
-      @connection.should_receive(:send_request).with("/collection", post: { name: "new_collection"} )
+      @connection.should_receive(:send_request).with("/collection", :post => { :name => "new_collection"} )
 
       Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/4590"))
 
@@ -82,9 +82,9 @@ describe Ashikawa::Core::Database do
     end
 
     it "should send a request via the connection object" do
-      @connection.should_receive(:send_request).with("/my/path", post: { data: "mydata" })
+      @connection.should_receive(:send_request).with("/my/path", :post => { :data => "mydata" })
 
-      subject.send_request "/my/path", post: { data: "mydata" }
+      subject.send_request "/my/path", :post => { :data => "mydata" }
     end
   end
 end

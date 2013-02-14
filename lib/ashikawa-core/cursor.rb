@@ -45,7 +45,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
-        @database.send_request "/cursor/#{@id}", delete: {}
+        @database.send_request "/cursor/#{@id}", :delete => {}
       end
 
       private
@@ -68,7 +68,7 @@ module Ashikawa
       # @api private
       def next_batch
         return false unless @has_more
-        raw_cursor = @database.send_request "/cursor/#{@id}", put: {}
+        raw_cursor = @database.send_request "/cursor/#{@id}", :put => {}
         parse_raw_cursor raw_cursor
       end
     end

@@ -1,11 +1,13 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
-require 'simplecov'
-SimpleCov.start do
-    add_filter "spec/"
+if defined? version and version != '1.8.7'
+  require 'simplecov'
+  SimpleCov.start do
+      add_filter "spec/"
+  end
+  SimpleCov.minimum_coverage 100
 end
-SimpleCov.minimum_coverage 100
 
 # For HTTP Testing
 require 'webmock/rspec'

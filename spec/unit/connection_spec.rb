@@ -24,7 +24,7 @@ describe Ashikawa::Core::Connection do
     subject { Ashikawa::Core::Connection.new "http://localhost:8529" }
 
     it "should send a get request" do
-      stub_request(:get, "http://localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
+      stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
       subject.send_request "/my/path"
 
@@ -32,31 +32,31 @@ describe Ashikawa::Core::Connection do
     end
 
     it "should send a post request" do
-      stub_request(:post, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return body: '{ "name": "dude" }'
+      stub_request(:post, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", post: { :name => 'new_collection' }
+      subject.send_request "/my/path", :post => { :name => 'new_collection' }
 
       WebMock.should have_requested(:post, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
     end
 
     it "should send a put request" do
-      stub_request(:put, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return body: '{ "name": "dude" }'
+      stub_request(:put, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", put: { :name => 'new_collection' }
+      subject.send_request "/my/path", :put => { :name => 'new_collection' }
 
       WebMock.should have_requested(:put, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
     end
 
     it "should send a delete request" do
-      stub_request(:delete, "http://localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
+      stub_request(:delete, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", delete: { }
+      subject.send_request "/my/path", :delete => { }
 
       WebMock.should have_requested(:delete, "http://localhost:8529/_api/my/path")
     end
 
     it "should parse JSON" do
-      stub_request(:get, "http://localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
+      stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
       subject.send_request("/my/path").should == {"name" => "dude"}
     end
@@ -66,7 +66,7 @@ describe Ashikawa::Core::Connection do
     subject { Ashikawa::Core::Connection.new }
 
     it "should authenticate with username and password" do
-      subject.authenticate_with username: "testuser", password: "testpassword"
+      subject.authenticate_with :username => "testuser", :password => "testpassword"
 
       subject.username.should == "testuser"
       subject.password.should == "testpassword"
@@ -77,28 +77,28 @@ describe Ashikawa::Core::Connection do
     end
 
     it "should tell if authentication is enabled" do
-      subject.authenticate_with username: "testuser", password: "testpassword"
+      subject.authenticate_with :username => "testuser", :password => "testpassword"
       subject.authentication?.should be_true
     end
 
     it "should only accept a username & password pairs" do
       expect {
-        subject.authenticate_with username: "kitty"
+        subject.authenticate_with :username => "kitty"
       }.to raise_error(ArgumentError)
 
       expect {
-        subject.authenticate_with password: "cheezburger?"
+        subject.authenticate_with :password => "cheezburger?"
       }.to raise_error(ArgumentError)
     end
 
     it "should allow chaining" do
-      subject.authenticate_with(username: "a", password: "b").should == subject
+      subject.authenticate_with(:username => "a", :password => "b").should == subject
     end
 
     it "should send the authentication data with every GET request" do
-      stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return body: '{ "name": "dude" }'
+      stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
-      subject.authenticate_with username: "user", password: "pass"
+      subject.authenticate_with :username => "user", :password => "pass"
       subject.send_request "/my/path"
 
       WebMock.should have_requested(:get, "http://user:pass@localhost:8529/_api/my/path")

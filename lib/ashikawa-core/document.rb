@@ -58,7 +58,7 @@ module Ashikawa
       # @api public
       def delete
         check_if_persisted!
-        @database.send_request "document/#{@collection_id}/#{@id}", delete: {}
+        @database.send_request "document/#{@collection_id}/#{@id}", :delete => {}
       end
 
       # Update the value of an attribute (Does not write to database)
@@ -86,7 +86,7 @@ module Ashikawa
       # @api public
       def save()
         check_if_persisted!
-        @database.send_request "document/#{@collection_id}/#{@id}", put: @content
+        @database.send_request "document/#{@collection_id}/#{@id}", :put => @content
       end
     end
   end

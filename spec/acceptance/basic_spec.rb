@@ -71,8 +71,8 @@ describe "Basics" do
     it "should be possible to get information about the number of documents" do
       empty_collection = subject["empty_collection"]
       empty_collection.length.should == 0
-      empty_collection << { name: "testname", age: 27}
-      empty_collection << { name: "anderer name", age: 28}
+      empty_collection << { :name => "testname", :age => 27}
+      empty_collection << { :name => "anderer name", :age => 28}
       empty_collection.length.should == 2
       empty_collection.truncate!
       empty_collection.length.should == 0
@@ -81,7 +81,7 @@ describe "Basics" do
     it "should be possible to update the attributes of a document" do
       collection = subject["documenttests"]
 
-      document = collection.create name: "The Dude", bowling: true
+      document = collection.create :name => "The Dude", :bowling => true
       document_id = document.id
       document["name"] = "Other Dude"
       document.save
@@ -92,11 +92,11 @@ describe "Basics" do
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
 
-      document = collection.create name: "The Dude", bowling: true
+      document = collection.create :name => "The Dude", :bowling => true
       document_id = document.id
       collection[document_id]["name"].should == "The Dude"
 
-      collection[document_id] = { name: "Other Dude", bowling: true }
+      collection[document_id] = { :name => "Other Dude", :bowling => true }
       collection[document_id]["name"].should == "Other Dude"
     end
   end
@@ -104,7 +104,7 @@ describe "Basics" do
   describe "created document" do
     let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
     let(:collection) { database["documenttests"] }
-    subject { collection.create name: "The Dude" }
+    subject { collection.create :name => "The Dude" }
     let(:document_id) { subject.id }
 
     it "should be possible to manipulate documents and save them" do

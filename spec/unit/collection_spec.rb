@@ -62,43 +62,43 @@ describe Ashikawa::Core::Collection do
     subject { Ashikawa::Core::Collection.new @database, { "id" => "4590", "name" => "example_1" } }
 
     it "should get deleted" do
-      @database.stub(:send_request).with("/collection/4590", delete: {})
-      @database.should_receive(:send_request).with("/collection/4590", delete: {})
+      @database.stub(:send_request).with("/collection/4590", :delete => {})
+      @database.should_receive(:send_request).with("/collection/4590", :delete => {})
 
       subject.delete
     end
 
     it "should get loaded" do
-      @database.stub(:send_request).with("/collection/4590/load", put: {})
-      @database.should_receive(:send_request).with("/collection/4590/load", put: {})
+      @database.stub(:send_request).with("/collection/4590/load", :put => {})
+      @database.should_receive(:send_request).with("/collection/4590/load", :put => {})
 
       subject.load
     end
 
     it "should get unloaded" do
-      @database.stub(:send_request).with("/collection/4590/unload", put: {})
-      @database.should_receive(:send_request).with("/collection/4590/unload", put: {})
+      @database.stub(:send_request).with("/collection/4590/unload", :put => {})
+      @database.should_receive(:send_request).with("/collection/4590/unload", :put => {})
 
       subject.unload
     end
 
     it "should get truncated" do
-      @database.stub(:send_request).with("/collection/4590/truncate", put: {})
-      @database.should_receive(:send_request).with("/collection/4590/truncate", put: {})
+      @database.stub(:send_request).with("/collection/4590/truncate", :put => {})
+      @database.should_receive(:send_request).with("/collection/4590/truncate", :put => {})
 
       subject.truncate!
     end
 
     it "should change if it waits for sync" do
-      @database.stub(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
-      @database.should_receive(:send_request).with("/collection/4590/properties", put: {"waitForSync" => true})
+      @database.stub(:send_request).with("/collection/4590/properties", :put => {"waitForSync" => true})
+      @database.should_receive(:send_request).with("/collection/4590/properties", :put => {"waitForSync" => true})
 
       subject.wait_for_sync = true
     end
 
     it "should change its name" do
-      @database.stub(:send_request).with("/collection/4590/rename", put: {"name" => "my_new_name"})
-      @database.should_receive(:send_request).with("/collection/4590/rename", put: {"name" => "my_new_name"})
+      @database.stub(:send_request).with("/collection/4590/rename", :put => {"name" => "my_new_name"})
+      @database.should_receive(:send_request).with("/collection/4590/rename", :put => {"name" => "my_new_name"})
 
       subject.name = "my_new_name"
     end
@@ -115,17 +115,17 @@ describe Ashikawa::Core::Collection do
       end
 
       it "should replace a document by ID" do
-        @database.stub(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
-        @database.should_receive(:send_request).with("/document/4590/333", put: {"name" => "The Dude"})
+        @database.stub(:send_request).with("/document/4590/333", :put => {"name" => "The Dude"})
+        @database.should_receive(:send_request).with("/document/4590/333", :put => {"name" => "The Dude"})
 
         subject[333] = {"name" => "The Dude"}
       end
 
       it "should create a new document" do
-        @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
+        @database.stub(:send_request).with("/document?collection=4590", :post => { "name" => "The Dude" }).and_return do
           server_response('documents/new-4590-333')
         end
-        @database.stub(:send_request).with("/document/4590/333", post: { "name" => "The Dude" }).and_return { server_response('documents/4590-333') }
+        @database.stub(:send_request).with("/document/4590/333", :post => { "name" => "The Dude" }).and_return { server_response('documents/4590-333') }
 
         # Documents need to get initialized:
         Ashikawa::Core::Document.should_receive(:new)
@@ -134,7 +134,7 @@ describe Ashikawa::Core::Collection do
       end
 
       it "should create a new document with `<<`" do
-        @database.stub(:send_request).with("/document?collection=4590", post: { "name" => "The Dude" }).and_return do
+        @database.stub(:send_request).with("/document?collection=4590", :post => { "name" => "The Dude" }).and_return do
           server_response('documents/new-4590-333')
         end
         @database.stub(:send_request).with("/document/4590/333").and_return { server_response('documents/4590-333') }
@@ -147,17 +147,17 @@ describe Ashikawa::Core::Collection do
 
       describe "indices" do
         it "should add a new index" do
-          @database.stub(:send_request).with("/index?collection=4590", post: {
+          @database.stub(:send_request).with("/index?collection=4590", :post => {
             "type" => "hash", "fields" => [ "a", "b" ]
           }).and_return { server_response('indices/new-hash-index') }
-          @database.should_receive(:send_request).with("/index?collection=4590", post: {
+          @database.should_receive(:send_request).with("/index?collection=4590", :post => {
             "type" => "hash", "fields" => [ "a", "b" ]
           })
 
           Ashikawa::Core::Index.should_receive(:new).with(subject,
             server_response('indices/new-hash-index'))
 
-          subject.add_index :hash, on: [ :a, :b ]
+          subject.add_index :hash, :on => [ :a, :b ]
         end
 
         it "should get an index by ID" do

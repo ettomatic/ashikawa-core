@@ -76,7 +76,7 @@ module Ashikawa
       attr_reader :database
 
       # Sending requests is delegated to the database
-      delegate send_request: :@database
+      delegate :send_request => :@database
 
       # Create a new Collection object with a name and an optional ID
       #
@@ -223,7 +223,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new database, raw_collection
       #   collection.delete
       def delete
-        send_request_for_this_collection "", delete: {}
+        send_request_for_this_collection "", :delete => {}
       end
 
       # Load the collection into memory
@@ -306,7 +306,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api public
       def []=(document_id, raw_document)
-        send_request "/document/#{@id}/#{document_id}", put: raw_document
+        send_request "/document/#{@id}/#{document_id}", :put => raw_document
       end
 
       # Create a new document from raw data
@@ -315,7 +315,7 @@ module Ashikawa
       # @return [Document] The created document
       # @api public
       def create(raw_document)
-        server_response = send_request "/document?collection=#{@id}", post: raw_document
+        server_response = send_request "/document?collection=#{@id}", :post => raw_document
         Document.new @database, server_response
       end
 
@@ -331,7 +331,7 @@ module Ashikawa
       #   people = database['people']
       #   people.add_index :hash, :on => [:name, :profession]
       def add_index(type, opts)
-        server_response = send_request "/index?collection=#{@id}", post: {
+        server_response = send_request "/index?collection=#{@id}", :post => {
           "type" => type.to_s,
           "fields" => opts[:on].map { |field| field.to_s }
         }
@@ -379,7 +379,7 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def send_information_to_server(path, key, value)
-        send_request_for_this_collection "/#{path}", put: { key.to_s => value }
+        send_request_for_this_collection "/#{path}", :put => { key.to_s => value }
       end
 
       # Send a put request with the given command
@@ -388,7 +388,7 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def send_command_to_server(command)
-        send_request_for_this_collection "/#{command}", put: {}
+        send_request_for_this_collection "/#{command}", :put => {}
       end
 
       # Send a get request to the server and return a certain attribute

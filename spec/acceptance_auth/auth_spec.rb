@@ -20,7 +20,7 @@ describe "authenticated database" do
 
     context "with user and password" do
       it "should allow acces to DB" do
-        subject.authenticate_with username: 'testuser', password: 'testpassword'
+        subject.authenticate_with :username => 'testuser', :password => 'testpassword'
 
         expect do
           subject["new_collection"]
@@ -29,7 +29,7 @@ describe "authenticated database" do
       end
 
       it "should deny acces if username and password are wrong" do
-        subject.authenticate_with username: 'ruffy', password: 'three_headed_monkey'
+        subject.authenticate_with :username => 'ruffy', :password => 'three_headed_monkey'
 
         expect do
           subject["denied"]

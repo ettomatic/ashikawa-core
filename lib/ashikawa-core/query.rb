@@ -10,7 +10,7 @@ module Ashikawa
       extend Forwardable
 
       # Delegate sending requests to the connection
-      delegate send_request: :@connection
+      delegate :send_request => :@connection
 
       # Initializes a Query
       #
@@ -52,7 +52,7 @@ module Ashikawa
       #   query.by_example { "color" => "red" }, :options => { :limit => 1 } # => #<Cursor id=2444>
       def by_example(example={}, options={})
         simple_query_request "/simple/by-example",
-          { example: example }.merge(options),
+          { :example => example }.merge(options),
           [:limit, :skip, :example]
       end
 
@@ -67,7 +67,7 @@ module Ashikawa
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example = {})
         response = simple_query_request "/simple/first-example",
-          { example: example },
+          { :example => example },
           [:example]
         response.first
       end
@@ -145,7 +145,7 @@ module Ashikawa
       #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def execute(query, options = {})
         post_request "/cursor",
-          options.merge({ query: query }),
+          options.merge({ :query => query }),
           [:query, :count, :batch_size]
       end
 
@@ -158,7 +158,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.valid? "FOR u IN users LIMIT 2" # => true
       def valid?(query)
-          !!post_request("/query", { query: query })
+          !!post_request("/query", { :query => query })
       rescue RestClient::BadRequest
         false
       end
@@ -212,7 +212,7 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api private
       def simple_query_request(path, request_data, allowed_keys)
-        request_data = request_data.merge({ collection: collection.name })
+        request_data = request_data.merge({ :collection => collection.name })
         put_request path,
           request_data,
           allowed_keys << :collection

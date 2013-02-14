@@ -30,7 +30,7 @@ describe Ashikawa::Core::Index do
 
     it "should be deletable" do
       collection.should_receive(:send_request).with("index/167137465/168054969",
-        delete: {})
+        :delete => {})
       collection.should_receive(:id).and_return(167137465)
 
       subject.delete

@@ -11,11 +11,11 @@ module Ashikawa
       extend Forwardable
 
       # Delegate sending requests to the connection
-      delegate send_request: :@connection
-      delegate host: :@connection
-      delegate port: :@connection
-      delegate scheme: :@connection
-      delegate authenticate_with: :@connection
+      delegate :send_request => :@connection
+      delegate :host => :@connection
+      delegate :port => :@connection
+      delegate :scheme => :@connection
+      delegate :authenticate_with => :@connection
 
       # Initializes the connection to the database
       #
@@ -63,7 +63,7 @@ module Ashikawa
         begin
           server_response = send_request "/collection/#{collection_identifier}"
         rescue CollectionNotFoundException
-          server_response = send_request "/collection", post: { name: collection_identifier }
+          server_response = send_request "/collection", :post => { :name => collection_identifier }
         end
 
         Ashikawa::Core::Collection.new self, server_response
