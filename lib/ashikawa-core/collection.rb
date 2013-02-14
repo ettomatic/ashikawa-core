@@ -8,7 +8,7 @@ require "forwardable"
 
 module Ashikawa
   module Core
-    # Represents a certain Collection within the Database
+    # A certain Collection within the Database
     class Collection
       extend Forwardable
 

@@ -1,6 +1,6 @@
 module Ashikawa
   module Core
-    # Represents an index on a certain collection
+    # An index on a certain collection
     class Index
       # The fields the index is defined on as symbols
       # @return [Array<Symbol>]

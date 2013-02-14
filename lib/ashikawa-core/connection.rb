@@ -8,7 +8,7 @@ require "ashikawa-core/exceptions/unknown_path"
 
 module Ashikawa
   module Core
-    # Represents a Connection via HTTP to a certain host
+    # A Connection via HTTP to a certain host
     class Connection
       # The host part of the connection
       #

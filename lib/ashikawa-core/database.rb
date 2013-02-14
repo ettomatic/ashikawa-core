@@ -6,7 +6,7 @@ require "forwardable"
 
 module Ashikawa
   module Core
-    # Represents an ArangoDB database in Ruby
+    # An ArangoDB database
     class Database
       extend Forwardable
 

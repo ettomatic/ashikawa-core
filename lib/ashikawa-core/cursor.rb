@@ -2,7 +2,7 @@ require 'ashikawa-core/document'
 
 module Ashikawa
   module Core
-    # Represents a Cursor on a certain Database.
+    # A Cursor on a certain Database.
     # It is an enumerable.
     class Cursor
       include Enumerable

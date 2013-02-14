@@ -2,7 +2,7 @@ require 'ashikawa-core/exceptions/document_not_found'
 
 module Ashikawa
   module Core
-    # Represents a certain Document within a certain Collection
+    # A certain Document within a certain Collection
     class Document
       # The ID of the document without the Collection prefix
       #
