@@ -3,6 +3,7 @@ require 'ashikawa-core/document'
 require 'ashikawa-core/exceptions/no_collection_provided'
 require 'forwardable'
 require 'backports'
+require 'rest-client'
 
 module Ashikawa
   module Core
