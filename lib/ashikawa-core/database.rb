@@ -11,11 +11,11 @@ module Ashikawa
       extend Forwardable
 
       # Delegate sending requests to the connection
-      delegate :send_request => :@connection
-      delegate :host => :@connection
-      delegate :port => :@connection
-      delegate :scheme => :@connection
-      delegate :authenticate_with => :@connection
+      def_delegator :@connection, :send_request
+      def_delegator :@connection, :host
+      def_delegator :@connection, :port
+      def_delegator :@connection, :scheme
+      def_delegator :@connection, :authenticate_with
 
       # Initializes the connection to the database
       #

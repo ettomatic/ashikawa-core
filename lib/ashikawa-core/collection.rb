@@ -76,7 +76,7 @@ module Ashikawa
       attr_reader :database
 
       # Sending requests is delegated to the database
-      delegate :send_request => :@database
+      def_delegator :@database, :send_request
 
       # Create a new Collection object with a name and an optional ID
       #

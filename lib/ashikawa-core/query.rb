@@ -10,7 +10,7 @@ module Ashikawa
       extend Forwardable
 
       # Delegate sending requests to the connection
-      delegate :send_request => :@connection
+      def_delegator :@connection, :send_request
 
       # Initializes a Query
       #
