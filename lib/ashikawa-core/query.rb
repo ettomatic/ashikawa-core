@@ -158,11 +158,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.valid? "FOR u IN users LIMIT 2" # => true
       def valid?(query)
-        begin
           !!post_request("/query", { query: query })
-        rescue RestClient::BadRequest
-          false
-        end
+      rescue RestClient::BadRequest
+        false
       end
 
       private
