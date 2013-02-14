@@ -2,6 +2,12 @@ module Ashikawa
   module Core
     # Wrapper around the status of a collection
     class Status
+      STATUS_NEW_BORN       = 1
+      STATUS_UNLOADED       = 2
+      STATUS_LOADED         = 3
+      STATUS_BEING_UNLOADED = 4
+      MAX_UNCORRUPTED       = 5
+
       # Create a wrapper around a given status
       #
       # @param [Fixnum] code
@@ -18,7 +24,7 @@ module Ashikawa
       #   status = Ashikawa::Core::Status.new 3
       #   status.new_born? #=> false
       def new_born?
-        @code == 1
+        @code == STATUS_NEW_BORN
       end
 
       # Checks if the collection is unloaded
@@ -29,7 +35,7 @@ module Ashikawa
       #   status = Ashikawa::Core::Status.new 3
       #   status.unloaded? #=> false
       def unloaded?
-        @code == 2
+        @code == STATUS_UNLOADED
       end
 
       # Checks if the collection is loaded
@@ -40,7 +46,7 @@ module Ashikawa
       #   status = Ashikawa::Core::Status.new 3
       #   status.loaded? #=> true
       def loaded?
-        @code == 3
+        @code == STATUS_LOADED
       end
 
       # Checks if the collection is in the process of being unloaded
@@ -51,7 +57,7 @@ module Ashikawa
       #   status = Ashikawa::Core::Status.new 3
       #   status.being_unloaded? #=> false
       def being_unloaded?
-        @code == 4
+        @code == STATUS_BEING_UNLOADED
       end
 
       # Checks if the collection is corrupted
@@ -62,7 +68,7 @@ module Ashikawa
       #   status = Ashikawa::Core::Status.new 3
       #   status.corrupted? #=> false
       def corrupted?
-        @code > 5
+        @code > MAX_UNCORRUPTED
       end
     end
   end
