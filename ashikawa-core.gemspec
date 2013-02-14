@@ -24,6 +24,8 @@ Gem::Specification.new do |gem|
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
 
+  gem.add_dependency "json", "~> 1.7.7" if defined? VERSION and VERSION == '1.8.7'
+
   # Runtime Dependencies (JRuby only)
   if defined? PLATFORM and PLATFORM == 'java'
     gem.add_dependency "json", "~> 1.7.5"
@@ -41,8 +43,11 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "webmock", "~> 1.9.0"
   gem.add_development_dependency "yardstick", "~> 0.8.0"
   gem.add_development_dependency "simplecov", "~> 0.7.1"
-  gem.add_development_dependency "cane", "~> 2.5.0"
-  gem.add_development_dependency "roodi1.9", "~> 2.0.1"
+
+  if defined? VERSION and VERSION != '1.8.7'
+    gem.add_development_dependency "cane", "~> 2.5.0"
+    gem.add_development_dependency "roodi1.9", "~> 2.0.1"
+  end
 
   # Do not update to version 3, it is currently not compatible with roodi1.9
   # see grsmv/roodi1.9#1
@@ -51,6 +56,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "guard", "~> 1.6.1"
   gem.add_development_dependency "guard-rspec", "~> 2.4.0"
   gem.add_development_dependency "guard-bundler", "~> 1.0.0"
-  gem.add_development_dependency "guard-yard", "~> 2.0.1"
   gem.add_development_dependency "rb-fsevent", "~> 0.9.2"
 end
