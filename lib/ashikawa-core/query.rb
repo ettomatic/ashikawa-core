@@ -2,6 +2,7 @@ require 'ashikawa-core/cursor'
 require 'ashikawa-core/document'
 require 'ashikawa-core/exceptions/no_collection_provided'
 require 'forwardable'
+require 'backports'
 
 module Ashikawa
   module Core

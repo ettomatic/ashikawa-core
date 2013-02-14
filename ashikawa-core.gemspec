@@ -24,7 +24,10 @@ Gem::Specification.new do |gem|
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
 
-  gem.add_dependency "json", "~> 1.7.7" if defined? VERSION and VERSION == '1.8.7'
+  if defined? VERSION and VERSION == '1.8.7'
+    gem.add_dependency "json", "~> 1.7.7"
+    gem.add_dependency "backports", "~> 2.6.7"
+  end
 
   # Runtime Dependencies (JRuby only)
   if defined? PLATFORM and PLATFORM == 'java'
