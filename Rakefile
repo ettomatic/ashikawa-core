@@ -2,8 +2,6 @@
 require "bundler/gem_tasks"
 require "rspec"
 require "rspec/core/rake_task"
-require "roodi"
-require "roodi_task"
 require "yardstick/rake/measurement"
 require "yardstick/rake/verify"
 
@@ -89,10 +87,16 @@ namespace :metrics do
     warn "cane not available, quality task not provided."
   end
 
-  RoodiTask.new do |roodi|
-    roodi.patterns = %w(lib/**/*.rb spec/**/*.rb)
+  begin
+    require "roodi"
+    require "roodi_task"
+    RoodiTask.new do |roodi|
+      roodi.patterns = %w(lib/**/*.rb spec/**/*.rb)
+    end
+    metric_tasks << :roodi
+  rescue LoadError
+    warn "roodi not available, quality task not provided."
   end
-  metric_tasks << :roodi
 
   task :all => metric_tasks
 end
