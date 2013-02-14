@@ -24,7 +24,7 @@ module Ashikawa
       # @api public
       def initialize(database, raw_cursor)
         @database = database
-        parse_raw_cursor raw_cursor
+        parse_raw_cursor(raw_cursor)
       end
 
       # Iterate over the documents found by the cursor
@@ -45,7 +45,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api public
       def delete
-        @database.send_request "/cursor/#{@id}", :delete => {}
+        @database.send_request("/cursor/#{@id}", :delete => {})
       end
 
       private
@@ -55,9 +55,9 @@ module Ashikawa
       # @return self
       # @api private
       def parse_raw_cursor(raw_cursor)
-        @id       = raw_cursor['id'].to_i if raw_cursor.has_key? 'id'
+        @id       = raw_cursor['id'].to_i if raw_cursor.has_key?('id')
         @has_more = raw_cursor['hasMore']
-        @length   = raw_cursor['count'].to_i if raw_cursor.has_key? 'count'
+        @length   = raw_cursor['count'].to_i if raw_cursor.has_key?('count')
         @current  = raw_cursor['result']
         self
       end
@@ -68,8 +68,8 @@ module Ashikawa
       # @api private
       def next_batch
         return false unless @has_more
-        raw_cursor = @database.send_request "/cursor/#{@id}", :put => {}
-        parse_raw_cursor raw_cursor
+        raw_cursor = @database.send_request("/cursor/#{@id}", :put => {})
+        parse_raw_cursor(raw_cursor)
       end
     end
   end

@@ -30,10 +30,10 @@ module Ashikawa
       # @api public
       def initialize(collection, raw_index)
         @collection = collection
-        @id = raw_index["id"].split("/")[1].to_i if raw_index.has_key? "id"
-        @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key? "fields"
-        @type = raw_index["type"].to_sym if raw_index.has_key? "type"
-        @unique = raw_index["unique"] if raw_index.has_key? "unique"
+        @id = raw_index["id"].split("/")[1].to_i if raw_index.has_key?("id")
+        @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key?("fields")
+        @type = raw_index["type"].to_sym if raw_index.has_key?("type")
+        @unique = raw_index["unique"] if raw_index.has_key?("unique")
       end
 
       # Remove the index from the collection

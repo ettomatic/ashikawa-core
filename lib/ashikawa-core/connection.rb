@@ -59,7 +59,7 @@ module Ashikawa
       # @example Create a new Connection
       #  connection = Connection.new "http://localhost:8529"
       def initialize(api_string = "http://localhost:8529")
-        uri     = URI api_string
+        uri     = URI(api_string)
         @host   = uri.host
         @port   = uri.port
         @scheme = uri.scheme
@@ -78,11 +78,11 @@ module Ashikawa
       # @api public
       def send_request(path, params = {})
         begin
-          raw = raw_result_for path, params
+          raw = raw_result_for(path, params)
         rescue RestClient::ResourceNotFound
-          resource_not_found_for path
+          resource_not_found_for(path)
         end
-        JSON.parse raw
+        JSON.parse(raw)
       end
 
       # Raise the fitting ResourceNotFoundException
@@ -114,15 +114,15 @@ module Ashikawa
       # @return [String] raw response from the server
       # @api public
       def raw_result_for(path, params = {})
-        path   = full_path path
+        path   = full_path(path)
         method = [:post, :put, :delete].find { |method_name|
-          params.has_key? method_name
+          params.has_key?(method_name)
         } || :get
 
-        if [:post, :put].include? method
-          RestClient.send method, path, params[method].to_json
+        if [:post, :put].include?(method)
+          RestClient.send(method, path, params[method].to_json)
         else
-          RestClient.send method, path
+          RestClient.send(method, path)
         end
       end
 

@@ -35,9 +35,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.all # => #<Cursor id=33>
       def all(options={})
-        simple_query_request "/simple/all",
+        simple_query_request("/simple/all",
           options,
-          [:limit, :skip]
+          [:limit, :skip])
       end
 
       # Looks for documents in a collection which match the given criteria
@@ -53,9 +53,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.by_example { "color" => "red" }, :options => { :limit => 1 } # => #<Cursor id=2444>
       def by_example(example={}, options={})
-        simple_query_request "/simple/by-example",
+        simple_query_request("/simple/by-example",
           { :example => example }.merge(options),
-          [:limit, :skip, :example]
+          [:limit, :skip, :example])
       end
 
       # Looks for one document in a collection which matches the given criteria
@@ -68,9 +68,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
       def first_example(example = {})
-        response = simple_query_request "/simple/first-example",
+        response = simple_query_request("/simple/first-example",
           { :example => example },
-          [:example]
+          [:example])
         response.first
       end
 
@@ -89,9 +89,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.near latitude: 37.331693, longitude: -122.030468
       def near(options={})
-        simple_query_request "/simple/near",
+        simple_query_request("/simple/near",
           options,
-          [:latitude, :longitude, :distance, :skip, :limit, :geo]
+          [:latitude, :longitude, :distance, :skip, :limit, :geo])
       end
 
       # Looks for documents in a collection within a radius
@@ -110,9 +110,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def within(options={})
-        simple_query_request "/simple/within",
+        simple_query_request("/simple/within",
           options,
-          [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo]
+          [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo])
       end
 
       # Looks for documents in a collection with an attribute between two values
@@ -130,9 +130,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
       def in_range(options={})
-        simple_query_request "/simple/range",
+        simple_query_request("/simple/range",
           options,
-          [:attribute, :left, :right, :closed, :limit, :skip]
+          [:attribute, :left, :right, :closed, :limit, :skip])
       end
 
       # Send an AQL query to the database
@@ -146,9 +146,9 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new collection
       #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def execute(query, options = {})
-        post_request "/cursor",
+        post_request("/cursor",
           options.merge({ :query => query }),
-          [:query, :count, :batch_size]
+          [:query, :count, :batch_size])
       end
 
       # Test if an AQL query is valid
@@ -180,7 +180,7 @@ module Ashikawa
       # @return [collection]
       # @api private
       def collection
-        raise NoCollectionProvidedException unless @connection.respond_to? :database
+        raise NoCollectionProvidedException unless @connection.respond_to?(:database)
         @connection
       end
 
@@ -191,7 +191,7 @@ module Ashikawa
       # @return [Hash] The filtered Hash
       # @api private
       def allowed_options(options, allowed_keys)
-        options.keep_if { |key, _| allowed_keys.include? key }
+        options.keep_if { |key, _| allowed_keys.include?(key) }
       end
 
       # Transforms the keys into the required format
@@ -215,9 +215,9 @@ module Ashikawa
       # @api private
       def simple_query_request(path, request_data, allowed_keys)
         request_data = request_data.merge({ :collection => collection.name })
-        put_request path,
+        put_request(path,
           request_data,
-          allowed_keys << :collection
+          allowed_keys << :collection)
       end
 
       # Perform a wrapped request
@@ -229,10 +229,10 @@ module Ashikawa
       # @return [Cursor]
       # @api private
       def wrapped_request(path, request_method, request_data, allowed_keys)
-        request_data = allowed_options request_data, allowed_keys unless allowed_keys.nil?
-        request_data = prepare_request_data request_data
-        server_response = send_request path, { request_method => request_data }
-        Cursor.new database, server_response
+        request_data = allowed_options(request_data, allowed_keys) unless allowed_keys.nil?
+        request_data = prepare_request_data(request_data)
+        server_response = send_request(path, { request_method => request_data })
+        Cursor.new(database, server_response)
       end
 
       # Perform a wrapped put request
@@ -243,7 +243,7 @@ module Ashikawa
       # @return [Cursor]
       # @api private
       def put_request(path, request_data, allowed_keys = nil)
-        wrapped_request path, :put, request_data, allowed_keys
+        wrapped_request(path, :put, request_data, allowed_keys)
       end
 
       # Perform a wrapped post request
@@ -254,7 +254,7 @@ module Ashikawa
       # @return [Cursor]
       # @api private
       def post_request(path, request_data, allowed_keys = nil)
-        wrapped_request path, :post, request_data, allowed_keys
+        wrapped_request(path, :post, request_data, allowed_keys)
       end
     end
   end
