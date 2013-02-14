@@ -66,7 +66,8 @@ describe Ashikawa::Core::Database do
     end
 
     it "should create a single collection if it doesn't exist" do
-      @connection.stub :send_request do |path, method = {}|
+      @connection.stub :send_request do |path, method|
+        method ||= {}
         if method.has_key? :post
           server_response("collections/4590")
         else
