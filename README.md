@@ -5,15 +5,16 @@
 [![Dependency Status](https://gemnasium.com/triAGENS/ashikawa-core.png)](https://gemnasium.com/triAGENS/ashikawa-core)
 [![Code Climate](https://codeclimate.com/github/triAGENS/ashikawa-core.png)](https://codeclimate.com/github/triAGENS/ashikawa-core)
 
-Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs.
+Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs and other projects related to the database. It is always working with the stable version of ArangoDB, this is currently version **1.1.2**.
 
 All tests run on Travis CI for the following versions of Ruby:
 
-* MRI 1.9.2 and 1.9.3
-* Rubinius 1.9 mode
-* JRuby 1.9 mode
+* MRI 1.8.7, 1.9.2 and 1.9.3
+* Rubinius 1.8 and 1.9 mode
+* JRuby 1.8 and 1.9 mode
+* REE
 
-It does not run on Ruby 1.8 and is not supposed to do so. We also run on JRuby and MRI Head, but they are allowed failures (Please see [Travis](http://travis-ci.org/triAGENS/ashikawa-core) for their build status).
+We also run on JRuby and MRI Head, but they are allowed failures (Please see [Travis](http://travis-ci.org/triAGENS/ashikawa-core) for their build status).
 
 Please note that the `master` branch is always the stable version released on Ruby Gems and documented on RDoc. If you want the most recent version, please refer to the `development` branch.
 
@@ -35,4 +36,8 @@ If you find a bug in this gem, please report it on [our tracker](https://github.
 
 # Contributing
 
-If you want to contribute to the project, see CONTRIBUTING.md for details. It contains information on our process and how to set up everything.
+If you want to contribute to the project, see CONTRIBUTING.md for details. It contains information on our process and how to set up everything. The following people have contributed to this project:
+
+* Lucas Dohmen (@moonglum): Developer
+* Tobias Eilert (@EinLama): Contributor
+* Markus Schirp (@mbj): Contributor
