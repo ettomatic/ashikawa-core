@@ -2,6 +2,11 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "ashikawa-core/version"
 
+IS_RUBY_18 = defined? VERSION and VERSION == '1.8.7' unless defined? IS_RUBY_18
+IS_NOT_RUBY_18 = !IS_RUBY_18 unless defined? IS_NOT_RUBY_18
+IS_JRUBY = defined? PLATFORM and PLATFORM == 'java' unless defined? IS_JRUBY
+IS_NOT_JRUBY = !IS_JRUBY unless defined? IS_NOT_JRUBY
+
 Gem::Specification.new do |gem|
   gem.name        = "ashikawa-core"
   gem.version     = Ashikawa::Core::VERSION
@@ -23,21 +28,9 @@ Gem::Specification.new do |gem|
 
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
-
-  if defined? VERSION and VERSION == '1.8.7'
-    gem.add_dependency "json", "~> 1.7.7"
-    gem.add_dependency "backports", "~> 2.6.7"
-  end
-
-  # Runtime Dependencies (JRuby only)
-  if defined? PLATFORM and PLATFORM == 'java'
-    gem.add_dependency "json", "~> 1.7.5"
-    gem.add_dependency "jruby-openssl", "~> 0.8.2"
-  else
-    # RedCarpet is not compatible with JRuby
-    # It is only needed to generate the YARD Documentation
-    gem.add_development_dependency "redcarpet", "~> 2.2.2"
-  end
+  gem.add_dependency "json", "~> 1.7.7" if IS_RUBY_18 or IS_JRUBY
+  gem.add_dependency "backports", "~> 2.6.7" if IS_RUBY_18
+  gem.add_dependency "jruby-openssl", "~> 0.7.7" if IS_JRUBY
 
   # Development Dependencies
   gem.add_development_dependency "rake", "~> 10.0.3"
@@ -47,7 +40,11 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "yardstick", "~> 0.8.0"
   gem.add_development_dependency "simplecov", "~> 0.7.1"
 
-  if defined? VERSION and VERSION != '1.8.7'
+  # RedCarpet is not compatible with JRuby
+  # It is only needed to generate the YARD Documentation
+  gem.add_development_dependency "redcarpet", "~> 2.2.2" if IS_NOT_JRUBY
+
+  if IS_NOT_RUBY_18 and IS_NOT_JRUBY
     gem.add_development_dependency "cane", "~> 2.5.0"
     gem.add_development_dependency "roodi1.9", "~> 2.0.1"
   end

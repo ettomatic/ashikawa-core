@@ -5,7 +5,6 @@ require "rspec/core/rake_task"
 require "yardstick/rake/measurement"
 require "yardstick/rake/verify"
 
-
 namespace :spec do
   desc "Run the acceptance tests. Requires ArangoDB to be running."
   RSpec::Core::RakeTask.new(:acceptance_with_running_arangodb) do |spec|
