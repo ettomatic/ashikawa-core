@@ -25,7 +25,8 @@ if [ "$ARCH" == "x86_64" ]; then
   ARANGOD="${ARANGOD}_x86_64"
 fi
 
-# create database directory
+# (re-)create database directory
+rm -rf ${TMP_DIR}
 mkdir ${TMP_DIR}
 
 echo "Starting arangodb '${ARANGOD}'"
