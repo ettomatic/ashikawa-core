@@ -91,6 +91,7 @@ namespace :metrics do
     require "roodi_task"
     RoodiTask.new do |roodi|
       roodi.patterns = %w(lib/**/*.rb spec/**/*.rb)
+      roodi.config = "config/roodi.yml"
     end
     metric_tasks << :roodi
   rescue LoadError
