@@ -2,6 +2,9 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "ashikawa-core/version"
 
+IS_RUBY_18 = defined? VERSION and VERSION == '1.8.7' unless defined? IS_RUBY_18
+IS_JRUBY = defined? PLATFORM and PLATFORM == 'java' unless defined? IS_JRUBY
+
 Gem::Specification.new do |gem|
   gem.name        = "ashikawa-core"
   gem.version     = Ashikawa::Core::VERSION
@@ -12,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.description = "Ashikawa Core is a wrapper around the ArangoDB REST API. It provides low level access and will be used in different ArangoDB ODMs."
 
   gem.required_ruby_version = '>= 1.9.2'
-  gem.requirements << "ArangoDB, v1.0 alpha or greater"
+  gem.requirements << "ArangoDB, v1.1.2"
 
   gem.rubyforge_project = "ashikawa-core"
 
@@ -23,27 +26,10 @@ Gem::Specification.new do |gem|
 
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
-
-  # Runtime Dependencies (JRuby only)
-  if defined? PLATFORM and PLATFORM == 'java'
-    gem.add_dependency "json", "~> 1.7.5"
-    gem.add_dependency "jruby-openssl", "~> 0.8.2"
-  else
-    # RedCarpet is not compatible with JRuby
-    # It is only needed to generate the YARD Documentation
-    gem.add_development_dependency "redcarpet", "~> 2.2.2"
-  end
+  gem.add_dependency "json", "~> 1.7.7" if IS_RUBY_18 or IS_JRUBY
+  gem.add_dependency "backports", "~> 2.6.7" if IS_RUBY_18
 
   # Development Dependencies
   gem.add_development_dependency "webmock", "~> 1.9.0"
-  # gem.add_development_dependency "yardstick", "~> 0.6.0"
-  gem.add_development_dependency "cane", "~> 2.4.0"
-  gem.add_development_dependency "roodi1.9", "~> 2.0.1"
-
-  # Do not update to version 3, it is currently not compatible with roodi1.9
-  # see grsmv/roodi1.9#1
-  gem.add_development_dependency "ruby_parser", "= 2.3.1"
-
-  gem.add_development_dependency "guard-yard", "~> 2.0.1"
   gem.add_development_dependency "rb-fsevent", "~> 0.9.2"
 end

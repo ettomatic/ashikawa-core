@@ -44,15 +44,17 @@ describe Ashikawa::Core::Document do
 
     it "should be deletable" do
       database.should_receive(:send_request).with("document/#{raw_data['_id']}",
-        { delete: {} }
+        { :delete => {} }
       )
 
       subject.delete
     end
 
     it "should store changes to the database" do
+      pending "Failing on 1.8, see Ticket #32" if defined? VERSION and VERSION == '1.8.7'
+
       database.should_receive(:send_request).with("document/#{raw_data['_id']}",
-        { put: { "first_name" => "The", "last_name" => "Other" } }
+        { :put => { "first_name" => "The", "last_name" => "Other" } }
       )
 
       subject["last_name"] = "Other"

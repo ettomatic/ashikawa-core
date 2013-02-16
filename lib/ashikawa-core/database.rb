@@ -6,16 +6,16 @@ require "forwardable"
 
 module Ashikawa
   module Core
-    # Represents an ArangoDB database in Ruby
+    # An ArangoDB database
     class Database
       extend Forwardable
 
       # Delegate sending requests to the connection
-      delegate send_request: :@connection
-      delegate host: :@connection
-      delegate port: :@connection
-      delegate scheme: :@connection
-      delegate authenticate_with: :@connection
+      def_delegator :@connection, :send_request
+      def_delegator :@connection, :host
+      def_delegator :@connection, :port
+      def_delegator :@connection, :scheme
+      def_delegator :@connection, :authenticate_with
 
       # Initializes the connection to the database
       #
@@ -28,7 +28,7 @@ module Ashikawa
       #  database = Ashikawa::Core::Database.new connection
       def initialize(connection)
         if connection.class == String
-          @connection = Ashikawa::Core::Connection.new connection
+          @connection = Ashikawa::Core::Connection.new(connection)
         else
           @connection = connection
         end
@@ -44,8 +44,8 @@ module Ashikawa
       #   database["b"]
       #   database.collections # => [ #<Collection name="a">, #<Collection name="b">]
       def collections
-        server_response = send_request "/collection"
-        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new self, collection }
+        server_response = send_request("/collection")
+        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new(self, collection) }
       end
 
       # Get or create a Collection based on name or ID
@@ -61,12 +61,12 @@ module Ashikawa
       #   database["7254820"] # => #<Collection id=7254820>
       def [](collection_identifier)
         begin
-          server_response = send_request "/collection/#{collection_identifier}"
+          server_response = send_request("/collection/#{collection_identifier}")
         rescue CollectionNotFoundException
-          server_response = send_request "/collection", post: { name: collection_identifier }
+          server_response = send_request("/collection", :post => { :name => collection_identifier })
         end
 
-        Ashikawa::Core::Collection.new self, server_response
+        Ashikawa::Core::Collection.new(self, server_response)
       end
 
       # Return a Query initialized with this database
@@ -74,7 +74,7 @@ module Ashikawa
       # @return [Query]
       # @api public
       def query
-        Query.new self
+        Query.new(self)
       end
     end
   end
