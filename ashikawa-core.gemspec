@@ -2,9 +2,6 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "ashikawa-core/version"
 
-IS_RUBY_18 = defined? VERSION and VERSION == '1.8.7' unless defined? IS_RUBY_18
-IS_JRUBY = defined? PLATFORM and PLATFORM == 'java' unless defined? IS_JRUBY
-
 Gem::Specification.new do |gem|
   gem.name        = "ashikawa-core"
   gem.version     = Ashikawa::Core::VERSION
@@ -26,10 +23,8 @@ Gem::Specification.new do |gem|
 
   # Runtime Dependencies
   gem.add_dependency "rest-client", "~> 1.6.7"
-  gem.add_dependency "json", "~> 1.7.7" if IS_RUBY_18 or IS_JRUBY
-  gem.add_dependency "backports", "~> 2.6.7" if IS_RUBY_18
+  gem.add_dependency "json", "~> 1.7.7"
 
   # Development Dependencies
   gem.add_development_dependency "webmock", "~> 1.9.0"
-  gem.add_development_dependency "rb-fsevent", "~> 0.9.2"
 end

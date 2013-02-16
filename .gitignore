@@ -6,6 +6,7 @@
 /Gemfile.lock
 /pkg/*
 /report/*
+/measurements/*
 /coverage
 /.rbx
 /tmp

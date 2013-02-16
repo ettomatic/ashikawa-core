@@ -2,16 +2,18 @@
 UncommunicativeParameterName:
   accept: []
   exclude: []
-  enabled: false # Todo enable
+  enabled: false
   reject:
   - !ruby/regexp /^.$/
   - !ruby/regexp /[0-9]$/
   - !ruby/regexp /[A-Z]/
 LargeClass:
-  max_methods: 10 # Todo decrease to 10
-  exclude: []
+  max_methods: 10
+  exclude:
+  - Ashikawa::Core::Query
+  - Ashikawa::Core::Collection
   enabled: true
-  max_instance_variables: 3
+  max_instance_variables: 5
 UncommunicativeMethodName:
   accept: []
   exclude: []
@@ -21,13 +23,14 @@ UncommunicativeMethodName:
   - !ruby/regexp /[0-9]$/
   - !ruby/regexp /[A-Z]/
 LongParameterList:
-  max_params: 2 
-  exclude: []
+  max_params: 3
+  exclude:
+  - Ashikawa::Core::Query#wrapped_request
   enabled: true
   overrides: {}
 FeatureEnvy:
   exclude: []
-  enabled: true
+  enabled: false
 ClassVariable:
   exclude: []
   enabled: true
@@ -46,26 +49,26 @@ NestedIterators:
   ignore_iterators: []
   exclude: []
   enabled: true
-  max_allowed_nesting: 1
+  max_allowed_nesting: 2
 LongMethod:
-  max_statements: 8 
+  max_statements: 8
   exclude: []
   enabled: true
 Duplication:
   allow_calls: []
-  exclude: 
-  - Aequitas#self.blank
+  exclude:
+  - Ashikawa::Core::Document#initialize
   enabled: true
-  max_calls: 1 
+  max_calls: 1
 UtilityFunction:
-  max_helper_calls: 0 
+  max_helper_calls: 0
   exclude: []
-  enabled: true
+  enabled: false
 Attribute:
   exclude: []
-  enabled: true
+  enabled: false
 UncommunicativeVariableName:
-  accept: [] 
+  accept: []
   exclude: []
   enabled: true
   reject:
@@ -73,14 +76,16 @@ UncommunicativeVariableName:
   - !ruby/regexp /[0-9]$/
   - !ruby/regexp /[A-Z]/
 SimulatedPolymorphism:
-  exclude: []
+  exclude:
+  - Ashikawa::Core::Query
   enabled: true
-  max_ifs: 1 
+  max_ifs: 1
 DataClump:
-  exclude: []
+  exclude:
+  - Ashikawa::Core::Query
   enabled: true
-  max_copies: 2 
-  min_clump_size: 2 
+  max_copies: 2
+  min_clump_size: 2
 ControlCouple:
   exclude: []
   enabled: true

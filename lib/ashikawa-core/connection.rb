@@ -91,7 +91,7 @@ module Ashikawa
       # @return nil
       # @api private
       def resource_not_found_for(path)
-        path = path.split("/").delete_if { |e| e == "" }
+        path = path.split("/").delete_if { |part| part == "" }
         resource = path.first
 
         raise case resource

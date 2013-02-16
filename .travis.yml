@@ -17,4 +17,4 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-    script: "rake ci"
+script: "bundle exec rake ci"
