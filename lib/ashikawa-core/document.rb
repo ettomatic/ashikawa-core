@@ -1,4 +1,5 @@
 require 'ashikawa-core/exceptions/document_not_found'
+require 'backports'
 
 module Ashikawa
   module Core
