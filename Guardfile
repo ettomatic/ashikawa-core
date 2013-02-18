@@ -3,6 +3,6 @@ guard 'bundler' do
 end
 
 guard 'rspec', :spec_paths => "spec/unit" do
-  watch(%r{lib/.+\.rb})
   watch(%r{spec/.+\.rb})
+  watch(%r{lib/ashikawa-core/(.+)\.rb$}) { |m| "spec/unit/#{m[1]}_spec.rb" }
 end
