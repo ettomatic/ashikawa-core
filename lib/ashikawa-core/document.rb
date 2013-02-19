@@ -1,5 +1,4 @@
 require 'ashikawa-core/exceptions/document_not_found'
-require 'backports'
 
 module Ashikawa
   module Core
@@ -32,7 +31,7 @@ module Ashikawa
         @database = database
         @collection_id, @id = raw_document['_id'].split('/').map { |id| id.to_i } unless raw_document['_id'].nil?
         @revision = raw_document['_rev'].to_i unless raw_document['_rev'].nil?
-        @content = raw_document.delete_if { |key, value| key[0] == "_" }
+        @content = raw_document.delete_if { |key, value| key.start_with? "_" }
       end
 
       # Raises an exception if the document is not persisted

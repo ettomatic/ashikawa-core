@@ -19,8 +19,6 @@ describe "Indices" do
   end
 
   it "should be possible to remove indices" do
-    pending "Failing on MRI 1.9.3 and Rubinius 1.8 and 1.9, see Ticket #33"
-
     expect {
       index.delete
     }.to change { subject.indices.length }.by(-1)

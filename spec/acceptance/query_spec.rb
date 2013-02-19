@@ -6,18 +6,17 @@ describe "Queries" do
 
   describe "AQL query via the database" do
     it "should return the documents" do
+      query = "FOR u IN my_collection FILTER u.bowling == true RETURN u"
+      options = { :batch_size => 2, :count => true }
+
       collection << { "name" => "Jeff Lebowski",    "bowling" => true }
       collection << { "name" => "Walter Sobchak",   "bowling" => true }
       collection << { "name" => "Donny Kerabatsos", "bowling" => true }
       collection << { "name" => "Jeffrey Lebowski", "bowling" => false }
 
-      query = "FOR u IN my_collection FILTER u.bowling == true RETURN u"
-      results = database.query.execute query, :batch_size => 2, :count => true
-
-      results.length.should == 3
-      results = results.map { |person| person["name"] }
-      results.should     include "Jeff Lebowski"
-      results.should_not include "Jeffrey Lebowski"
+      names = database.query.execute(query, options).map { |person| person["name"] }
+      names.should     include "Jeff Lebowski"
+      names.should_not include "Jeffrey Lebowski"
     end
 
     it "should be possible to validate" do

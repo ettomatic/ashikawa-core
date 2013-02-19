@@ -21,9 +21,7 @@ describe "Basics" do
     end
 
     it "should create and delete collections" do
-      pending "This check fails on Travis at random, see #35"
-
-      subject.collections.should ==[]
+      subject.collections.should == []
       subject["collection_1"]
       subject["collection_2"]
       subject["collection_3"]
