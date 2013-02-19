@@ -3,10 +3,6 @@ require 'acceptance/spec_helper'
 describe "Basics" do
   subject { ARANGO_HOST }
 
-  # it "should have booted up an ArangoDB instance" do
-    # expect { RestClient.get(subject) }.to_not raise_error
-  # end
-
   describe "initialized database" do
     subject { Ashikawa::Core::Database.new ARANGO_HOST }
 
