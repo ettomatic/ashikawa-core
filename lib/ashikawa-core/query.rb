@@ -20,8 +20,8 @@ module Ashikawa
       # @return [Query]
       # @api public
       # @example Create a new query object
-      #   collection = Ashikawa::Core::Collection.new database, raw_collection
-      #   query = Ashikawa::Core::Query.new collection
+      #   collection = Ashikawa::Core::Collection.new(database, raw_collection)
+      #   query = Ashikawa::Core::Query.new(collection)
       def initialize(connection)
         @connection = connection
       end
@@ -35,7 +35,7 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Get an array with all documents
-      #   query = Ashikawa::Core::Query.new collection
+      #   query = Ashikawa::Core::Query.new(collection)
       #   query.all # => #<Cursor id=33>
       def all(options={})
         simple_query_request("/simple/all",
@@ -53,8 +53,8 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents in a collection that are red
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.by_example { "color" => "red" }, :options => { :limit => 1 } # => #<Cursor id=2444>
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.by_example({ "color" => "red" }, :options => { :limit => 1 }) #=> #<Cursor id=2444>
       def by_example(example={}, options={})
         simple_query_request("/simple/by-example",
           { :example => example }.merge(options),
@@ -68,8 +68,8 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find one document in a collection that is red
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.first_example { "color" => "red"} # => #<Document id=2444 color="red">
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.first_example({ "color" => "red"}) # => #<Document id=2444 color="red">
       def first_example(example = {})
         response = simple_query_request("/simple/first-example",
           { :example => example },
@@ -89,8 +89,8 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents at Infinite Loop
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.near latitude: 37.331693, longitude: -122.030468
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.near(:latitude => 37.331693, :longitude => -122.030468)
       def near(options={})
         simple_query_request("/simple/near",
           options,
@@ -110,8 +110,8 @@ module Ashikawa
       # @api public
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @example Find all documents within a radius of 100 to Infinite Loop
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.within(:latitude => 37.331693, :longitude => -122.030468, :radius => 100)
       def within(options={})
         simple_query_request("/simple/within",
           options,
@@ -130,8 +130,8 @@ module Ashikawa
       # @raise [NoCollectionProvidedException] If you provided a database, no collection
       # @api public
       # @example Find all documents within a radius of 100 to Infinite Loop
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.within latitude: 37.331693, longitude: -122.030468, radius: 100
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.within(:latitude => 37.331693, :longitude => -122.030468, :radius => 100)
       def in_range(options={})
         simple_query_request("/simple/range",
           options,
@@ -146,8 +146,8 @@ module Ashikawa
       # @return [Cursor]
       # @api public
       # @example Send an AQL query to the database
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.execute("FOR u IN users LIMIT 2") # => #<Cursor id=33>
       def execute(query, options = {})
         post_request("/cursor",
           options.merge({ :query => query }),
@@ -160,8 +160,8 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Validate an AQL query
-      #   query = Ashikawa::Core::Query.new collection
-      #   query.valid? "FOR u IN users LIMIT 2" # => true
+      #   query = Ashikawa::Core::Query.new(collection)
+      #   query.valid?("FOR u IN users LIMIT 2") # => true
       def valid?(query)
           !!post_request("/query", { :query => query })
       rescue RestClient::BadRequest

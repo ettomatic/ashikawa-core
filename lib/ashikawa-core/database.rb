@@ -22,9 +22,9 @@ module Ashikawa
       # @param [Connection, String] connection A Connection object or a String to create a Connection object.
       # @api public
       # @example Access a Database by providing the URL
-      #  database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #  database = Ashikawa::Core::Database.new("http://localhost:8529")
       # @example Access a Database by providing a Connection
-      #  connection = Connection.new "http://localhost:8529"
+      #  connection = Connection.new("http://localhost:8529")
       #  database = Ashikawa::Core::Database.new connection
       def initialize(connection)
         if connection.class == String
@@ -39,7 +39,7 @@ module Ashikawa
       # @return [Array<Collection>]
       # @api public
       # @example Get an Array containing the Collections in the database
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
       #   database["a"]
       #   database["b"]
       #   database.collections # => [ #<Collection name="a">, #<Collection name="b">]
@@ -54,10 +54,10 @@ module Ashikawa
       # @return [Collection]
       # @api public
       # @example Get a Collection from the database by name
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
       #   database["a"] # => #<Collection name="a">
       # @example Get a Collection from the database by ID
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
       #   database["7254820"] # => #<Collection id=7254820>
       def [](collection_identifier)
         begin
@@ -74,7 +74,7 @@ module Ashikawa
       # @return [Query]
       # @api public
       # @example Send an AQL query to the database
-      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
       #   database.query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def query
         Query.new(self)

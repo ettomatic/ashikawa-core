@@ -13,7 +13,7 @@ module Ashikawa
       # @param [Fixnum] code
       # @api public
       # @example Create a new status
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       def initialize(code)
         @code = code
       end
@@ -23,7 +23,7 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Is the collection new born?
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       #   status.new_born? #=> false
       def new_born?
         @code == STATUS_NEW_BORN
@@ -34,7 +34,7 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Is the collection unloaded?
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       #   status.unloaded? #=> false
       def unloaded?
         @code == STATUS_UNLOADED
@@ -45,7 +45,7 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Is the collection loaded?
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       #   status.loaded? #=> true
       def loaded?
         @code == STATUS_LOADED
@@ -56,7 +56,7 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Is the collection unloaded?
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       #   status.being_unloaded? #=> false
       def being_unloaded?
         @code == STATUS_BEING_UNLOADED
@@ -67,7 +67,7 @@ module Ashikawa
       # @return [Boolean]
       # @api public
       # @example Is the collection corrupted?
-      #   status = Ashikawa::Core::Status.new 3
+      #   status = Ashikawa::Core::Status.new(3)
       #   status.corrupted? #=> false
       def corrupted?
         @code > MAX_UNCORRUPTED
