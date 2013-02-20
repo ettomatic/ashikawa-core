@@ -6,7 +6,7 @@ module Ashikawa
       # String representation of the exception
       #
       # @return String
-      # @api public
+      # @api private
       def to_s
         "You requested a collection from the server that does not exist"
       end

@@ -73,6 +73,9 @@ module Ashikawa
       #
       # @return [Query]
       # @api public
+      # @example Send an AQL query to the database
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   database.query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def query
         Query.new(self)
       end

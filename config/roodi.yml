@@ -1,7 +1,7 @@
 AbcMetricMethodCheck:            { score: 15.0 }
 AssignmentInConditionalCheck:    { }
 CaseMissingElseCheck:            { }
-ClassLineCountCheck:             { line_count: 400 }
+ClassLineCountCheck:             { line_count: 500 }
 ClassNameCheck:
   pattern: !ruby/regexp /^[A-Z][a-zA-Z0-9]*$/
 ClassVariableCheck:              { }

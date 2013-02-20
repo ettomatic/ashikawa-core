@@ -73,6 +73,18 @@ module Ashikawa
       #
       # @return [Database]
       # @api public
+      # @example
+      #   database = Ashikawa::Core::Database.new "http://localhost:8529"
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   collection.database #=> #<Database: ...>
       attr_reader :database
 
       # Sending requests is delegated to the database
@@ -292,7 +304,7 @@ module Ashikawa
       # @raise [DocumentNotFoundException] If the requested document was not found
       # @return Document
       # @api public
-      # @example Fetch a document with the ID 12345
+      # @example Fetch the document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
         server_response = send_request("/document/#{@id}/#{document_id}")
@@ -305,6 +317,8 @@ module Ashikawa
       # @param [Hash] raw_document the data you want to replace it with
       # @return [Hash] parsed JSON response from the server
       # @api public
+      # @example Replace the document with the ID 12345
+      #   collection[12345] = document
       def []=(document_id, raw_document)
         send_request("/document/#{@id}/#{document_id}", :put => raw_document)
       end
@@ -314,6 +328,8 @@ module Ashikawa
       # @param [Hash] raw_document
       # @return [Document] The created document
       # @api public
+      # @example Create a new document from raw data
+      #   collection.create(raw_document)
       def create(raw_document)
         server_response = send_request("/document?collection=#{@id}", :post => raw_document)
         Document.new(@database, server_response)
@@ -344,6 +360,9 @@ module Ashikawa
       # @param [Integer] id
       # @return Index
       # @api public
+      # @example Get an Index by its ID
+      #   people = database['people']
+      #   people.index(1244) #=> #<Index: id=1244...>
       def index(id)
         server_response = send_request("/index/#{@id}/#{id}")
         Index.new(self, server_response)
@@ -353,6 +372,9 @@ module Ashikawa
       #
       # @return [Array<Index>]
       # @api public
+      # @example Get all indices
+      #   people = database['people']
+      #   people.indices #=> [#<Index: id=1244...>, ...]
       def indices
         server_response = send_request("/index?collection=#{@id}")
 
@@ -365,6 +387,9 @@ module Ashikawa
       #
       # @return [Query]
       # @api public
+      # @example Get all documents in this collection
+      #   people = database['people']
+      #   people.query.all #=> #<Cursor: id=1244...>
       def query
         Query.new(self)
       end

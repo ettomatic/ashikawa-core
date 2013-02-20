@@ -6,6 +6,8 @@ module Ashikawa
       #
       # @param [Hash] raw_figure
       # @api public
+      # @example Create a new figure from a raw figure
+      #   figure = Ashikawa::Core::Figure.new raw_figure
       def initialize(raw_figure)
         @datafiles = raw_figure["datafiles"]
         @alive = raw_figure["alive"]
@@ -16,6 +18,9 @@ module Ashikawa
       #
       # @return Fixnum
       # @api public
+      # @example Get the number of datafiles
+      #   figure = Ashikawa::Core::Figure.new raw_figure
+      #   figure.datafiles_count #=> 1337
       def datafiles_count
         @datafiles["count"]
       end
@@ -24,6 +29,9 @@ module Ashikawa
       #
       # @return Fixnum
       # @api public
+      # @example Get the size of all living documents in bytes
+      #   figure = Ashikawa::Core::Figure.new raw_figure
+      #   figure.alive_size #=> 1337
       def alive_size
         @alive["size"]
       end
@@ -32,6 +40,9 @@ module Ashikawa
       #
       # @return Fixnum
       # @api public
+      # @example Get the number of living documents
+      #   figure = Ashikawa::Core::Figure.new raw_figure
+      #   figure.alive_count #=> 1337
       def alive_count
         @alive["count"]
       end
@@ -40,6 +51,9 @@ module Ashikawa
       #
       # @return Fixnum
       # @api public
+      # @example Get the size of all dead documents in bytes
+      #   figure = Ashikawa::Core::Figure.new raw_figure
+      #   figure.dead_size #=> 1337
       def dead_size
         @dead["size"]
       end
@@ -48,6 +62,9 @@ module Ashikawa
       #
       # @return Fixnum
       # @api public
+      # @example Get the number of dead documents
+      #   figure = Ashikawa::Core::Figure.new raw_figure
+      #   figure.dead_count #=> 1337
       def dead_count
         @dead["count"]
       end

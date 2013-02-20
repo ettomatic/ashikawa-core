@@ -19,6 +19,9 @@ module Ashikawa
       # @param [Collection, Database] connection
       # @return [Query]
       # @api public
+      # @example Create a new query object
+      #   collection = Ashikawa::Core::Collection.new database, raw_collection
+      #   query = Ashikawa::Core::Query.new collection
       def initialize(connection)
         @connection = connection
       end

@@ -12,6 +12,8 @@ module Ashikawa
       #
       # @param [Fixnum] code
       # @api public
+      # @example Create a new status
+      #   status = Ashikawa::Core::Status.new 3
       def initialize(code)
         @code = code
       end

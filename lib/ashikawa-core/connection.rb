@@ -42,7 +42,10 @@ module Ashikawa
       #
       # @return String
       # @api public
-
+      # @example Get the username of the connection
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.authenticate_with(:username => 'james', :password => 'bond')
+      #   connection.username # => 'james'
       attr_reader :username
 
       # Password of the connection if using authentication
@@ -50,6 +53,10 @@ module Ashikawa
       #
       # @return String
       # @api public
+      # @example Get the password of the connection
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.authenticate_with(:username => 'james', :password => 'bond')
+      #   connection.password # => 'bond'
       attr_reader :password
 
       # Initialize a Connection with a given API String
@@ -68,14 +75,14 @@ module Ashikawa
       # Sends a request to a given path returning the parsed result
       # @note prepends the api_string automatically
       #
-      # @example get request
-      #   connection.send_request('/collection/new_collection')
-      # @example post request
-      #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       # @param [String] path the path you wish to send a request to.
       # @option params [Hash] :post POST data in case you want to send a POST request.
       # @return [Hash] parsed JSON response from the server
       # @api public
+      # @example get request
+      #   connection.send_request('/collection/new_collection')
+      # @example post request
+      #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       def send_request(path, params = {})
         begin
           raw = raw_result_for(path, params)
@@ -130,6 +137,11 @@ module Ashikawa
       #
       # @return [Boolean]
       # @api public
+      # @example Is authentication activated for this connection?
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.authentication? #=> false
+      #   connection.authenticate_with(:username => 'james', :password => 'bond')
+      #   connection.authentication? #=> true
       def authentication?
         !!@username
       end
@@ -141,6 +153,9 @@ module Ashikawa
       # @return [self]
       # @raise [ArgumentError] if username or password are missing
       # @api public
+      # @example Authenticate with the database for all future requests
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.authenticate_with(:username => 'james', :password => 'bond')
       def authenticate_with(options = {})
         if options.key? :username and options.key? :password
           @username = options[:username]
@@ -157,6 +172,10 @@ module Ashikawa
       # @param [String] path The API path
       # @return [String] Full path
       # @api public
+      # @example Get the full path
+      #   connection = Connection.new "http://localhost:8529"
+      #   connection.full_path('documents') #=> "http://localhost:8529/_api/documents"
+      #   connection.full_path('/documents') #=> "http://localhost:8529/_api/documents"
       def full_path(path)
         prefix = if authentication?
           "#{@scheme}://#{@username}:#{@password}@#{@host}:#{@port}"

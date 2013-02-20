@@ -10,11 +10,17 @@ module Ashikawa
       # The ID of the cursor
       # @return [Int]
       # @api public
+      # @example Get the id of the cursor
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
+      #   cursor.id #=> 1337
       attr_reader :id
 
       # The number of documents
       # @return [Int]
       # @api public
+      # @example Get the number of documents
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
+      #   cursor.length #=> 23
       attr_reader :length
 
       # Initialize a Cursor with the database and raw data
@@ -22,6 +28,8 @@ module Ashikawa
       # @param [Database] database
       # @param [Hash] raw_cursor
       # @api public
+      # @example Create a new Cursor from the raw representation
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
       def initialize(database, raw_cursor)
         @database = database
         parse_raw_cursor(raw_cursor)
@@ -32,6 +40,11 @@ module Ashikawa
       # @yield [document]
       # @return nil
       # @api public
+      # @example Print all documents
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
+      #   cursor.each do |document|
+      #     p document
+      #   end
       def each
         begin
           @current.each do |raw_document|
@@ -44,6 +57,9 @@ module Ashikawa
       # Delete the cursor
       # @return [Hash] parsed JSON response from the server
       # @api public
+      # @example Delete the cursor
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
+      #   cursor.delete
       def delete
         @database.send_request("/cursor/#{@id}", :delete => {})
       end

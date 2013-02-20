@@ -6,7 +6,7 @@ module Ashikawa
       # String representation of the exception
       #
       # @return String
-      # @api public
+      # @api private
       def to_s
         "A simple query can't be executed by a Query object without a collection"
       end

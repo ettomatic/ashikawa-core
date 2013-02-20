@@ -6,7 +6,7 @@ module Ashikawa
       # String representation of the exception
       #
       # @return String
-      # @api public
+      # @api private
       def to_s
         "The path is unknown"
       end
