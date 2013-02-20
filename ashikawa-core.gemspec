@@ -26,8 +26,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "json", "~> 1.7.7"
 
   # Development Dependencies
-  # TODO: Set pack to ~> 1.9.3, but this is currently broken
-  # on Ruby 1.8 - see:
-  # https://github.com/bblimke/webmock/issues/254
-  gem.add_development_dependency "webmock", "1.9.0"
+  gem.add_development_dependency "webmock", "~> 1.9.3"
 end
