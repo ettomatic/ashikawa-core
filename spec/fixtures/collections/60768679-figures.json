@@ -1,0 +1,35 @@
+{
+  "id": "60768679",
+  "name": "example_1",
+  "waitForSync": true,
+  "journalSize": 134217728,
+  "isVolatile": false,
+  "isSystem": false,
+  "count": 0,
+  "figures": {
+    "alive": {
+      "count": 0,
+      "size": 0
+    },
+    "dead": {
+      "count": 149,
+      "size": 2384,
+      "deletion": 0
+    },
+    "datafiles": {
+      "count": 1,
+      "fileSize": 0
+    },
+    "journals": {
+      "count": 1,
+      "fileSize": 33554432
+    },
+    "shapes": {
+      "count": 6
+    }
+  },
+  "status": 3,
+  "type": 2,
+  "error": false,
+  "code": 200
+}

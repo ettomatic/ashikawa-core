@@ -1,8 +1,8 @@
 {
+	"id": "60768679",
 	"name": "example_1",
-	"waitForSync": true,
-	"id": 4588,
 	"status": 3,
+  "type": 2,
 	"error": false,
 	"code": 200
 }
