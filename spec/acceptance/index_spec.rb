@@ -6,6 +6,8 @@ describe "Indices" do
   let(:index) { subject.add_index :skiplist, :on => [:identifier] }
 
   it "should be possible to set indices" do
+    pending "Updating to new ArangoDB version"
+
     index.delete
 
     expect {
@@ -14,6 +16,8 @@ describe "Indices" do
   end
 
   it "should be possible to get an index by ID" do
+    pending "Updating to new ArangoDB version"
+
     subject.index(index.id).id.should == index.id
     subject.indices[0].class.should == Ashikawa::Core::Index
   end
