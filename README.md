@@ -5,7 +5,7 @@
 [![Dependency Status](https://gemnasium.com/triAGENS/ashikawa-core.png)](https://gemnasium.com/triAGENS/ashikawa-core)
 [![Code Climate](https://codeclimate.com/github/triAGENS/ashikawa-core.png)](https://codeclimate.com/github/triAGENS/ashikawa-core)
 
-Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs and other projects related to the database. It is always working with the stable version of ArangoDB, this is currently version **1.1.2**.
+Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs and other projects related to the database. It is always working with the stable version of ArangoDB, this is currently version **1.2**. If you want to access an ArangoDB instance running version **1.1.2** refer to version [0.6](https://github.com/triAGENS/ashikawa-core/tree/0.6.0) of this gem (or just update ;) ).
 
 All tests run on Travis CI for the following versions of Ruby:
 
@@ -16,14 +16,14 @@ All tests run on Travis CI for the following versions of Ruby:
 
 We also run on JRuby and MRI Head, but they are allowed failures (Please see [Travis](http://travis-ci.org/triAGENS/ashikawa-core) for their build status).
 
-Please note that the `master` branch is always the stable version released on Ruby Gems and documented on RDoc. If you want the most recent version, please refer to the `development` branch.
+Please note that the [`master`](https://github.com/triAGENS/ashikawa-core) branch is always the stable version released on Ruby Gems and documented on RDoc. If you want the most recent version, please refer to the [`development`](https://github.com/triAGENS/ashikawa-core/tree/development) branch.
 
 ## How to use it
 
 For a detailed description of Ashikawa::Core please refer to the [documentation](http://rdoc.info/github/triAGENS/ashikawa-core/master/frames). An example:
 
 ```ruby
-database = Ashikawa::Core::Database.new "http://localhost:8529"
+database = Ashikawa::Core::Database.new("http://localhost:8529")
 
 database["my_collection"] # => Returns the collection my_collection – creates it, if it doesn't exist
 database["my_collection"].name = "new_name"
@@ -38,6 +38,6 @@ If you find a bug in this gem, please report it on [our tracker](https://github.
 
 If you want to contribute to the project, see CONTRIBUTING.md for details. It contains information on our process and how to set up everything. The following people have contributed to this project:
 
-* Lucas Dohmen (@moonglum): Developer
-* Tobias Eilert (@EinLama): Contributor
-* Markus Schirp (@mbj): Contributor
+* Lucas Dohmen ([@moonglum](https://github.com/moonglum)): Developer
+* Tobias Eilert ([@EinLama](https://github.com/EinLama)): Contributor
+* Markus Schirp ([@mbj](https://github.com/mbj)): Contributor
