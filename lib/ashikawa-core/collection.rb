@@ -108,8 +108,8 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new(database, raw_collection)
       def initialize(database, raw_collection)
         @database = database
-        @name     = raw_collection['name']                   if raw_collection.has_key?('name')
-        @id       = raw_collection['id']                     if raw_collection.has_key?('id')
+        @name     = raw_collection['name']
+        @id       = raw_collection['id']
         @status   = Status.new raw_collection['status'].to_i if raw_collection.has_key?('status')
       end
 
