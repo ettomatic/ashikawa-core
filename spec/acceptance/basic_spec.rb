@@ -49,11 +49,16 @@ describe "Basics" do
 
     it "should be possible to get figures" do
       my_collection = subject["test_collection"]
-      my_collection.figure.datafiles_count.class.should == Fixnum
       my_collection.figure.alive_size.class.should == Fixnum
       my_collection.figure.alive_count.class.should == Fixnum
       my_collection.figure.dead_size.class.should == Fixnum
       my_collection.figure.dead_count.class.should == Fixnum
+      my_collection.figure.dead_deletion.class.should == Fixnum
+      my_collection.figure.datafiles_count.class.should == Fixnum
+      my_collection.figure.datafiles_file_size.class.should == Fixnum
+      my_collection.figure.journals_count.class.should == Fixnum
+      my_collection.figure.journals_file_size.class.should == Fixnum
+      my_collection.figure.shapes_count.class.should == Fixnum
     end
 
     it "should change and receive information about waiting for sync" do

@@ -10,8 +10,10 @@ module Ashikawa
       #   figure = Ashikawa::Core::Figure.new(raw_figure)
       def initialize(raw_figure)
         @datafiles = raw_figure["datafiles"]
-        @alive = raw_figure["alive"]
-        @dead = raw_figure["dead"]
+        @alive     = raw_figure["alive"]
+        @dead      = raw_figure["dead"]
+        @shapes    = raw_figure["shapes"]
+        @journals  = raw_figure["journals"]
       end
 
       # The number of active datafiles
@@ -23,6 +25,17 @@ module Ashikawa
       #   figure.datafiles_count #=> 1337
       def datafiles_count
         @datafiles["count"]
+      end
+
+      # The file size of datafiles
+      #
+      # @return Fixnum
+      # @api public
+      # @example Get the file size of datafiles
+      #   figure = Ashikawa::Core::Figure.new(raw_figure)
+      #   figure.datafile_size #=> 1337
+      def datafiles_file_size
+        @datafiles["fileSize"]
       end
 
       # The total size in bytes used by all living documents
@@ -67,6 +80,50 @@ module Ashikawa
       #   figure.dead_count #=> 1337
       def dead_count
         @dead["count"]
+      end
+
+      # The total number of shapes used in the collection
+      #
+      # @return Fixnum
+      # @api public
+      # @example Get the number of shapes
+      #   figure = Ashikawa::Core::Figure.new(raw_figure)
+      #   figure.shapes_count #=> 1337
+      def shapes_count
+        @shapes["count"]
+      end
+
+      # The number of deletion markers
+      #
+      # @return Fixnum
+      # @api public
+      # @example Get the number of deletion markers
+      #   figure = Ashikawa::Core::Figure.new(raw_figure)
+      #   figure.dead_deletion #=> 1337
+      def dead_deletion
+        @dead["deletion"]
+      end
+
+      # The number of journals
+      #
+      # @return Fixnum
+      # @api public
+      # @example Get the number of journals
+      #   figure = Ashikawa::Core::Figure.new(raw_figure)
+      #   figure.journal_count #=> 1337
+      def journals_count
+        @journals["count"]
+      end
+
+      # The file size of journals
+      #
+      # @return Fixnum
+      # @api public
+      # @example Get the file size of journals
+      #   figure = Ashikawa::Core::Figure.new(raw_figure)
+      #   figure.journal_size #=> 1337
+      def journals_file_size
+        @journals["fileSize"]
       end
     end
   end
