@@ -30,7 +30,7 @@ describe Ashikawa::Core::Collection do
 
   describe "attributes of a collection" do
     it "should check if the collection waits for sync" do
-      @database.stub(:send_request).with("/collection/60768679/properties", {}).and_return { server_response("/collections/60768679") }
+      @database.stub(:send_request).with("/collection/60768679/properties", {}).and_return { server_response("/collections/60768679-properties") }
       @database.should_receive(:send_request).with("/collection/60768679/properties", {})
 
       my_collection = subject.new @database, { "id" => "60768679" }
@@ -38,7 +38,7 @@ describe Ashikawa::Core::Collection do
     end
 
     it "should know how many documents the collection has" do
-      @database.stub(:send_request).with("/collection/60768679/count", {}).and_return { server_response("/collections/60768679-properties") }
+      @database.stub(:send_request).with("/collection/60768679/count", {}).and_return { server_response("/collections/60768679-count") }
       @database.should_receive(:send_request).with("/collection/60768679/count", {})
 
       my_collection = subject.new @database, { "id" => "60768679" }
@@ -105,7 +105,7 @@ describe Ashikawa::Core::Collection do
 
     describe "add and get single documents" do
       it "should receive a document by ID" do
-        @database.stub(:send_request).with("/document/60768679/333").and_return { server_response('documents/60768679-333') }
+        @database.stub(:send_request).with("/document/60768679/333").and_return { server_response('documents/example_1-137249191') }
         @database.should_receive(:send_request).with("/document/60768679/333")
 
         # Documents need to get initialized:
@@ -123,9 +123,9 @@ describe Ashikawa::Core::Collection do
 
       it "should create a new document" do
         @database.stub(:send_request).with("/document?collection=60768679", :post => { "name" => "The Dude" }).and_return do
-          server_response('documents/new-60768679-333')
+          server_response('documents/new-example_1-137249191')
         end
-        @database.stub(:send_request).with("/document/60768679/333", :post => { "name" => "The Dude" }).and_return { server_response('documents/60768679-333') }
+        @database.stub(:send_request).with("/document/60768679/333", :post => { "name" => "The Dude" }).and_return { server_response('documents/example_1-137249191') }
 
         # Documents need to get initialized:
         Ashikawa::Core::Document.should_receive(:new)
@@ -135,9 +135,9 @@ describe Ashikawa::Core::Collection do
 
       it "should create a new document with `<<`" do
         @database.stub(:send_request).with("/document?collection=60768679", :post => { "name" => "The Dude" }).and_return do
-          server_response('documents/new-60768679-333')
+          server_response('documents/example_1-137249191')
         end
-        @database.stub(:send_request).with("/document/60768679/333").and_return { server_response('documents/60768679-333') }
+        @database.stub(:send_request).with("/document/60768679/333").and_return { server_response('documents/example_1-137249191') }
 
         # Documents need to get initialized:
         Ashikawa::Core::Document.should_receive(:new)

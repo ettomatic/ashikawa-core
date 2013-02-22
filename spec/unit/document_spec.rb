@@ -6,6 +6,7 @@ describe Ashikawa::Core::Document do
   let(:raw_data) {
     {
       "_id" => "1234567/2345678",
+      "_key" => "2345678",
       "_rev" => "3456789",
       "first_name" => "The",
       "last_name" => "Dude"
@@ -21,7 +22,8 @@ describe Ashikawa::Core::Document do
 
   it "should initialize data with ID" do
     document = subject.new database, raw_data
-    document.id.should == 2345678
+    document.id.should == "1234567/2345678"
+    document.key.should == "2345678"
     document.revision.should == 3456789
   end
 

@@ -4,14 +4,23 @@ module Ashikawa
   module Core
     # A certain Document within a certain Collection
     class Document
-      # The ID of the document without the Collection prefix
+      # The ID of the document (this includes the Collection prefix)
       #
-      # @return [Int]
+      # @return [String]
       # @api public
       # @example Get the ID for a Document
       #   document = Ashikawa::Core::Document.new(database, raw_document)
-      #   document.id # => 2345678
+      #   document.id # => "my_fancy_collection/2345678"
       attr_reader :id
+
+      # The key of the document (No collection prefix)
+      #
+      # @return [String]
+      # @api public
+      # @example Get the key for a Document
+      #   document = Ashikawa::Core::Document.new(database, raw_document)
+      #   document.key # => "2345678"
+      attr_reader :key
 
       # The current revision of the document
       #
@@ -31,7 +40,8 @@ module Ashikawa
       #   document = Ashikawa::Core::Document.new(database, raw_document)
       def initialize(database, raw_document)
         @database = database
-        @collection_id, @id = raw_document['_id'].split('/').map { |id| id.to_i } unless raw_document['_id'].nil?
+        @id = raw_document['_id'] unless raw_document['_id'].nil?
+        @key = raw_document['_key'] unless raw_document['_key'].nil?
         @revision = raw_document['_rev'].to_i unless raw_document['_rev'].nil?
         @content = raw_document.delete_if { |key, value| key.start_with?("_") }
       end
@@ -69,7 +79,7 @@ module Ashikawa
       #   document.delete
       def delete
         check_if_persisted!
-        @database.send_request("document/#{@collection_id}/#{@id}", :delete => {})
+        @database.send_request("document/#{@id}", :delete => {})
       end
 
       # Update the value of an attribute (Does not write to database)
@@ -107,7 +117,7 @@ module Ashikawa
       #   document.save
       def save()
         check_if_persisted!
-        @database.send_request("document/#{@collection_id}/#{@id}", :put => @content)
+        @database.send_request("document/#{@id}", :put => @content)
       end
     end
   end

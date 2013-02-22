@@ -75,27 +75,25 @@ describe "Basics" do
     end
 
     it "should be possible to update the attributes of a document" do
-      pending "Updating to new ArangoDB version"
-
       collection = subject["documenttests"]
 
       document = collection.create :name => "The Dude", :bowling => true
-      document_id = document.id
+      document_key = document.key
       document["name"] = "Other Dude"
       document.save
 
-      collection[document_id]["name"].should == "Other Dude"
+      collection[document_key]["name"].should == "Other Dude"
     end
 
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
 
       document = collection.create :name => "The Dude", :bowling => true
-      document_id = document.id
-      collection[document_id]["name"].should == "The Dude"
+      document_key = document.key
+      collection[document_key]["name"].should == "The Dude"
 
-      collection[document_id] = { :name => "Other Dude", :bowling => true }
-      collection[document_id]["name"].should == "Other Dude"
+      collection[document_key] = { :name => "Other Dude", :bowling => true }
+      collection[document_key]["name"].should == "Other Dude"
     end
   end
 
@@ -103,24 +101,20 @@ describe "Basics" do
     let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
     let(:collection) { database["documenttests"] }
     subject { collection.create :name => "The Dude" }
-    let(:document_id) { subject.id }
+    let(:document_key) { subject.key }
 
     it "should be possible to manipulate documents and save them" do
-      pending "Updating to new ArangoDB version"
-
       subject["name"] = "Jeffrey Lebowski"
       subject["name"].should == "Jeffrey Lebowski"
-      collection[document_id]["name"].should == "The Dude"
+      collection[document_key]["name"].should == "The Dude"
       subject.save
-      collection[document_id]["name"].should == "Jeffrey Lebowski"
+      collection[document_key]["name"].should == "Jeffrey Lebowski"
     end
 
     it "should be possible to delete a document" do
-      pending "Updating to new ArangoDB version"
-
-      collection[document_id].delete
+      collection[document_key].delete
       expect {
-        collection[document_id]
+        collection[document_key]
       }.to raise_exception Ashikawa::Core::DocumentNotFoundException
     end
 

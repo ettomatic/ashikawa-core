@@ -57,19 +57,19 @@ describe Ashikawa::Core::Database do
     end
 
     it "should fetch a single collection if it exists" do
-      @connection.stub(:send_request) { |path| server_response("collections/4588") }
-      @connection.should_receive(:send_request).with("/collection/4588")
+      @connection.stub(:send_request) { |path| server_response("collections/60768679") }
+      @connection.should_receive(:send_request).with("/collection/60768679")
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/4588"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
 
-      subject[4588]
+      subject[60768679]
     end
 
     it "should create a single collection if it doesn't exist" do
       @connection.stub :send_request do |path, method|
         method ||= {}
         if method.has_key? :post
-          server_response("collections/4590")
+          server_response("collections/60768679")
         else
           raise Ashikawa::Core::CollectionNotFoundException
         end
@@ -77,7 +77,7 @@ describe Ashikawa::Core::Database do
       @connection.should_receive(:send_request).with("/collection/new_collection")
       @connection.should_receive(:send_request).with("/collection", :post => { :name => "new_collection"} )
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/4590"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
       subject['new_collection']
     end
