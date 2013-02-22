@@ -394,6 +394,17 @@ module Ashikawa
         Query.new(self)
       end
 
+      # Check if the collection is volatile
+      #
+      # @return [Boolean]
+      # @api public
+      # @example Is the people collection volatile?
+      #   people = database['people']
+      #   people.volatile? #=> false
+      def volatile?
+        get_information_from_server(:properties, :isVolatile)
+      end
+
       private
 
       # Send a put request with a given key and value to the server

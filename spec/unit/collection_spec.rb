@@ -45,6 +45,22 @@ describe Ashikawa::Core::Collection do
       my_collection.length.should == 54
     end
 
+    it "should know if the collection is volatile" do
+      @database.stub(:send_request).with("/collection/60768679/properties", {}).and_return { server_response("/collections/60768679-properties-volatile") }
+      @database.should_receive(:send_request).with("/collection/60768679/properties", {})
+
+      my_collection = subject.new(@database, { "id" => "60768679" })
+      my_collection.volatile?.should == true
+    end
+
+    it "should know if the collection is not volatile" do
+      @database.stub(:send_request).with("/collection/60768679/properties", {}).and_return { server_response("/collections/60768679-properties") }
+      @database.should_receive(:send_request).with("/collection/60768679/properties", {})
+
+      my_collection = subject.new(@database, { "id" => "60768679" })
+      my_collection.volatile?.should == false
+    end
+
     it "should check for the figures" do
       @database.stub(:send_request).with("/collection/60768679/figures", {}).and_return { server_response("/collections/60768679-figures") }
       @database.should_receive(:send_request).with("/collection/60768679/figures", {}).at_least(1).times

@@ -56,6 +56,26 @@ describe Ashikawa::Core::Database do
       subject.collections.length.should == 2
     end
 
+    it "should create a non volatile collection by default" do
+      @connection.stub(:send_request) { |path| server_response("collections/60768679") }
+      @connection.should_receive(:send_request).with("/collection",
+        :post => { :name => "volatile_collection"})
+
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
+
+      subject.create_collection("volatile_collection")
+    end
+
+    it "should create a volatile collection when asked" do
+      @connection.stub(:send_request) { |path| server_response("collections/60768679") }
+      @connection.should_receive(:send_request).with("/collection",
+        :post => { :name => "volatile_collection", :isVolatile => true})
+
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
+
+      subject.create_collection("volatile_collection", :is_volatile => true)
+    end
+
     it "should fetch a single collection if it exists" do
       @connection.stub(:send_request) { |path| server_response("collections/60768679") }
       @connection.should_receive(:send_request).with("/collection/60768679")

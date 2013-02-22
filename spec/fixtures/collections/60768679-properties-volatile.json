@@ -1,0 +1,12 @@
+{
+  "id": "60768679",
+  "name": "example_1",
+  "waitForSync": true,
+  "journalSize": 134217728,
+  "isVolatile": true,
+  "isSystem": false,
+  "status": 3,
+  "type": 2,
+  "error": false,
+  "code": 200
+}

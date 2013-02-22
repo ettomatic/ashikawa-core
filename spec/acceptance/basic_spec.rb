@@ -26,6 +26,16 @@ describe "Basics" do
       subject.collections.length.should == 2
     end
 
+    it "should create a non-volatile collection by default" do
+      subject.create_collection("nonvolatile_collection")
+      subject["nonvolatile_collection"].volatile?.should be_false
+    end
+
+    it "should create a volatile collection" do
+      subject.create_collection("volatile_collection", :is_volatile => true)
+      subject["volatile_collection"].volatile?.should be_true
+    end
+
     it "should be possible to change the name of a collection" do
       my_collection = subject["test_collection"]
       my_collection.name.should == "test_collection"

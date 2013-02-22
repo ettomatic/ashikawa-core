@@ -44,8 +44,24 @@ module Ashikawa
       #   database["b"]
       #   database.collections # => [ #<Collection name="a">, #<Collection name="b">]
       def collections
-        server_response = send_request("/collection")
-        server_response["collections"].map { |collection| Ashikawa::Core::Collection.new(self, collection) }
+        response = send_request("/collection")
+        response["collections"].map { |collection| Ashikawa::Core::Collection.new(self, collection) }
+      end
+
+      # Create a Collection based on name
+      #
+      # @param [String] collection_identifier The desired name of the collection
+      # @option opts [Boolean] :is_volatile Should the collection be volatile? Default is false
+      # @return [Collection]
+      # @api public
+      # @example Create a new, volatile collection
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
+      #   database.create_collection("a", :isVolatile => true) # => #<Collection name="a">
+      def create_collection(collection_identifier, opts={})
+        params = { :name => collection_identifier }
+        params[:isVolatile] = true if opts[:is_volatile] == true
+        response = send_request("/collection", :post => params)
+        Ashikawa::Core::Collection.new(self, response)
       end
 
       # Get or create a Collection based on name or ID
@@ -61,12 +77,12 @@ module Ashikawa
       #   database["7254820"] # => #<Collection id=7254820>
       def [](collection_identifier)
         begin
-          server_response = send_request("/collection/#{collection_identifier}")
+          response = send_request("/collection/#{collection_identifier}")
         rescue CollectionNotFoundException
-          server_response = send_request("/collection", :post => { :name => collection_identifier })
+          response = send_request("/collection", :post => { :name => collection_identifier })
         end
 
-        Ashikawa::Core::Collection.new(self, server_response)
+        Ashikawa::Core::Collection.new(self, response)
       end
 
       # Return a Query initialized with this database
