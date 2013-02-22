@@ -40,9 +40,9 @@ module Ashikawa
       #   document = Ashikawa::Core::Document.new(database, raw_document)
       def initialize(database, raw_document)
         @database = database
-        @id = raw_document['_id'] unless raw_document['_id'].nil?
-        @key = raw_document['_key'] unless raw_document['_key'].nil?
-        @revision = raw_document['_rev'] unless raw_document['_rev'].nil?
+        @id = raw_document['_id']
+        @key = raw_document['_key']
+        @revision = raw_document['_rev']
         @content = raw_document.delete_if { |key, value| key.start_with?("_") }
       end
 
