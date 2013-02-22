@@ -24,7 +24,7 @@ describe Ashikawa::Core::Document do
     document = subject.new database, raw_data
     document.id.should == "1234567/2345678"
     document.key.should == "2345678"
-    document.revision.should == 3456789
+    document.revision.should == "3456789"
   end
 
   it "should initialize data without ID" do

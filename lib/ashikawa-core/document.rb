@@ -24,7 +24,7 @@ module Ashikawa
 
       # The current revision of the document
       #
-      # @return [Int]
+      # @return [String]
       # @api public
       # @example Get the Revision for a Document
       #   document = Ashikawa::Core::Document.new(database, raw_document)
@@ -42,7 +42,7 @@ module Ashikawa
         @database = database
         @id = raw_document['_id'] unless raw_document['_id'].nil?
         @key = raw_document['_key'] unless raw_document['_key'].nil?
-        @revision = raw_document['_rev'].to_i unless raw_document['_rev'].nil?
+        @revision = raw_document['_rev'] unless raw_document['_rev'].nil?
         @content = raw_document.delete_if { |key, value| key.start_with?("_") }
       end
 
