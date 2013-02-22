@@ -110,7 +110,7 @@ module Ashikawa
         @database = database
         @name     = raw_collection['name']
         @id       = raw_collection['id']
-        @status   = Status.new raw_collection['status'].to_i if raw_collection.has_key?('status')
+        @status   = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
       end
 
       # Change the name of the collection
@@ -307,8 +307,8 @@ module Ashikawa
       # @example Fetch the document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        server_response = send_request("/document/#{@id}/#{document_id}")
-        Document.new(@database, server_response)
+        response = send_request("/document/#{@id}/#{document_id}")
+        Document.new(@database, response)
       end
 
       # Replace a document by its ID
@@ -331,8 +331,8 @@ module Ashikawa
       # @example Create a new document from raw data
       #   collection.create(raw_document)
       def create(raw_document)
-        server_response = send_request("/document?collection=#{@id}", :post => raw_document)
-        Document.new(@database, server_response)
+        response = send_request("/document?collection=#{@id}", :post => raw_document)
+        Document.new(@database, response)
       end
 
       alias :<< :create
@@ -376,9 +376,9 @@ module Ashikawa
       #   people = database['people']
       #   people.indices #=> [#<Index: id=1244...>, ...]
       def indices
-        server_response = send_request("/index?collection=#{@id}")
+        response = send_request("/index?collection=#{@id}")
 
-        server_response["indexes"].map do |raw_index|
+        response["indexes"].map do |raw_index|
           Index.new(self, raw_index)
         end
       end
@@ -423,8 +423,8 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def get_information_from_server(path, attribute)
-        server_response = send_request_for_this_collection("/#{path}")
-        server_response[attribute.to_s]
+        response = send_request_for_this_collection("/#{path}")
+        response[attribute.to_s]
       end
 
       # Send a request to the server with the name of the collection prepended

@@ -40,10 +40,10 @@ module Ashikawa
       #   document = Ashikawa::Core::Document.new(database, raw_document)
       def initialize(database, raw_document)
         @database = database
-        @id = raw_document['_id']
-        @key = raw_document['_key']
+        @id       = raw_document['_id']
+        @key      = raw_document['_key']
         @revision = raw_document['_rev']
-        @content = raw_document.delete_if { |key, value| key.start_with?("_") }
+        @content  = raw_document.delete_if { |key, value| key.start_with?("_") }
       end
 
       # Raises an exception if the document is not persisted
