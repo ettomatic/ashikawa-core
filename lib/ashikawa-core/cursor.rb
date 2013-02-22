@@ -8,11 +8,11 @@ module Ashikawa
       include Enumerable
 
       # The ID of the cursor
-      # @return [Int]
+      # @return [String]
       # @api public
       # @example Get the id of the cursor
       #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
-      #   cursor.id #=> 1337
+      #   cursor.id #=> "1337"
       attr_reader :id
 
       # The number of documents
@@ -71,7 +71,7 @@ module Ashikawa
       # @return self
       # @api private
       def parse_raw_cursor(raw_cursor)
-        @id       = raw_cursor['id'].to_i if raw_cursor.has_key?('id')
+        @id       = raw_cursor['id']
         @has_more = raw_cursor['hasMore']
         @length   = raw_cursor['count'].to_i if raw_cursor.has_key?('count')
         @current  = raw_cursor['result']

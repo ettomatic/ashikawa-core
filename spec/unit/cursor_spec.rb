@@ -11,7 +11,7 @@ describe Ashikawa::Core::Cursor do
 
   it "should create a cursor for a non-complete batch" do
     my_cursor = subject.new @database, server_response("/cursor/26011191")
-    my_cursor.id.should        == 26011191
+    my_cursor.id.should        == "26011191"
     my_cursor.length.should    == 5
   end
 
