@@ -162,7 +162,7 @@ describe Ashikawa::Core::Collection do
 
         it "should get an index by ID" do
           @database.stub(:send_request).with(
-            "/index/60768679/168054969"
+            "/index/example_1/168054969"
           ).and_return { server_response('indices/hash-index') }
 
           Ashikawa::Core::Index.should_receive(:new).with(subject,

@@ -364,7 +364,7 @@ module Ashikawa
       #   people = database['people']
       #   people.index(1244) #=> #<Index: id=1244...>
       def index(id)
-        server_response = send_request("/index/#{@id}/#{id}")
+        server_response = send_request("/index/#{@name}/#{id}")
         Index.new(self, server_response)
       end
 

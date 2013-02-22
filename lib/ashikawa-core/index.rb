@@ -3,6 +3,7 @@ module Ashikawa
     # An index on a certain collection
     class Index
       # The fields the index is defined on as symbols
+      #
       # @return [Array<Symbol>]
       # @api public
       # @example Get the fields the index is set on
@@ -11,6 +12,7 @@ module Ashikawa
       attr_reader :on
 
       # The type of index as a symbol
+      #
       # @return [Symbol]
       # @api public
       # @example Get the type of the index
@@ -19,6 +21,7 @@ module Ashikawa
       attr_reader :type
 
       # Is the unique constraint set?
+      #
       # @return [Boolean]
       # @api public
       # @example Get the fields the index is set on
@@ -26,8 +29,9 @@ module Ashikawa
       #   index.unique #=> false
       attr_reader :unique
 
-      # The id of the index
-      # @return [Int]
+      # The ID of the index (includes a Collection prefix)
+      #
+      # @return [String]
       # @api public
       # @example Get the id of this index
       #   index = Ashikawa::Core::Index.new(collection, raw_index)
@@ -44,10 +48,10 @@ module Ashikawa
       #   index = Ashikawa::Core::Index.new(collection, raw_index)
       def initialize(collection, raw_index)
         @collection = collection
-        @id = raw_index["id"].split("/")[1].to_i if raw_index.has_key?("id")
+        @id = raw_index["id"]
         @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key?("fields")
         @type = raw_index["type"].to_sym if raw_index.has_key?("type")
-        @unique = raw_index["unique"] if raw_index.has_key?("unique")
+        @unique = raw_index["unique"]
       end
 
       # Remove the index from the collection
@@ -58,7 +62,7 @@ module Ashikawa
       #   index = Ashikawa::Core::Index.new(collection, raw_index)
       #   index.delete
       def delete
-        @collection.send_request("index/#{@collection.id}/#{@id}", :delete => {})
+        @collection.send_request("index/#{@id}", :delete => {})
       end
     end
   end
