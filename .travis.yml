@@ -18,3 +18,5 @@ matrix:
     - rvm: ruby-head
     - rvm: jruby-head
 script: "bundle exec rake ci"
+notifications:
+  webhooks: https://www.buildheroes.com/api/projects/0f136ecd2207606cfacf9a968fe9fd0819398b63/builds
