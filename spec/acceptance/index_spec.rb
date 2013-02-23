@@ -22,6 +22,8 @@ describe "Indices" do
   end
 
   it "should be possible to remove indices" do
+    pending "See Bug #34"
+
     expect {
       index.delete
       sleep(1) # from time to time it may fail because of threading
