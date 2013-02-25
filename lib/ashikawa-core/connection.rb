@@ -1,5 +1,6 @@
 require "forwardable"
 require "faraday"
+require "faraday_middleware"
 require "json"
 require "uri"
 require "ashikawa-core/exceptions/index_not_found"
@@ -77,6 +78,7 @@ module Ashikawa
           connection.headers['Content-Type'] = 'application/json'
           connection.use Faraday::Response::RaiseError
           connection.use Faraday::Adapter::NetHttp
+          connection.response :json
         end
       end
 
@@ -92,14 +94,12 @@ module Ashikawa
       # @example post request
       #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       def send_request(path, params = {})
-        begin
-          raw = raw_result_for(path, params)
-        rescue Faraday::Error::ResourceNotFound
-          resource_not_found_for(path)
-        rescue Faraday::Error::ClientError
-          raise Ashikawa::Core::BadRequest
-        end
-        JSON.parse(raw.body)
+        raw = raw_result_for(path, params)
+        raw.body
+      rescue Faraday::Error::ResourceNotFound
+        resource_not_found_for(path)
+      rescue Faraday::Error::ClientError
+        raise Ashikawa::Core::BadRequest
       end
 
       # Checks if authentication for this Connection is active or not
