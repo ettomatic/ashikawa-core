@@ -98,6 +98,12 @@ UtilityFunction:
   max_helper_calls: 0
   exclude: []
   enabled: false
+NilCheck:
+  enabled: true
+  exclude:
+  - Ashikawa::Core::Document#check_if_persisted!
+  - Ashikawa::Core::Query#prepare_request_data
+  - Ashikawa::Core::Query#wrapped_request
 Attribute:
   exclude: []
   enabled: false
