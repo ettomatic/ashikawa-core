@@ -74,7 +74,7 @@ module Ashikawa
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string = "http://localhost:8529")
-        @connection = Faraday.new(api_string) do |connection|
+        @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :json
           connection.response :json
           connection.use Faraday::Response::RaiseError
@@ -85,21 +85,19 @@ module Ashikawa
       # Sends a request to a given path returning the parsed result
       # @note prepends the api_string automatically
       #
-      # @param [String] path the path you wish to send a request to.
-      # @option params [Hash] :post POST data in case you want to send a POST request.
-      # @return [Hash] parsed JSON response from the server
+      # @param [string] path the path you wish to send a request to.
+      # @option params [hash] :post post data in case you want to send a post request.
+      # @return [hash] parsed json response from the server
       # @api public
       # @example get request
       #   connection.send_request('/collection/new_collection')
       # @example post request
       #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       def send_request(path, params = {})
-        raw = raw_result_for(path, params)
-        raw.body
-      rescue Faraday::Error::ResourceNotFound
-        resource_not_found_for(path)
-      rescue Faraday::Error::ClientError
-        raise Ashikawa::Core::BadRequest
+        bubblewrap_request(path) do
+          raw = raw_result_for(path, params)
+          raw.body
+        end
       end
 
       # Checks if authentication for this Connection is active or not
@@ -161,6 +159,19 @@ module Ashikawa
         end
       end
 
+      # Executes the block and translates the exceptions
+      #
+      # @param [string] path the path you wish to send a request to.
+      # @return [Object] The response from the block
+      # @api private
+      def bubblewrap_request(path)
+        yield
+      rescue Faraday::Error::ResourceNotFound
+        resource_not_found_for(path)
+      rescue Faraday::Error::ClientError
+        raise Ashikawa::Core::BadRequest
+      end
+
       # Sends a request to a given path returning the raw result
       # @note prepends the api_string automatically
       #
@@ -173,14 +184,8 @@ module Ashikawa
       # @return [String] raw response from the server
       # @api private
       def raw_result_for(path, params = {})
-        path   = "/_api/#{path.gsub(/^\//, '')}"
         method = http_verb(params)
-
-        if [:post, :put].include?(method)
-          @connection.public_send(method, path, params[method])
-        else
-          @connection.public_send(method, path)
-        end
+        @connection.public_send(method, path, params[method])
       end
     end
   end
