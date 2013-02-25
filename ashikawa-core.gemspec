@@ -21,11 +21,7 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  # Runtime Dependencies
   gem.add_dependency "faraday", "~> 0.8.6"
   gem.add_dependency "faraday_middleware", "~> 0.9.0"
   gem.add_dependency "json", "~> 1.7.7"
-
-  # Development Dependencies
-  gem.add_development_dependency "webmock", "~> 1.9.3"
 end

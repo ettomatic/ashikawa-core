@@ -10,7 +10,6 @@ if defined? version and version != '1.8.7'
 end
 
 # For HTTP Testing
-require 'webmock/rspec'
 require 'json'
 
 # Helper to simulate Server Responses. Parses the fixtures in the spec folder

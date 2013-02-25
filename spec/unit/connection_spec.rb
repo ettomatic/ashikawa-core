@@ -2,10 +2,11 @@ require 'unit/spec_helper'
 require 'ashikawa-core/connection'
 
 describe Ashikawa::Core::Connection do
+  let(:address) { "http://localhost:8529" }
   subject { Ashikawa::Core::Connection }
 
   it "should have a scheme, hostname and port" do
-    connection = subject.new "http://localhost:8529"
+    connection = subject.new address
 
     connection.scheme.should == "http"
     connection.host.should == "localhost"
@@ -13,7 +14,7 @@ describe Ashikawa::Core::Connection do
   end
 
   it "should default to HTTP, localhost and ArangoDB port" do
-    connection = subject.new "http://localhost:8529"
+    connection = subject.new address
 
     connection.scheme.should == "http"
     connection.host.should == "localhost"
@@ -21,42 +22,53 @@ describe Ashikawa::Core::Connection do
   end
 
   describe "initialized connection" do
-    subject { Ashikawa::Core::Connection.new "http://localhost:8529" }
+    let(:request_stub) { Faraday::Adapter::Test::Stubs.new }
+    subject { Ashikawa::Core::Connection.new(address, [:test, request_stub]) }
 
     it "should send a get request" do
-      stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
+      request_stub.get("/_api/my/path") do
+        [200, {}, { "name" => "dude" }]
+      end
 
       subject.send_request "my/path"
 
-      WebMock.should have_requested(:get, "http://localhost:8529/_api/my/path")
+      request_stub.verify_stubbed_calls
     end
 
     it "should send a post request" do
-      stub_request(:post, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
+      request_stub.post("/_api/my/path") do |request|
+        request[:body].should == "{\"name\":\"new_collection\"}"
+        [200, {}, { "name" => "dude" }]
+      end
 
       subject.send_request "my/path", :post => { :name => 'new_collection' }
 
-      WebMock.should have_requested(:post, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
+      request_stub.verify_stubbed_calls
     end
 
     it "should send a put request" do
-      stub_request(:put, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
+      request_stub.put("/_api/my/path") do |request|
+        request[:body].should == '{"name":"new_collection"}'
+        [200, {}, { "name" => "dude" }]
+      end
 
       subject.send_request "my/path", :put => { :name => 'new_collection' }
 
-      WebMock.should have_requested(:put, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
+      request_stub.verify_stubbed_calls
     end
 
     it "should send a delete request" do
-      stub_request(:delete, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
+      request_stub.delete("/_api/my/path") do |request|
+        [200, {}, { "name" => "dude" }]
+      end
 
       subject.send_request "my/path", :delete => { }
 
-      WebMock.should have_requested(:delete, "http://localhost:8529/_api/my/path")
+      request_stub.verify_stubbed_calls
     end
 
     it "should throw its own exception when doing a bad request" do
-      stub_request(:get, "http://localhost:8529/_api/bad/request").to_return do
+      request_stub.get("/_api/bad/request") do
         raise Faraday::Error::ClientError.new(RuntimeError)
       end
 
@@ -64,88 +76,103 @@ describe Ashikawa::Core::Connection do
         subject.send_request("bad/request")
       end.to raise_error(Ashikawa::Core::BadRequest)
 
-      WebMock.should have_requested(:get, "http://localhost:8529/_api/bad/request")
+      request_stub.verify_stubbed_calls
     end
 
     it "should parse JSON" do
-      stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
+      request_stub.get("/_api/my/path") do
+        [200, {}, { "name" => "dude" }]
+      end
 
       subject.send_request("my/path").should == {"name" => "dude"}
-    end
-  end
-
-  describe "authentication" do
-    subject { Ashikawa::Core::Connection.new "http://localhost:8529" }
-
-    it "should authenticate with username and password" do
-      subject.authenticate_with :username => "testuser", :password => "testpassword"
-
-      subject.username.should == "testuser"
-      subject.password.should == "testpassword"
+      request_stub.verify_stubbed_calls
     end
 
-    it "should have authentication turned off by default" do
-      subject.authentication?.should be_false
-    end
+    describe "authentication" do
+      it "should authenticate with username and password" do
+        subject.authenticate_with :username => "testuser", :password => "testpassword"
 
-    it "should tell if authentication is enabled" do
-      subject.authenticate_with :username => "testuser", :password => "testpassword"
-      subject.authentication?.should be_true
-    end
-
-    it "should only accept a username & password pairs" do
-      expect {
-        subject.authenticate_with :username => "kitty"
-      }.to raise_error(ArgumentError)
-
-      expect {
-        subject.authenticate_with :password => "cheezburger?"
-      }.to raise_error(ArgumentError)
-    end
-
-    it "should allow chaining" do
-      subject.authenticate_with(:username => "a", :password => "b").should == subject
-    end
-
-    it "should send the authentication data with every GET request" do
-      stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
-
-      subject.authenticate_with :username => "user", :password => "pass"
-      subject.send_request "my/path"
-
-      WebMock.should have_requested(:get, "http://user:pass@localhost:8529/_api/my/path")
-    end
-  end
-
-  describe "exception handling" do
-    subject { Ashikawa::Core::Connection.new "http://localhost:8529"}
-
-    it "should raise an exception if a document is not found" do
-      stub_request(:get, "http://localhost:8529/_api/document/4590/333").to_return do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        subject.username.should == "testuser"
+        subject.password.should == "testpassword"
       end
-      expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
+
+      it "should have authentication turned off by default" do
+        subject.authentication?.should be_false
+      end
+
+      it "should tell if authentication is enabled" do
+        subject.authenticate_with :username => "testuser", :password => "testpassword"
+        subject.authentication?.should be_true
+      end
+
+      it "should only accept a username & password pairs" do
+        expect {
+          subject.authenticate_with :username => "kitty"
+        }.to raise_error(ArgumentError)
+
+        expect {
+          subject.authenticate_with :password => "cheezburger?"
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should allow chaining" do
+        subject.authenticate_with(:username => "a", :password => "b").should == subject
+      end
+
+      it "should send the authentication data with every GET request" do
+        pending "Find out how to check for basic auth via Faraday Stubs"
+
+        request_stub.get("/_api/my/path") do |request|
+          [200, {}, { "name" => "dude" }]
+        end
+
+        subject.authenticate_with :username => "user", :password => "pass"
+        subject.send_request "my/path"
+
+        request_stub.verify_stubbed_calls
+      end
     end
 
-    it "should raise an exception if a collection is not found" do
-      stub_request(:get, "http://localhost:8529/_api/collection/4590").to_return do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
-      end
-      expect { subject.send_request "collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
-    end
+    describe "exception handling" do
+      it "should raise an exception if a document is not found" do
+        request_stub.get("/_api/document/4590/333") do
+          raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        end
 
-    it "should raise an exception if an index is not found" do
-      stub_request(:get, "http://localhost:8529/_api/index/4590/333").to_return do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
-      end
-      expect { subject.send_request "index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
-    end
+        expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
 
-    it "should raise an exception for unknown pathes" do
-      stub_request(:get, "http://localhost:8529/_api/unknown_path/4590/333").to_return do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        request_stub.verify_stubbed_calls
       end
-      expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+
+      it "should raise an exception if a collection is not found" do
+        request_stub.get("/_api/collection/4590") do
+          raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        end
+
+        expect { subject.send_request "collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
+
+        request_stub.verify_stubbed_calls
+      end
+
+      it "should raise an exception if an index is not found" do
+        request_stub.get("/_api/index/4590/333") do
+          raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        end
+
+        expect { subject.send_request "index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
+
+        request_stub.verify_stubbed_calls
+      end
+
+      it "should raise an exception for unknown pathes" do
+        request_stub.get("/_api/unknown_path/4590/333") do
+          raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        end
+
+        expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+
+        request_stub.verify_stubbed_calls
+      end
     end
   end
 end

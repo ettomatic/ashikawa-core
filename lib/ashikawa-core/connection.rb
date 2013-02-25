@@ -78,7 +78,7 @@ module Ashikawa
           connection.request :json
           connection.response :json
           connection.use Faraday::Response::RaiseError
-          connection.adapter adapter
+          connection.adapter *adapter
         end
       end
 
