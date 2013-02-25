@@ -1,6 +1,7 @@
 # Remove some tasks defined by devtools to redefine them
 
 Rake::Task["spec"].clear
+Rake::Task["spec:integration"].clear
 Rake::Task["ci:metrics"].clear
 Rake::Task["ci"].clear
 
@@ -38,9 +39,9 @@ end
 # * On the CI, ArangoDB is already running so use the special acceptance task
 
 namespace :ci do
-  desc 'Run metrics'
+  desc 'Run all metrics except mutant'
   task :metrics => %w[ metrics:verify_measurements metrics:flog metrics:flay metrics:reek metrics:roodi ]
 end
 
-desc 'Run metrics with Mutant'
+desc 'Run all metrics and specs'
 task :ci => %w[ spec:unit spec:acceptance_with_running_arangodb ci:metrics ]
