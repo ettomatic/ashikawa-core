@@ -1,4 +1,4 @@
-require "rest-client"
+require "faraday"
 require "json"
 require "uri"
 require "ashikawa-core/exceptions/index_not_found"
@@ -87,48 +87,12 @@ module Ashikawa
       def send_request(path, params = {})
         begin
           raw = raw_result_for(path, params)
-        rescue RestClient::ResourceNotFound
+        rescue Faraday::Error::ResourceNotFound
           resource_not_found_for(path)
-        rescue RestClient::BadRequest
+        rescue Faraday::Error::ClientError
           raise Ashikawa::Core::BadRequest
         end
-        JSON.parse(raw)
-      end
-
-      # Raise the fitting ResourceNotFoundException
-      #
-      # @raise [DocumentNotFoundException, CollectionNotFoundException, IndexNotFoundException]
-      # @return nil
-      # @api private
-      def resource_not_found_for(path)
-        raise case path
-          when /\A\/?document/ then DocumentNotFoundException
-          when /\A\/?collection/ then CollectionNotFoundException
-          when /\A\/?index/ then IndexNotFoundException
-          else UnknownPath
-        end
-      end
-
-      # Sends a request to a given path returning the raw result
-      # @note prepends the api_string automatically
-      #
-      # @example get request
-      #   connection.raw_result_for('/collection/new_collection')
-      # @example post request
-      #   connection.raw_result_for('/collection/new_collection', :post => { :name => 'new_collection' })
-      # @param [String] path the path you wish to send a request to.
-      # @option params [Hash] :post POST data in case you want to send a POST request.
-      # @return [String] raw response from the server
-      # @api public
-      def raw_result_for(path, params = {})
-        path   = full_path(path)
-        method = http_verb(params)
-
-        if [:post, :put].include?(method)
-          RestClient.send(method, path, params[method].to_json)
-        else
-          RestClient.send(method, path)
-        end
+        JSON.parse(raw.body)
       end
 
       # Checks if authentication for this Connection is active or not
@@ -165,26 +129,21 @@ module Ashikawa
         self
       end
 
+      private
+
       # Return the full path for a given API path
       #
       # @param [String] path The API path
       # @return [String] Full path
-      # @api public
+      # @api private
       # @example Get the full path
       #   connection = Connection.new("http://localhost:8529")
       #   connection.full_path('documents') #=> "http://localhost:8529/_api/documents"
       #   connection.full_path('/documents') #=> "http://localhost:8529/_api/documents"
       def full_path(path)
-        prefix = if authentication?
-          "#{@scheme}://#{@username}:#{@password}@#{@host}:#{@port}"
-        else
-          "#{@scheme}://#{@host}:#{@port}"
-        end
-
+        prefix = "#{@scheme}://#{@host}:#{@port}"
         "#{prefix}/_api/#{path.gsub(/^\//, '')}"
       end
-
-      private
 
       # Return the HTTP Verb for the given parameters
       #
@@ -195,6 +154,49 @@ module Ashikawa
         [:post, :put, :delete].find { |method_name|
           params.has_key?(method_name)
         } || :get
+      end
+
+      # Raise the fitting ResourceNotFoundException
+      #
+      # @raise [DocumentNotFoundException, CollectionNotFoundException, IndexNotFoundException]
+      # @return nil
+      # @api private
+      def resource_not_found_for(path)
+        raise case path
+          when /\A\/?document/ then DocumentNotFoundException
+          when /\A\/?collection/ then CollectionNotFoundException
+          when /\A\/?index/ then IndexNotFoundException
+          else UnknownPath
+        end
+      end
+
+      # Sends a request to a given path returning the raw result
+      # @note prepends the api_string automatically
+      #
+      # @example get request
+      #   connection.raw_result_for('/collection/new_collection')
+      # @example post request
+      #   connection.raw_result_for('/collection/new_collection', :post => { :name => 'new_collection' })
+      # @param [String] path the path you wish to send a request to.
+      # @option params [Hash] :post POST data in case you want to send a POST request.
+      # @return [String] raw response from the server
+      # @api private
+      def raw_result_for(path, params = {})
+        path   = full_path(path)
+        method = http_verb(params)
+
+        connection = Faraday.new do |c|
+          c.headers['Content-Type'] = 'application/json'
+          c.use Faraday::Response::RaiseError
+          c.use Faraday::Adapter::NetHttp
+        end
+        connection.basic_auth(@username, @password) if authentication?
+
+        if [:post, :put].include?(method)
+          connection.send(method, path, params[method].to_json)
+        else
+          connection.send(method, path)
+        end
       end
     end
   end

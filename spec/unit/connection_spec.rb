@@ -57,7 +57,7 @@ describe Ashikawa::Core::Connection do
 
     it "should throw its own exception when doing a bad request" do
       stub_request(:get, "http://localhost:8529/_api/bad/request").to_return do
-        raise RestClient::BadRequest
+        raise Faraday::Error::ClientError.new(RuntimeError)
       end
 
       expect do
@@ -122,28 +122,28 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception if a document is not found" do
       stub_request(:get, "http://localhost:8529/_api/document/4590/333").to_return do
-        raise RestClient::ResourceNotFound
+        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
       expect { subject.send_request "/document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
     end
 
     it "should raise an exception if a collection is not found" do
       stub_request(:get, "http://localhost:8529/_api/collection/4590").to_return do
-        raise RestClient::ResourceNotFound
+        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
       expect { subject.send_request "/collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
     end
 
     it "should raise an exception if an index is not found" do
       stub_request(:get, "http://localhost:8529/_api/index/4590/333").to_return do
-        raise RestClient::ResourceNotFound
+        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
       expect { subject.send_request "/index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
     end
 
     it "should raise an exception for unknown pathes" do
       stub_request(:get, "http://localhost:8529/_api/unknown_path/4590/333").to_return do
-        raise RestClient::ResourceNotFound
+        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
       expect { subject.send_request "/unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
     end

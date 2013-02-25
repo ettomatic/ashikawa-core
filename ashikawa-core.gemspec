@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   # Runtime Dependencies
-  gem.add_dependency "rest-client", "~> 1.6.7"
+  gem.add_dependency "faraday", "~> 0.8.6"
   gem.add_dependency "json", "~> 1.7.7"
 
   # Development Dependencies
