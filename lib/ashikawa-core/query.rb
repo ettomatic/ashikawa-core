@@ -1,6 +1,7 @@
 require 'ashikawa-core/cursor'
 require 'ashikawa-core/document'
 require 'ashikawa-core/exceptions/no_collection_provided'
+require 'ashikawa-core/exceptions/bad_request'
 require 'forwardable'
 require 'backports'
 require 'rest-client'
@@ -163,8 +164,8 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.valid?("FOR u IN users LIMIT 2") # => true
       def valid?(query)
-          !!post_request("/query", { :query => query })
-      rescue RestClient::BadRequest
+        !!post_request("/query", { :query => query })
+      rescue Ashikawa::Core::BadRequest
         false
       end
 

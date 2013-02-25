@@ -55,6 +55,18 @@ describe Ashikawa::Core::Connection do
       WebMock.should have_requested(:delete, "http://localhost:8529/_api/my/path")
     end
 
+    it "should throw its own exception when doing a bad request" do
+      stub_request(:get, "http://localhost:8529/_api/bad/request").to_return do
+        raise RestClient::BadRequest
+      end
+
+      expect do
+        subject.send_request("/bad/request")
+      end.to raise_error(Ashikawa::Core::BadRequest)
+
+      WebMock.should have_requested(:get, "http://localhost:8529/_api/bad/request")
+    end
+
     it "should parse JSON" do
       stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 

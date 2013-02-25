@@ -5,6 +5,7 @@ require "ashikawa-core/exceptions/index_not_found"
 require "ashikawa-core/exceptions/document_not_found"
 require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/exceptions/unknown_path"
+require "ashikawa-core/exceptions/bad_request"
 
 module Ashikawa
   module Core
@@ -88,6 +89,8 @@ module Ashikawa
           raw = raw_result_for(path, params)
         rescue RestClient::ResourceNotFound
           resource_not_found_for(path)
+        rescue RestClient::BadRequest
+          raise Ashikawa::Core::BadRequest
         end
         JSON.parse(raw)
       end

@@ -154,7 +154,7 @@ describe Ashikawa::Core::Query do
         query = "FOR u IN users LIMIT 2"
 
         collection.stub(:send_request) do
-          raise RestClient::BadRequest
+          raise Ashikawa::Core::BadRequest
         end
         collection.should_receive(:send_request).with("/query", :post => {
           "query" => query
@@ -202,7 +202,7 @@ describe Ashikawa::Core::Query do
         query = "FOR u IN users LIMIT 2"
 
         database.stub(:send_request) do
-          raise RestClient::BadRequest
+          raise Ashikawa::Core::BadRequest
         end
         database.should_receive(:send_request).with("/query", :post => {
           "query" => query
