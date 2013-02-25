@@ -31,6 +31,7 @@ LongParameterList:
   overrides: {}
 FeatureEnvy:
   exclude:
+  - Ashikawa::Core::Connection#initialize
   - Ashikawa::Core::Connection#http_verb
   - Ashikawa::Core::Index#initialize
   - Ashikawa::Core::Query#allowed_options
@@ -60,6 +61,7 @@ LongMethod:
   max_statements: 4
   exclude:
   - Ashikawa::Core::Cursor#parse_raw_cursor
+  - Ashikawa::Core::Connection#authenticate_with
   enabled: true
 Duplication:
   allow_calls: []

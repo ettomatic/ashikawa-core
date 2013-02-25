@@ -1,3 +1,4 @@
+require "forwardable"
 require "faraday"
 require "json"
 require "uri"
@@ -11,32 +12,37 @@ module Ashikawa
   module Core
     # A Connection via HTTP to a certain host
     class Connection
+      extend Forwardable
+
       # The host part of the connection
       #
+      # @!method host
       # @return [String]
       # @api public
       # @example Get the host part of the connection
       #   connection = Connection.new("http://localhost:8529")
       #   connection.host # => "localhost"
-      attr_reader :host
+      def_delegator :@connection, :host
 
       # The scheme of the connection
       #
+      # @!method scheme
       # @return [String]
       # @api public
       # @example Get the scheme of the connection
       #   connection = Connection.new("http://localhost:8529")
       #   connection.scheme # => "http"
-      attr_reader :scheme
+      def_delegator :@connection, :scheme
 
       # The port of the connection
       #
+      # @!method port
       # @return [Fixnum]
       # @api public
       # @example Get the port of the connection
       #   connection = Connection.new("http://localhost:8529")
       #   connection.port # => 8529
-      attr_reader :port
+      def_delegator :@connection, :port
 
       # Username of the connection if using authentication
       # @note you can set these properties with the `authenticate_with` method
@@ -67,10 +73,11 @@ module Ashikawa
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string = "http://localhost:8529")
-        uri     = URI(api_string)
-        @host   = uri.host
-        @port   = uri.port
-        @scheme = uri.scheme
+        @connection = Faraday.new(api_string) do |connection|
+          connection.headers['Content-Type'] = 'application/json'
+          connection.use Faraday::Response::RaiseError
+          connection.use Faraday::Adapter::NetHttp
+        end
       end
 
       # Sends a request to a given path returning the parsed result
@@ -122,6 +129,7 @@ module Ashikawa
         if options.key? :username and options.key? :password
           @username = options[:username]
           @password = options[:password]
+          @connection.basic_auth(@username, @password)
         else
           raise ArgumentError, 'missing username or password'
         end
@@ -130,20 +138,6 @@ module Ashikawa
       end
 
       private
-
-      # Return the full path for a given API path
-      #
-      # @param [String] path The API path
-      # @return [String] Full path
-      # @api private
-      # @example Get the full path
-      #   connection = Connection.new("http://localhost:8529")
-      #   connection.full_path('documents') #=> "http://localhost:8529/_api/documents"
-      #   connection.full_path('/documents') #=> "http://localhost:8529/_api/documents"
-      def full_path(path)
-        prefix = "#{@scheme}://#{@host}:#{@port}"
-        "#{prefix}/_api/#{path.gsub(/^\//, '')}"
-      end
 
       # Return the HTTP Verb for the given parameters
       #
@@ -182,20 +176,13 @@ module Ashikawa
       # @return [String] raw response from the server
       # @api private
       def raw_result_for(path, params = {})
-        path   = full_path(path)
+        path   = "/_api/#{path.gsub(/^\//, '')}"
         method = http_verb(params)
 
-        connection = Faraday.new do |c|
-          c.headers['Content-Type'] = 'application/json'
-          c.use Faraday::Response::RaiseError
-          c.use Faraday::Adapter::NetHttp
-        end
-        connection.basic_auth(@username, @password) if authentication?
-
         if [:post, :put].include?(method)
-          connection.send(method, path, params[method].to_json)
+          @connection.send(method, path, params[method].to_json)
         else
-          connection.send(method, path)
+          @connection.send(method, path)
         end
       end
     end

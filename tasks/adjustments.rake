@@ -43,4 +43,4 @@ namespace :ci do
 end
 
 desc 'Run metrics with Mutant'
-task :ci => %w[ spec:unit spec:acceptance_with_running_arangodb ]
+task :ci => %w[ spec:unit spec:acceptance_with_running_arangodb ci:metrics ]
