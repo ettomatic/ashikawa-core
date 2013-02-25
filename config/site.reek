@@ -2,7 +2,7 @@
 UncommunicativeParameterName:
   accept: []
   exclude: []
-  enabled: false
+  enabled: true
   reject:
   - !ruby/regexp /^.$/
   - !ruby/regexp /[0-9]$/
@@ -30,8 +30,12 @@ LongParameterList:
   enabled: true
   overrides: {}
 FeatureEnvy:
-  exclude: []
-  enabled: false
+  exclude:
+  - Ashikawa::Core::Connection#http_verb
+  - Ashikawa::Core::Index#initialize
+  - Ashikawa::Core::Query#allowed_options
+  - Ashikawa::Core::Query#prepare_request_data
+  enabled: true
 ClassVariable:
   exclude: []
   enabled: true
@@ -48,26 +52,20 @@ UncommunicativeModuleName:
   reject: []
 NestedIterators:
   ignore_iterators: []
-  exclude: []
+  exclude:
+  - Ashikawa::Core::Query#prepare_request_data
   enabled: true
-  max_allowed_nesting: 2
+  max_allowed_nesting: 1
 LongMethod:
-  max_statements: 8
-  exclude: []
+  max_statements: 4
+  exclude:
+  - Ashikawa::Core::Cursor#parse_raw_cursor
   enabled: true
 Duplication:
   allow_calls: []
-  exclude:
-  - Ashikawa::Core::Document#initialize
+  exclude: []
   enabled: true
   max_calls: 1
-UtilityFunction:
-  max_helper_calls: 0
-  exclude: []
-  enabled: false
-Attribute:
-  exclude: []
-  enabled: false
 UncommunicativeVariableName:
   accept: []
   exclude: []
@@ -94,3 +92,10 @@ LongYieldList:
   max_params: 1
   exclude: []
   enabled: true
+UtilityFunction:
+  max_helper_calls: 0
+  exclude: []
+  enabled: false
+Attribute:
+  exclude: []
+  enabled: false

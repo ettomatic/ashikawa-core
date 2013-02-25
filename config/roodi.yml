@@ -1,4 +1,4 @@
-AbcMetricMethodCheck:            { score: 15.0 }
+AbcMetricMethodCheck:            { score: 10.0 }
 AssignmentInConditionalCheck:    { }
 CaseMissingElseCheck:            { }
 ClassLineCountCheck:             { line_count: 500 }
@@ -9,7 +9,7 @@ CyclomaticComplexityBlockCheck:  { complexity: 1 }
 CyclomaticComplexityMethodCheck: { complexity: 5 }
 EmptyRescueBodyCheck:            { }
 ForLoopCheck:                    { }
-MethodLineCountCheck:            { line_count: 10 }
+MethodLineCountCheck:            { line_count: 8 }
 MethodNameCheck:
   pattern: !ruby/regexp /^[_a-z<>=\[\]|+-\/\*`]+[_a-z0-9_<>=~@\[\]]*[=!\?]?$/
 ModuleLineCountCheck:            { line_count: 500 }

@@ -98,13 +98,10 @@ module Ashikawa
       # @return nil
       # @api private
       def resource_not_found_for(path)
-        path = path.split("/").delete_if { |part| part == "" }
-        resource = path.first
-
-        raise case resource
-          when "document" then DocumentNotFoundException
-          when "collection" then CollectionNotFoundException
-          when "index" then IndexNotFoundException
+        raise case path
+          when /\A\/?document/ then DocumentNotFoundException
+          when /\A\/?collection/ then CollectionNotFoundException
+          when /\A\/?index/ then IndexNotFoundException
           else UnknownPath
         end
       end
@@ -122,9 +119,7 @@ module Ashikawa
       # @api public
       def raw_result_for(path, params = {})
         path   = full_path(path)
-        method = [:post, :put, :delete].find { |method_name|
-          params.has_key?(method_name)
-        } || :get
+        method = http_verb(params)
 
         if [:post, :put].include?(method)
           RestClient.send(method, path, params[method].to_json)
@@ -184,6 +179,19 @@ module Ashikawa
         end
 
         "#{prefix}/_api/#{path.gsub(/^\//, '')}"
+      end
+
+      private
+
+      # Return the HTTP Verb for the given parameters
+      #
+      # @param [Hash] params The params given to the method
+      # @return [Symbol] The HTTP verb used
+      # @api private
+      def http_verb(params)
+        [:post, :put, :delete].find { |method_name|
+          params.has_key?(method_name)
+        } || :get
       end
     end
   end
