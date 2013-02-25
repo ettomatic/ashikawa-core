@@ -75,10 +75,10 @@ module Ashikawa
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string = "http://localhost:8529")
         @connection = Faraday.new(api_string) do |connection|
-          connection.headers['Content-Type'] = 'application/json'
+          connection.request :json
+          connection.response :json
           connection.use Faraday::Response::RaiseError
           connection.use Faraday::Adapter::NetHttp
-          connection.response :json
         end
       end
 
@@ -180,7 +180,7 @@ module Ashikawa
         method = http_verb(params)
 
         if [:post, :put].include?(method)
-          @connection.send(method, path, params[method].to_json)
+          @connection.send(method, path, params[method])
         else
           @connection.send(method, path)
         end
