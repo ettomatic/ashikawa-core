@@ -44,7 +44,7 @@ module Ashikawa
       #   database["b"]
       #   database.collections # => [ #<Collection name="a">, #<Collection name="b">]
       def collections
-        response = send_request("/collection")
+        response = send_request("collection")
         response["collections"].map { |collection| Ashikawa::Core::Collection.new(self, collection) }
       end
 
@@ -60,7 +60,7 @@ module Ashikawa
       def create_collection(collection_identifier, opts={})
         params = { :name => collection_identifier }
         params[:isVolatile] = true if opts[:is_volatile] == true
-        response = send_request("/collection", :post => params)
+        response = send_request("collection", :post => params)
         Ashikawa::Core::Collection.new(self, response)
       end
 
@@ -77,9 +77,9 @@ module Ashikawa
       #   database["7254820"] # => #<Collection id=7254820>
       def [](collection_identifier)
         begin
-          response = send_request("/collection/#{collection_identifier}")
+          response = send_request("collection/#{collection_identifier}")
         rescue CollectionNotFoundException
-          response = send_request("/collection", :post => { :name => collection_identifier })
+          response = send_request("collection", :post => { :name => collection_identifier })
         end
 
         Ashikawa::Core::Collection.new(self, response)

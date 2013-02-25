@@ -10,31 +10,31 @@ describe Ashikawa::Core::Cursor do
   end
 
   it "should create a cursor for a non-complete batch" do
-    my_cursor = subject.new @database, server_response("/cursor/26011191")
+    my_cursor = subject.new @database, server_response("cursor/26011191")
     my_cursor.id.should        == "26011191"
     my_cursor.length.should    == 5
   end
 
   it "should create a cursor for the last batch" do
-    my_cursor = subject.new @database, server_response("/cursor/26011191-3")
+    my_cursor = subject.new @database, server_response("cursor/26011191-3")
     my_cursor.id.should be_nil
     my_cursor.length.should == 5
   end
 
   describe "existing cursor" do
     subject { Ashikawa::Core::Cursor.new @database,
-      server_response("/cursor/26011191")
+      server_response("cursor/26011191")
     }
 
     it "should iterate over all documents of a cursor" do
       first = true
 
-      @database.stub(:send_request).with("/cursor/26011191", :put => {}) do
+      @database.stub(:send_request).with("cursor/26011191", :put => {}) do
         if first
           first = false
-          server_response("/cursor/26011191-2")
+          server_response("cursor/26011191-2")
         else
-          server_response("/cursor/26011191-3")
+          server_response("cursor/26011191-3")
         end
       end
       @database.should_receive(:send_request).twice
@@ -47,7 +47,7 @@ describe Ashikawa::Core::Cursor do
 
     it "should be deletable" do
       @database.stub(:send_request)
-      @database.should_receive(:send_request).with("/cursor/26011191",
+      @database.should_receive(:send_request).with("cursor/26011191",
         :delete => {})
 
       subject.delete
@@ -56,12 +56,12 @@ describe Ashikawa::Core::Cursor do
     it "should be enumerable" do
       first = true
 
-      @database.stub(:send_request).with("/cursor/26011191", :put => {}) do
+      @database.stub(:send_request).with("cursor/26011191", :put => {}) do
         if first
           first = false
-          server_response("/cursor/26011191-2")
+          server_response("cursor/26011191-2")
         else
-          server_response("/cursor/26011191-3")
+          server_response("cursor/26011191-3")
         end
       end
       @database.should_receive(:send_request).twice

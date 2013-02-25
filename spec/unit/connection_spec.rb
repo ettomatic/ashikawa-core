@@ -26,7 +26,7 @@ describe Ashikawa::Core::Connection do
     it "should send a get request" do
       stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path"
+      subject.send_request "my/path"
 
       WebMock.should have_requested(:get, "http://localhost:8529/_api/my/path")
     end
@@ -34,7 +34,7 @@ describe Ashikawa::Core::Connection do
     it "should send a post request" do
       stub_request(:post, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", :post => { :name => 'new_collection' }
+      subject.send_request "my/path", :post => { :name => 'new_collection' }
 
       WebMock.should have_requested(:post, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
     end
@@ -42,7 +42,7 @@ describe Ashikawa::Core::Connection do
     it "should send a put request" do
       stub_request(:put, "http://localhost:8529/_api/my/path").with(:body => '{"name":"new_collection"}').to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", :put => { :name => 'new_collection' }
+      subject.send_request "my/path", :put => { :name => 'new_collection' }
 
       WebMock.should have_requested(:put, "http://localhost:8529/_api/my/path").with :body => '{"name":"new_collection"}'
     end
@@ -50,7 +50,7 @@ describe Ashikawa::Core::Connection do
     it "should send a delete request" do
       stub_request(:delete, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
-      subject.send_request "/my/path", :delete => { }
+      subject.send_request "my/path", :delete => { }
 
       WebMock.should have_requested(:delete, "http://localhost:8529/_api/my/path")
     end
@@ -61,7 +61,7 @@ describe Ashikawa::Core::Connection do
       end
 
       expect do
-        subject.send_request("/bad/request")
+        subject.send_request("bad/request")
       end.to raise_error(Ashikawa::Core::BadRequest)
 
       WebMock.should have_requested(:get, "http://localhost:8529/_api/bad/request")
@@ -70,7 +70,7 @@ describe Ashikawa::Core::Connection do
     it "should parse JSON" do
       stub_request(:get, "http://localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
-      subject.send_request("/my/path").should == {"name" => "dude"}
+      subject.send_request("my/path").should == {"name" => "dude"}
     end
   end
 
@@ -111,7 +111,7 @@ describe Ashikawa::Core::Connection do
       stub_request(:get, "http://user:pass@localhost:8529/_api/my/path").to_return :body => '{ "name": "dude" }'
 
       subject.authenticate_with :username => "user", :password => "pass"
-      subject.send_request "/my/path"
+      subject.send_request "my/path"
 
       WebMock.should have_requested(:get, "http://user:pass@localhost:8529/_api/my/path")
     end
@@ -124,28 +124,28 @@ describe Ashikawa::Core::Connection do
       stub_request(:get, "http://localhost:8529/_api/document/4590/333").to_return do
         raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
-      expect { subject.send_request "/document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
+      expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
     end
 
     it "should raise an exception if a collection is not found" do
       stub_request(:get, "http://localhost:8529/_api/collection/4590").to_return do
         raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
-      expect { subject.send_request "/collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
+      expect { subject.send_request "collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
     end
 
     it "should raise an exception if an index is not found" do
       stub_request(:get, "http://localhost:8529/_api/index/4590/333").to_return do
         raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
-      expect { subject.send_request "/index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
+      expect { subject.send_request "index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
     end
 
     it "should raise an exception for unknown pathes" do
       stub_request(:get, "http://localhost:8529/_api/unknown_path/4590/333").to_return do
         raise Faraday::Error::ResourceNotFound.new(RuntimeError)
       end
-      expect { subject.send_request "/unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+      expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
     end
   end
 end

@@ -307,7 +307,7 @@ module Ashikawa
       # @example Fetch the document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        response = send_request("/document/#{@id}/#{document_id}")
+        response = send_request("document/#{@id}/#{document_id}")
         Document.new(@database, response)
       end
 
@@ -320,7 +320,7 @@ module Ashikawa
       # @example Replace the document with the ID 12345
       #   collection[12345] = document
       def []=(document_id, raw_document)
-        send_request("/document/#{@id}/#{document_id}", :put => raw_document)
+        send_request("document/#{@id}/#{document_id}", :put => raw_document)
       end
 
       # Create a new document from raw data
@@ -331,7 +331,7 @@ module Ashikawa
       # @example Create a new document from raw data
       #   collection.create(raw_document)
       def create(raw_document)
-        response = send_request("/document?collection=#{@id}", :post => raw_document)
+        response = send_request("document?collection=#{@id}", :post => raw_document)
         Document.new(@database, response)
       end
 
@@ -347,7 +347,7 @@ module Ashikawa
       #   people = database['people']
       #   people.add_index(:hash, :on => [:name, :profession])
       def add_index(type, opts)
-        response = send_request("/index?collection=#{@id}", :post => {
+        response = send_request("index?collection=#{@id}", :post => {
           "type" => type.to_s,
           "fields" => opts[:on].map { |field| field.to_s }
         })
@@ -364,7 +364,7 @@ module Ashikawa
       #   people = database['people']
       #   people.index(1244) #=> #<Index: id=1244...>
       def index(id)
-        server_response = send_request("/index/#{@name}/#{id}")
+        server_response = send_request("index/#{@name}/#{id}")
         Index.new(self, server_response)
       end
 
@@ -376,7 +376,7 @@ module Ashikawa
       #   people = database['people']
       #   people.indices #=> [#<Index: id=1244...>, ...]
       def indices
-        response = send_request("/index?collection=#{@id}")
+        response = send_request("index?collection=#{@id}")
 
         response["indexes"].map do |raw_index|
           Index.new(self, raw_index)
@@ -415,7 +415,7 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def send_information_to_server(path, key, value)
-        send_request_for_this_collection("/#{path}", :put => { key.to_s => value })
+        send_request_for_this_collection("#{path}", :put => { key.to_s => value })
       end
 
       # Send a put request with the given command
@@ -424,7 +424,7 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def send_command_to_server(command)
-        send_request_for_this_collection("/#{command}", :put => {})
+        send_request_for_this_collection("#{command}", :put => {})
       end
 
       # Send a get request to the server and return a certain attribute
@@ -434,7 +434,7 @@ module Ashikawa
       # @return [Object] The result
       # @api private
       def get_information_from_server(path, attribute)
-        response = send_request_for_this_collection("/#{path}")
+        response = send_request_for_this_collection("#{path}")
         response[attribute.to_s]
       end
 
@@ -443,7 +443,7 @@ module Ashikawa
       # @return [String] Response from the server
       # @api private
       def send_request_for_this_collection(path, method={})
-        send_request("/collection/#{id}#{path}", method)
+        send_request("collection/#{id}/#{path}", method)
       end
     end
   end

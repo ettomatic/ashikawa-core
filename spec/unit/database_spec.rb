@@ -48,39 +48,39 @@ describe Ashikawa::Core::Database do
 
     it "should fetch all available collections" do
       @connection.stub(:send_request) {|path| server_response("collections/all") }
-      @connection.should_receive(:send_request).with("/collection")
+      @connection.should_receive(:send_request).with("collection")
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/all")["collections"][0])
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/all")["collections"][1])
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/all")["collections"][0])
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/all")["collections"][1])
 
       subject.collections.length.should == 2
     end
 
     it "should create a non volatile collection by default" do
       @connection.stub(:send_request) { |path| server_response("collections/60768679") }
-      @connection.should_receive(:send_request).with("/collection",
+      @connection.should_receive(:send_request).with("collection",
         :post => { :name => "volatile_collection"})
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
       subject.create_collection("volatile_collection")
     end
 
     it "should create a volatile collection when asked" do
       @connection.stub(:send_request) { |path| server_response("collections/60768679") }
-      @connection.should_receive(:send_request).with("/collection",
+      @connection.should_receive(:send_request).with("collection",
         :post => { :name => "volatile_collection", :isVolatile => true})
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
       subject.create_collection("volatile_collection", :is_volatile => true)
     end
 
     it "should fetch a single collection if it exists" do
       @connection.stub(:send_request) { |path| server_response("collections/60768679") }
-      @connection.should_receive(:send_request).with("/collection/60768679")
+      @connection.should_receive(:send_request).with("collection/60768679")
 
-      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("/collections/60768679"))
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
       subject[60768679]
     end
@@ -94,8 +94,8 @@ describe Ashikawa::Core::Database do
           raise Ashikawa::Core::CollectionNotFoundException
         end
       end
-      @connection.should_receive(:send_request).with("/collection/new_collection")
-      @connection.should_receive(:send_request).with("/collection", :post => { :name => "new_collection"} )
+      @connection.should_receive(:send_request).with("collection/new_collection")
+      @connection.should_receive(:send_request).with("collection", :post => { :name => "new_collection"} )
 
       Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
@@ -103,9 +103,9 @@ describe Ashikawa::Core::Database do
     end
 
     it "should send a request via the connection object" do
-      @connection.should_receive(:send_request).with("/my/path", :post => { :data => "mydata" })
+      @connection.should_receive(:send_request).with("my/path", :post => { :data => "mydata" })
 
-      subject.send_request "/my/path", :post => { :data => "mydata" }
+      subject.send_request "my/path", :post => { :data => "mydata" }
     end
   end
 end

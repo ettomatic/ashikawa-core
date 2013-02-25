@@ -38,7 +38,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.all # => #<Cursor id=33>
       def all(options={})
-        simple_query_request("/simple/all",
+        simple_query_request("simple/all",
           options,
           [:limit, :skip])
       end
@@ -56,7 +56,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.by_example({ "color" => "red" }, :options => { :limit => 1 }) #=> #<Cursor id=2444>
       def by_example(example={}, options={})
-        simple_query_request("/simple/by-example",
+        simple_query_request("simple/by-example",
           { :example => example }.merge(options),
           [:limit, :skip, :example])
       end
@@ -71,7 +71,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.first_example({ "color" => "red"}) # => #<Document id=2444 color="red">
       def first_example(example = {})
-        response = simple_query_request("/simple/first-example",
+        response = simple_query_request("simple/first-example",
           { :example => example },
           [:example])
         response.first
@@ -92,7 +92,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.near(:latitude => 37.331693, :longitude => -122.030468)
       def near(options={})
-        simple_query_request("/simple/near",
+        simple_query_request("simple/near",
           options,
           [:latitude, :longitude, :distance, :skip, :limit, :geo])
       end
@@ -113,7 +113,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.within(:latitude => 37.331693, :longitude => -122.030468, :radius => 100)
       def within(options={})
-        simple_query_request("/simple/within",
+        simple_query_request("simple/within",
           options,
           [:latitude, :longitude, :radius, :distance, :skip, :limit, :geo])
       end
@@ -133,7 +133,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.within(:latitude => 37.331693, :longitude => -122.030468, :radius => 100)
       def in_range(options={})
-        simple_query_request("/simple/range",
+        simple_query_request("simple/range",
           options,
           [:attribute, :left, :right, :closed, :limit, :skip])
       end
@@ -149,7 +149,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.execute("FOR u IN users LIMIT 2") # => #<Cursor id=33>
       def execute(query, options = {})
-        post_request("/cursor",
+        post_request("cursor",
           options.merge({ :query => query }),
           [:query, :count, :batch_size])
       end
@@ -163,7 +163,7 @@ module Ashikawa
       #   query = Ashikawa::Core::Query.new(collection)
       #   query.valid?("FOR u IN users LIMIT 2") # => true
       def valid?(query)
-        !!post_request("/query", { :query => query })
+        !!post_request("query", { :query => query })
       rescue Ashikawa::Core::BadRequest
         false
       end

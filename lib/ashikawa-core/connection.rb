@@ -126,13 +126,10 @@ module Ashikawa
       #   connection = Connection.new("http://localhost:8529")
       #   connection.authenticate_with(:username => 'james', :password => 'bond')
       def authenticate_with(options = {})
-        if options.key? :username and options.key? :password
-          @username = options[:username]
-          @password = options[:password]
-          @connection.basic_auth(@username, @password)
-        else
-          raise ArgumentError, 'missing username or password'
-        end
+        raise ArgumentError, 'missing username or password' unless options.key? :username and options.key? :password
+        @username = options[:username]
+        @password = options[:password]
+        @connection.basic_auth(@username, @password)
 
         self
       end
@@ -180,9 +177,9 @@ module Ashikawa
         method = http_verb(params)
 
         if [:post, :put].include?(method)
-          @connection.send(method, path, params[method])
+          @connection.public_send(method, path, params[method])
         else
-          @connection.send(method, path)
+          @connection.public_send(method, path)
         end
       end
     end
