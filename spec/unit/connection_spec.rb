@@ -13,7 +13,7 @@ describe Ashikawa::Core::Connection do
   end
 
   it "should default to HTTP, localhost and ArangoDB port" do
-    connection = subject.new
+    connection = subject.new "http://localhost:8529"
 
     connection.scheme.should == "http"
     connection.host.should == "localhost"
@@ -75,7 +75,7 @@ describe Ashikawa::Core::Connection do
   end
 
   describe "authentication" do
-    subject { Ashikawa::Core::Connection.new }
+    subject { Ashikawa::Core::Connection.new "http://localhost:8529" }
 
     it "should authenticate with username and password" do
       subject.authenticate_with :username => "testuser", :password => "testpassword"
@@ -118,7 +118,7 @@ describe Ashikawa::Core::Connection do
   end
 
   describe "exception handling" do
-    subject { Ashikawa::Core::Connection.new }
+    subject { Ashikawa::Core::Connection.new "http://localhost:8529"}
 
     it "should raise an exception if a document is not found" do
       stub_request(:get, "http://localhost:8529/_api/document/4590/333").to_return do

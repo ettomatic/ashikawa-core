@@ -73,7 +73,7 @@ module Ashikawa
       # @api public
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
-      def initialize(api_string = "http://localhost:8529")
+      def initialize(api_string)
         @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :json
           connection.response :json
