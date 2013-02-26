@@ -328,7 +328,7 @@ module Ashikawa
       # @example Fetch the document with the ID 12345
       #   document = collection[12345]
       def [](document_id)
-        response = send_request("document/#{@id}/#{document_id}")
+        response = send_request_for_content_id(document_id)
         Document.new(@database, response)
       end
 
@@ -341,7 +341,7 @@ module Ashikawa
       # @example Replace the document with the ID 12345
       #   collection[12345] = document
       def []=(document_id, raw_document)
-        send_request("document/#{@id}/#{document_id}", :put => raw_document)
+        send_request_for_content_id(document_id, :put => raw_document)
       end
 
       # Create a new document from raw data
@@ -352,7 +352,7 @@ module Ashikawa
       # @example Create a new document from raw data
       #   collection.create(raw_document)
       def create(raw_document)
-        response = send_request("document?collection=#{@id}", :post => raw_document)
+        response = send_request_for_content(:post => raw_document)
         Document.new(@database, response)
       end
 
@@ -478,6 +478,25 @@ module Ashikawa
         @content_type = CONTENT_TYPES[raw_collection['type']]
         @status       = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
         self
+      end
+
+      # Send a request for the content with the given id
+      #
+      # @param [Integer] document_id The id of the document
+      # @param [Hash] opts The options for the request
+      # @return [Hash] parsed JSON response from the server
+      # @api private
+      def send_request_for_content_id(document_id, opts = {})
+        send_request("document/#{@id}/#{document_id}", opts)
+      end
+
+      # Send a request for the content of this collection
+      #
+      # @param [Hash] opts The options for the request
+      # @return [Hash] parsed JSON response from the server
+      # @api private
+      def send_request_for_content(opts = {})
+        send_request("document?collection=#{@id}", opts)
       end
     end
   end

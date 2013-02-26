@@ -131,8 +131,8 @@ describe Ashikawa::Core::Collection do
 
     describe "add and get single documents" do
       it "should receive a document by ID" do
-        @database.stub(:send_request).with("document/60768679/333").and_return { server_response('documents/example_1-137249191') }
-        @database.should_receive(:send_request).with("document/60768679/333")
+        @database.stub(:send_request).with("document/60768679/333", {}).and_return { server_response('documents/example_1-137249191') }
+        @database.should_receive(:send_request).with("document/60768679/333", {})
 
         # Documents need to get initialized:
         Ashikawa::Core::Document.should_receive(:new)
