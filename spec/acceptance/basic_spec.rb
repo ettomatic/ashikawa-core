@@ -97,7 +97,7 @@ describe "Basics" do
     it "should be possible to update the attributes of a document" do
       collection = subject["documenttests"]
 
-      document = collection.create :name => "The Dude", :bowling => true
+      document = collection.create_document(:name => "The Dude", :bowling => true)
       document_key = document.key
       document["name"] = "Other Dude"
       document.save
@@ -108,7 +108,7 @@ describe "Basics" do
     it "should be possible to access and create documents from a collection" do
       collection = subject["documenttests"]
 
-      document = collection.create :name => "The Dude", :bowling => true
+      document = collection.create_document(:name => "The Dude", :bowling => true)
       document_key = document.key
       collection[document_key]["name"].should == "The Dude"
 
@@ -120,8 +120,8 @@ describe "Basics" do
       nodes = subject.create_collection("nodecollection")
       edges = subject.create_collection("edgecollection", :content_type => :edge)
 
-      a = nodes.create({:name => "a"})
-      b = nodes.create({:name => "b"})
+      a = nodes.create_document({:name => "a"})
+      b = nodes.create_document({:name => "b"})
       e = edges.create_edge(a, b, {:name => "fance_edge"})
 
       e = edges[e.key]
@@ -133,7 +133,7 @@ describe "Basics" do
   describe "created document" do
     let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
     let(:collection) { database["documenttests"] }
-    subject { collection.create :name => "The Dude" }
+    subject { collection.create_document(:name => "The Dude") }
     let(:document_key) { subject.key }
 
     it "should be possible to manipulate documents and save them" do

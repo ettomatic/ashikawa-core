@@ -351,20 +351,20 @@ module Ashikawa
         send_request_for_content_id(document_id, :put => raw_document)
       end
 
-      # Create a new document from raw data
+      # Create a new document with given attributes
       #
-      # @param [Hash] raw_document
+      # @param [Hash] attributes
       # @return [Document] The created document
       # @api public
       # @example Create a new document from raw data
-      #   collection.create(raw_document)
-      def create(raw_document)
+      #   collection.create_document(attributes)
+      def create_document(attributes)
         raise "Can't create a document in an edge collection" if @content_type == :edge
-        response = send_request_for_content(:post => raw_document)
+        response = send_request_for_content(:post => attributes)
         Document.new(@database, response)
       end
 
-      alias :<< :create
+      alias :<< :create_document
 
       # Create a new edge between two documents with certain attributes
       #

@@ -156,7 +156,7 @@ describe Ashikawa::Core::Collection do
         # Documents need to get initialized:
         Ashikawa::Core::Document.should_receive(:new)
 
-        subject.create({"name" => "The Dude"})
+        subject.create_document({"name" => "The Dude"})
       end
 
       it "should create a new document with `<<`" do
@@ -255,7 +255,7 @@ describe Ashikawa::Core::Collection do
 
     it "should not create a new document" do
       expect {
-        subject.create({"quote" => "D'ya have to use s'many cuss words?"})
+        subject.create_document({"quote" => "D'ya have to use s'many cuss words?"})
       }.to raise_exception(RuntimeError, "Can't create a document in an edge collection")
     end
   end
