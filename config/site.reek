@@ -31,6 +31,7 @@ LongParameterList:
   overrides: {}
 FeatureEnvy:
   exclude:
+  - Ashikawa::Core::RequestPreprocessor#call
   - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Connection#http_verb
   - Ashikawa::Core::Connection#initialize

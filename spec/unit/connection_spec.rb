@@ -169,14 +169,16 @@ describe Ashikawa::Core::Connection do
     }
 
     it "should log a get request" do
-      request_stub.get("/_api/test") { [200, {}, {}] }
+      request_stub.get("/_api/test") { [200, {}, {:a => 1}] }
       logger.should_receive(:info).with("GET #{ARANGO_HOST}/_api/test ")
+      logger.should_receive(:info).with("200 {:a=>1}")
       subject.send_request("test")
     end
 
     it "should log a post request" do
-      request_stub.post("/_api/test") { [200, {}, {}] }
-      logger.should_receive(:info).with("POST #{ARANGO_HOST}/_api/test {\"a\":2}")
+      request_stub.post("/_api/test") { [201, {}, {:b => 2}] }
+      logger.should_receive(:info).with("POST #{ARANGO_HOST}/_api/test {:a=>2}")
+      logger.should_receive(:info).with("201 {:b=>2}")
       subject.send_request("test", post: { :a => 2})
     end
   end

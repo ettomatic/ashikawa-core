@@ -10,6 +10,7 @@ require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/exceptions/unknown_path"
 require "ashikawa-core/exceptions/bad_request"
 require "ashikawa-core/request_preprocessor"
+require "ashikawa-core/response_preprocessor"
 
 module Ashikawa
   module Core
@@ -80,7 +81,8 @@ module Ashikawa
       def initialize(api_string, opts = {})
         logger = opts[:logger] || NullLogger.instance
         @connection = Faraday.new("#{api_string}/_api") do |connection|
-          connection.request :ashikawa, logger
+          connection.request :ashikawa_request, logger
+          connection.response :ashikawa_response, logger
           connection.response :json
           connection.use Faraday::Response::RaiseError
           connection.adapter *opts[:adapter] || Faraday.default_adapter

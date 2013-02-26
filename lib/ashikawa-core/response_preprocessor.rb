@@ -3,46 +3,44 @@ require "faraday"
 module Ashikawa
   module Core
     # Preprocessor for Faraday Requests
-    class RequestPreprocessor < Faraday::Middleware
-      # Create a new Request Preprocessor
+    class ResponsePreprocessor < Faraday::Middleware
+      # Create a new Response Preprocessor
       #
       # @param [Object] app Faraday internal
       # @param [Object] logger The object you want to log to
-      # @return [RequestPreprocessor]
+      # @return [ResponsePreprocessor]
       # @api private
       def initialize(app, logger)
         @app = app
         @logger = logger
       end
 
-      # Process a Request
+      # Process a Response
       #
       # @param [Hash] env Environment info
       # @return [Object]
       # @api private
       def call(env)
-        body = env[:body]
-        env[:body] = JSON.dump(body) if body
-        log(env[:method], env[:url], body)
-        @app.call(env)
+        @app.call(env).on_complete do
+          log(env[:status], env[:body])
+        end
       end
 
       private
 
       # Log a Request
       #
-      # @param [Symbol] method
-      # @param [String] url
+      # @param [String] status
       # @param [String] body
       # @return [nil]
       # @api private
-      def log(method, url, body)
-        @logger.info("#{method.upcase} #{url} #{body}")
+      def log(status, body)
+        @logger.info("#{status} #{body}")
         nil
       end
     end
 
-    Faraday.register_middleware :request,
-      :ashikawa_request => lambda { RequestPreprocessor}
+    Faraday.register_middleware :response,
+      :ashikawa_response => lambda { ResponsePreprocessor}
   end
 end
