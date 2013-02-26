@@ -171,6 +171,12 @@ describe Ashikawa::Core::Collection do
         subject << {"name" => "The Dude"}
       end
 
+      it "should not create a new document" do
+        expect {
+          subject.create_edge(nil, nil, {"quote" => "D'ya have to use s'many cuss words?"})
+        }.to raise_exception(RuntimeError, "Can't create an edge in a document collection")
+      end
+
       describe "indices" do
         it "should add a new index" do
           @database.stub(:send_request).with("index?collection=60768679", :post => {
@@ -247,6 +253,10 @@ describe Ashikawa::Core::Collection do
       subject.create_edge(from_double, to_double, {"name" => "The Dude"})
     end
 
-    it "should not create a new document"
+    it "should not create a new document" do
+      expect {
+        subject.create({"quote" => "D'ya have to use s'many cuss words?"})
+      }.to raise_exception(RuntimeError, "Can't create a document in an edge collection")
+    end
   end
 end

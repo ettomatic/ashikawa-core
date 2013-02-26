@@ -359,6 +359,7 @@ module Ashikawa
       # @example Create a new document from raw data
       #   collection.create(raw_document)
       def create(raw_document)
+        raise "Can't create a document in an edge collection" if @content_type == :edge
         response = send_request_for_content(:post => raw_document)
         Document.new(@database, response)
       end
@@ -375,6 +376,7 @@ module Ashikawa
       # @example Create a new document from raw data
       #   collection.create_edge(node_a, node_b, {"name" => "incredible edge"})
       def create_edge(from, to, attributes)
+        raise "Can't create an edge in a document collection" if @content_type == :document
         response = send_request("edge?collection=#{@id}&from=#{from.id}&to=#{to.id}", :post => attributes)
         Edge.new(@database, response)
       end
