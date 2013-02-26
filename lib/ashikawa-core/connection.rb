@@ -80,7 +80,6 @@ module Ashikawa
       def initialize(api_string, opts = {})
         logger = opts[:logger] || NullLogger.instance
         @connection = Faraday.new("#{api_string}/_api") do |connection|
-          connection.request :json
           connection.request :ashikawa, logger
           connection.response :json
           connection.use Faraday::Response::RaiseError
