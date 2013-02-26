@@ -48,10 +48,7 @@ module Ashikawa
       #   index = Ashikawa::Core::Index.new(collection, raw_index)
       def initialize(collection, raw_index)
         @collection = collection
-        @id = raw_index["id"]
-        @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key?("fields")
-        @type = raw_index["type"].to_sym if raw_index.has_key?("type")
-        @unique = raw_index["unique"]
+        parse_raw_index(raw_index)
       end
 
       # Remove the index from the collection
@@ -63,6 +60,21 @@ module Ashikawa
       #   index.delete
       def delete
         @collection.send_request("index/#{@id}", :delete => {})
+      end
+
+      private
+
+      # Parse information returned from the server
+      #
+      # @param [Hash] raw_index
+      # @return self
+      # @api private
+      def parse_raw_index(raw_index)
+        @id = raw_index["id"]
+        @on = raw_index["fields"].map { |field| field.to_sym } if raw_index.has_key?("fields")
+        @type = raw_index["type"].to_sym if raw_index.has_key?("type")
+        @unique = raw_index["unique"]
+        self
       end
     end
   end

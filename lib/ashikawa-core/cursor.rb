@@ -74,6 +74,7 @@ module Ashikawa
 
       # Pull the raw data from the cursor into this object
       #
+      # @param [Hash] raw_cursor
       # @return self
       # @api private
       def parse_raw_cursor(raw_cursor)

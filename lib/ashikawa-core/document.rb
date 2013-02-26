@@ -40,10 +40,7 @@ module Ashikawa
       #   document = Ashikawa::Core::Document.new(database, raw_document)
       def initialize(database, raw_document)
         @database = database
-        @id       = raw_document['_id']
-        @key      = raw_document['_key']
-        @revision = raw_document['_rev']
-        @content  = raw_document.delete_if { |key, value| key.start_with?("_") }
+        parse_raw_document(raw_document)
       end
 
       # Raises an exception if the document is not persisted
@@ -118,6 +115,21 @@ module Ashikawa
       def save()
         check_if_persisted!
         @database.send_request("document/#{@id}", :put => @content)
+      end
+
+      private
+
+      # Parse information returned from the server
+      #
+      # @param [Hash] raw_document
+      # @return self
+      # @api private
+      def parse_raw_document(raw_document)
+        @id       = raw_document['_id']
+        @key      = raw_document['_key']
+        @revision = raw_document['_rev']
+        @content  = raw_document.delete_if { |key, value| key.start_with?("_") }
+        self
       end
     end
   end

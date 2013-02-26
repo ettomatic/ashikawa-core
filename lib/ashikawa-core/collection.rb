@@ -108,9 +108,7 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new(database, raw_collection)
       def initialize(database, raw_collection)
         @database = database
-        @name     = raw_collection['name']
-        @id       = raw_collection['id']
-        @status   = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
+        parse_raw_collection(raw_collection)
       end
 
       # Change the name of the collection
@@ -444,6 +442,18 @@ module Ashikawa
       # @api private
       def send_request_for_this_collection(path, method={})
         send_request("collection/#{id}/#{path}", method)
+      end
+
+      # Parse information returned from the server
+      #
+      # @param [Hash] raw_collection
+      # @return self
+      # @api private
+      def parse_raw_collection(raw_collection)
+        @name     = raw_collection['name']
+        @id       = raw_collection['id']
+        @status   = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
+        self
       end
     end
   end
