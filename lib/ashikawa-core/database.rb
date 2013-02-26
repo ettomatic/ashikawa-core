@@ -75,7 +75,7 @@ module Ashikawa
       # @example Get a Collection from the database by ID
       #   database = Ashikawa::Core::Database.new("http://localhost:8529")
       #   database["7254820"] # => #<Collection id=7254820>
-      def [](collection_identifier)
+      def collection(collection_identifier)
         begin
           response = send_request("collection/#{collection_identifier}")
         rescue CollectionNotFoundException
@@ -84,6 +84,8 @@ module Ashikawa
 
         Ashikawa::Core::Collection.new(self, response)
       end
+
+      alias :[] :collection
 
       # Return a Query initialized with this database
       #

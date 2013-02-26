@@ -82,6 +82,15 @@ describe Ashikawa::Core::Database do
 
       Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
 
+      subject.collection(60768679)
+    end
+
+    it "should fetch a single collection with the array syntax" do
+      @connection.stub(:send_request) { |path| server_response("collections/60768679") }
+      @connection.should_receive(:send_request).with("collection/60768679")
+
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
+
       subject[60768679]
     end
 
