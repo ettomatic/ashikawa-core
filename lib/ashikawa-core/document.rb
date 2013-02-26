@@ -76,7 +76,7 @@ module Ashikawa
       #   document.delete
       def delete
         check_if_persisted!
-        @database.send_request("document/#{@id}", :delete => {})
+        send_request_for_document(:delete => {})
       end
 
       # Update the value of an attribute (Does not write to database)
@@ -114,10 +114,10 @@ module Ashikawa
       #   document.save
       def save()
         check_if_persisted!
-        @database.send_request("document/#{@id}", :put => @content)
+        send_request_for_document(:put => @content)
       end
 
-      private
+      protected
 
       # Parse information returned from the server
       #
@@ -130,6 +130,15 @@ module Ashikawa
         @revision = raw_document['_rev']
         @content  = raw_document.delete_if { |key, value| key.start_with?("_") }
         self
+      end
+
+      # Send a request for this document with the given opts
+      #
+      # @param [Hash] opts Options for this request
+      # @return [Hash] The parsed response from the server
+      # @api private
+      def send_request_for_document(opts = {})
+        @database.send_request("document/#{@id}", opts)
       end
     end
   end
