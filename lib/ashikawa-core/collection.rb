@@ -1,4 +1,5 @@
 require "ashikawa-core/document"
+require "ashikawa-core/edge"
 require "ashikawa-core/index"
 require "ashikawa-core/cursor"
 require "ashikawa-core/query"
@@ -15,6 +16,11 @@ module Ashikawa
       CONTENT_TYPES = {
         2 => :document,
         3 => :edge
+      }
+
+      CONTENT_CLASS = {
+        :document => Document,
+        :edge => Edge
       }
 
       # The name of the collection, must be unique
@@ -132,6 +138,7 @@ module Ashikawa
       def initialize(database, raw_collection)
         @database = database
         parse_raw_collection(raw_collection)
+        @content_class = CONTENT_CLASS[@content_type]
       end
 
       # Change the name of the collection
@@ -329,7 +336,7 @@ module Ashikawa
       #   document = collection[12345]
       def [](document_id)
         response = send_request_for_content_id(document_id)
-        Document.new(@database, response)
+        @content_class.new(@database, response)
       end
 
       # Replace a document by its ID
@@ -353,7 +360,7 @@ module Ashikawa
       #   collection.create(raw_document)
       def create(raw_document)
         response = send_request_for_content(:post => raw_document)
-        Document.new(@database, response)
+        @content_class.new(@database, response)
       end
 
       alias :<< :create
@@ -475,7 +482,7 @@ module Ashikawa
       def parse_raw_collection(raw_collection)
         @name         = raw_collection['name']
         @id           = raw_collection['id']
-        @content_type = CONTENT_TYPES[raw_collection['type']]
+        @content_type = CONTENT_TYPES[raw_collection['type']] || :document
         @status       = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
         self
       end
@@ -487,7 +494,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api private
       def send_request_for_content_id(document_id, opts = {})
-        send_request("document/#{@id}/#{document_id}", opts)
+        send_request("#{@content_type}/#{@id}/#{document_id}", opts)
       end
 
       # Send a request for the content of this collection
@@ -496,7 +503,7 @@ module Ashikawa
       # @return [Hash] parsed JSON response from the server
       # @api private
       def send_request_for_content(opts = {})
-        send_request("document?collection=#{@id}", opts)
+        send_request("#{@content_type}?collection=#{@id}", opts)
       end
     end
   end

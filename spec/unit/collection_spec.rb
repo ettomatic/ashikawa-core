@@ -210,4 +210,37 @@ describe Ashikawa::Core::Collection do
       end
     end
   end
+
+  describe "an initialized edge collection" do
+    subject { Ashikawa::Core::Collection.new @database, { "id" => "60768679", "name" => "example_1", "type" => 3 } }
+
+    it "should receive an edge by ID" do
+      @database.stub(:send_request).with("edge/60768679/333", {}).and_return { server_response('documents/example_1-137249191') }
+      @database.should_receive(:send_request).with("edge/60768679/333", {})
+
+      # Documents need to get initialized:
+      Ashikawa::Core::Edge.should_receive(:new)
+
+      subject[333]
+    end
+
+    it "should replace an edge by ID" do
+      @database.stub(:send_request).with("edge/60768679/333", :put => {"name" => "The Dude"})
+      @database.should_receive(:send_request).with("edge/60768679/333", :put => {"name" => "The Dude"})
+
+      subject[333] = {"name" => "The Dude"}
+    end
+
+    it "should create a new edge" do
+      @database.stub(:send_request).with("edge?collection=60768679", :post => { "name" => "The Dude" }).and_return do
+        server_response('documents/new-example_1-137249191')
+      end
+      @database.stub(:send_request).with("edge/60768679/333", :post => { "name" => "The Dude" }).and_return { server_response('documents/example_1-137249191') }
+
+      # Documents need to get initialized:
+      Ashikawa::Core::Edge.should_receive(:new)
+
+      subject.create({"name" => "The Dude"})
+    end
+  end
 end
