@@ -61,6 +61,16 @@ describe Ashikawa::Core::Collection do
       my_collection.volatile?.should == false
     end
 
+    it "should know that a collection is from type 'document'" do
+      my_collection = subject.new(@database, { "id" => "60768679", "type" => 2 })
+      my_collection.content_type.should == :document
+    end
+
+    it "should know that a collection is from type 'edge'" do
+      my_collection = subject.new(@database, { "id" => "60768679", "type" => 3 })
+      my_collection.content_type.should == :edge
+    end
+
     it "should check for the figures" do
       @database.stub(:send_request).with("collection/60768679/figures", {}).and_return { server_response("collections/60768679-figures") }
       @database.should_receive(:send_request).with("collection/60768679/figures", {}).at_least(1).times

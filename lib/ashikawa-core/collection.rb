@@ -12,6 +12,11 @@ module Ashikawa
     class Collection
       extend Forwardable
 
+      CONTENT_TYPES = {
+        2 => :document,
+        3 => :edge
+      }
+
       # The name of the collection, must be unique
       #
       # @return [String]
@@ -86,6 +91,24 @@ module Ashikawa
       #   collection = Ashikawa::Core::Collection.new(database, raw_collection)
       #   collection.database #=> #<Database: ...>
       attr_reader :database
+
+      # The kind of content in the collection: Documents or Edges
+      #
+      # @return [:document, :edge]
+      # @api public
+      # @example
+      #   database = Ashikawa::Core::Database.new("http://localhost:8529")
+      #   raw_collection = {
+      #     "name" => "example_1",
+      #     "waitForSync" => true,
+      #     "id" => 4588,
+      #     "status" => 3,
+      #     "error" => false,
+      #     "code" => 200
+      #   }
+      #   collection = Ashikawa::Core::Collection.new(database, raw_collection)
+      #   collection.content_type #=> :document
+      attr_reader :content_type
 
       # Sending requests is delegated to the database
       def_delegator :@database, :send_request
@@ -450,9 +473,10 @@ module Ashikawa
       # @return self
       # @api private
       def parse_raw_collection(raw_collection)
-        @name     = raw_collection['name']
-        @id       = raw_collection['id']
-        @status   = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
+        @name         = raw_collection['name']
+        @id           = raw_collection['id']
+        @content_type = CONTENT_TYPES[raw_collection['type']]
+        @status       = Status.new(raw_collection['status'].to_i) if raw_collection.has_key?('status')
         self
       end
     end

@@ -63,6 +63,7 @@ LongMethod:
   - Ashikawa::Core::Cursor#parse_raw_cursor
   - Ashikawa::Core::Document#parse_raw_document
   - Ashikawa::Core::Index#parse_raw_index
+  - Ashikawa::Core::Collection#parse_raw_collection
   - Ashikawa::Core::Connection#authenticate_with
   enabled: true
 Duplication:
