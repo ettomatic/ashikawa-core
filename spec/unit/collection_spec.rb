@@ -232,15 +232,21 @@ describe Ashikawa::Core::Collection do
     end
 
     it "should create a new edge" do
-      @database.stub(:send_request).with("edge?collection=60768679", :post => { "name" => "The Dude" }).and_return do
+      @database.stub(:send_request).with("edge?collection=60768679&from=1&to=2", :post => { "name" => "The Dude" }).and_return do
         server_response('documents/new-example_1-137249191')
       end
-      @database.stub(:send_request).with("edge/60768679/333", :post => { "name" => "The Dude" }).and_return { server_response('documents/example_1-137249191') }
+      @database.stub(:send_request).with("edge?collection=60768679&from=1&to=2", :post => { "name" => "The Dude" }).and_return { server_response('documents/example_1-137249191') }
+      from_double = double
+      from_double.stub(:id => "1")
+      to_double = double
+      to_double.stub(:id => "2")
 
       # Documents need to get initialized:
       Ashikawa::Core::Edge.should_receive(:new)
 
-      subject.create({"name" => "The Dude"})
+      subject.create_edge(from_double, to_double, {"name" => "The Dude"})
     end
+
+    it "should not create a new document"
   end
 end

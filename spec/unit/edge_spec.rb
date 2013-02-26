@@ -42,5 +42,13 @@ describe Ashikawa::Core::Edge do
       subject["last_name"] = "Other"
       subject.save
     end
+
+    it "should know the ID of the 'from' document" do
+      subject.from_id.should == "7848004/9289796"
+    end
+
+    it "should know the ID of the 'to' document" do
+      subject.to_id.should == "7848004/9355332"
+    end
   end
 end

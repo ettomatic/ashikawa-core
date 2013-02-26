@@ -115,6 +115,19 @@ describe "Basics" do
       collection[document_key] = { :name => "Other Dude", :bowling => true }
       collection[document_key]["name"].should == "Other Dude"
     end
+
+    it "should be possible to create an edge between two documents" do
+      nodes = subject.create_collection("nodecollection")
+      edges = subject.create_collection("edgecollection", :content_type => :edge)
+
+      a = nodes.create({:name => "a"})
+      b = nodes.create({:name => "b"})
+      e = edges.create_edge(a, b, {:name => "fance_edge"})
+
+      e = edges[e.key]
+      e.from_id.should == a.id
+      e.to_id.should == b.id
+    end
   end
 
   describe "created document" do

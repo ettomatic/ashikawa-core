@@ -4,6 +4,24 @@ module Ashikawa
   module Core
     # A certain Edge within a certain Collection
     class Edge < Document
+      # The ID of the 'from' document
+      #
+      # @return [String]
+      # @api public
+      # @example Get the ID for the 'from' Document
+      #   document = Ashikawa::Core::Edge.new(database, raw_document)
+      #   document.from_id # => "my_fancy_collection/2345678"
+      attr_reader :from_id
+
+      # The ID of the 'to' document
+      #
+      # @return [String]
+      # @api public
+      # @example Get the ID for the 'to' Document
+      #   document = Ashikawa::Core::Edge.new(database, raw_document)
+      #   document.to_id # => "my_fancy_collection/2345678"
+      attr_reader :to_id
+
       # Initialize an Edge with the database and raw data
       #
       # @param [Database] database
@@ -12,6 +30,8 @@ module Ashikawa
       # @example Create an Edge
       #   document = Ashikawa::Core::Edge.new(database, raw_edge)
       def initialize(database, raw_edge)
+        @from_id = raw_edge["_from"]
+        @to_id = raw_edge["_to"]
         super(database, raw_edge)
       end
 
