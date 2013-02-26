@@ -3,7 +3,7 @@ require 'ashikawa-core/connection'
 
 describe Ashikawa::Core::Connection do
   let(:request_stub) { Faraday::Adapter::Test::Stubs.new }
-  subject { Ashikawa::Core::Connection.new(ARANGO_HOST, [:test, request_stub]) }
+  subject { Ashikawa::Core::Connection.new(ARANGO_HOST, :adapter => [:test, request_stub]) }
 
   it "should have a scheme, hostname and port" do
     subject.scheme.should == "http"

@@ -1,5 +1,6 @@
 require "forwardable"
 require "faraday"
+require "null_logger"
 require "faraday_middleware"
 require "json"
 require "uri"
@@ -70,16 +71,19 @@ module Ashikawa
       # Initialize a Connection with a given API String
       #
       # @param [String] api_string scheme, hostname and port as a String
+      # @option opts [Object] adapter The Faraday adapter you want to use. Defaults to Default Adapter
+      # @option opts [Object] logger The logger you want to use. Defaults to Null Logger.
       # @api public
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
-      def initialize(api_string, adapter = Faraday.default_adapter)
+      def initialize(api_string, opts = {})
         @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :json
           connection.response :json
           connection.use Faraday::Response::RaiseError
-          connection.adapter *adapter
+          connection.adapter *opts[:adapter] || Faraday.default_adapter
         end
+        @logger = opts[:logger] || NullLogger.instance
       end
 
       # Sends a request to a given path returning the parsed result

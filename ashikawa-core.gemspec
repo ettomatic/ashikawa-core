@@ -24,4 +24,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "faraday", "~> 0.8.6"
   gem.add_dependency "faraday_middleware", "~> 0.9.0"
   gem.add_dependency "json", "~> 1.7.7"
+  gem.add_dependency "null_logger", "~> 0.0.1"
 end
