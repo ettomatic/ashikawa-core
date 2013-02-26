@@ -9,6 +9,7 @@ require "ashikawa-core/exceptions/document_not_found"
 require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/exceptions/unknown_path"
 require "ashikawa-core/exceptions/bad_request"
+require "ashikawa-core/request_preprocessor"
 
 module Ashikawa
   module Core
@@ -77,13 +78,14 @@ module Ashikawa
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string, opts = {})
+        logger = opts[:logger] || NullLogger.instance
         @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :json
+          connection.request :ashikawa, logger
           connection.response :json
           connection.use Faraday::Response::RaiseError
           connection.adapter *opts[:adapter] || Faraday.default_adapter
         end
-        @logger = opts[:logger] || NullLogger.instance
       end
 
       # Sends a request to a given path returning the parsed result

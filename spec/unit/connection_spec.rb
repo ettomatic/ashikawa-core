@@ -160,4 +160,24 @@ describe Ashikawa::Core::Connection do
       request_stub.verify_stubbed_calls
     end
   end
+
+  describe "logging" do
+    let(:request_stub) { Faraday::Adapter::Test::Stubs.new }
+    let(:logger) { double }
+    subject {
+      Ashikawa::Core::Connection.new(ARANGO_HOST, :adapter => [:test, request_stub], :logger => logger)
+    }
+
+    it "should log a get request" do
+      request_stub.get("/_api/test") { [200, {}, {}] }
+      logger.should_receive(:info).with("GET #{ARANGO_HOST}/_api/test ")
+      subject.send_request("test")
+    end
+
+    it "should log a post request" do
+      request_stub.post("/_api/test") { [200, {}, {}] }
+      logger.should_receive(:info).with("POST #{ARANGO_HOST}/_api/test {\"a\":2}")
+      subject.send_request("test", post: { :a => 2})
+    end
+  end
 end
