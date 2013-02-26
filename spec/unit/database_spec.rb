@@ -76,6 +76,16 @@ describe Ashikawa::Core::Database do
       subject.create_collection("volatile_collection", :is_volatile => true)
     end
 
+    it "should create an edge collection when asked" do
+      @connection.stub(:send_request) { |path| server_response("collections/60768679") }
+      @connection.should_receive(:send_request).with("collection",
+        :post => { :name => "volatile_collection", :type => 3})
+
+      Ashikawa::Core::Collection.should_receive(:new).with(subject, server_response("collections/60768679"))
+
+      subject.create_collection("volatile_collection", :content_type => :edge)
+    end
+
     it "should fetch a single collection if it exists" do
       @connection.stub(:send_request) { |path| server_response("collections/60768679") }
       @connection.should_receive(:send_request).with("collection/60768679")

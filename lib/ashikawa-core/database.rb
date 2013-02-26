@@ -8,6 +8,11 @@ module Ashikawa
   module Core
     # An ArangoDB database
     class Database
+      COLLECTION_TYPES = {
+        :document => 2,
+        :edge => 3
+      }
+
       extend Forwardable
 
       # Delegate sending requests to the connection
@@ -52,6 +57,7 @@ module Ashikawa
       #
       # @param [String] collection_identifier The desired name of the collection
       # @option opts [Boolean] :is_volatile Should the collection be volatile? Default is false
+      # @option opts [Boolean] :content_type What kind of content should the collection have? Default is :document
       # @return [Collection]
       # @api public
       # @example Create a new, volatile collection
@@ -60,6 +66,7 @@ module Ashikawa
       def create_collection(collection_identifier, opts={})
         params = { :name => collection_identifier }
         params[:isVolatile] = true if opts[:is_volatile] == true
+        params[:type] = COLLECTION_TYPES[opts[:content_type]] if opts.has_key?(:content_type)
         response = send_request("collection", :post => params)
         Ashikawa::Core::Collection.new(self, response)
       end

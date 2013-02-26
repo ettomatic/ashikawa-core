@@ -36,6 +36,11 @@ describe "Basics" do
       subject["volatile_collection"].volatile?.should be_true
     end
 
+    it "should be possible to create an edge collection" do
+      subject.create_collection("edge_collection", :content_type => :edge)
+      subject["edge_collection"].content_type.should == :edge
+    end
+
     it "should be possible to change the name of a collection" do
       my_collection = subject["test_collection"]
       my_collection.name.should == "test_collection"

@@ -31,6 +31,7 @@ LongParameterList:
   overrides: {}
 FeatureEnvy:
   exclude:
+  - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Connection#http_verb
   - Ashikawa::Core::Connection#initialize
   - Ashikawa::Core::Index#parse_raw_index
@@ -60,6 +61,7 @@ NestedIterators:
 LongMethod:
   max_statements: 4
   exclude:
+  - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Cursor#parse_raw_cursor
   - Ashikawa::Core::Document#parse_raw_document
   - Ashikawa::Core::Index#parse_raw_index
