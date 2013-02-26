@@ -26,7 +26,7 @@ describe Ashikawa::Core::Cursor do
       server_response("cursor/26011191")
     }
 
-    it "should iterate over all documents of a cursor" do
+    it "should iterate over all documents of a cursor when given a block" do
       first = true
 
       @database.stub(:send_request).with("cursor/26011191", :put => {}) do
@@ -43,6 +43,31 @@ describe Ashikawa::Core::Cursor do
       Ashikawa::Core::Document.should_receive(:new).exactly(5).times
 
       subject.each { |document| }
+    end
+
+    it "should return an enumerator to go over all documents of a cursor when given no block" do
+      first = true
+
+      @database.stub(:send_request).with("cursor/26011191", :put => {}) do
+        if first
+          first = false
+          server_response("cursor/26011191-2")
+        else
+          server_response("cursor/26011191-3")
+        end
+      end
+      @database.should_receive(:send_request).twice
+
+      Ashikawa::Core::Document.stub(:new)
+      Ashikawa::Core::Document.should_receive(:new).exactly(5).times
+
+      enumerator = subject.each
+      enumerator.next
+      enumerator.next
+      enumerator.next
+      enumerator.next
+      enumerator.next
+      expect { enumerator.next }.to raise_exception(StopIteration)
     end
 
     it "should be deletable" do

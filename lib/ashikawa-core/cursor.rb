@@ -38,14 +38,20 @@ module Ashikawa
       # Iterate over the documents found by the cursor
       #
       # @yield [document]
-      # @return nil
+      # @return [nil, Enumerator] If no block is given, an Enumerator is returned
       # @api public
       # @example Print all documents
       #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
       #   cursor.each do |document|
       #     p document
       #   end
+      # @example Get an enumerator to iterate over all documents
+      #   cursor = Ashikawa::Core::Cursor.new(database, raw_cursor)
+      #   enumerator = cursor.each
+      #   enumerator.next #=> #<Document ...>
       def each
+        return to_enum(__callee__) unless block_given?
+
         begin
           @current.each do |raw_document|
             yield Document.new(@database, raw_document)
