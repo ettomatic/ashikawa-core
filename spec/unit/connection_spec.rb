@@ -85,13 +85,6 @@ describe Ashikawa::Core::Connection do
   end
 
   describe "authentication" do
-    it "should authenticate with username and password" do
-      subject.authenticate_with :username => "testuser", :password => "testpassword"
-
-      subject.username.should == "testuser"
-      subject.password.should == "testpassword"
-    end
-
     it "should have authentication turned off by default" do
       subject.authentication?.should be_false
     end
@@ -101,7 +94,7 @@ describe Ashikawa::Core::Connection do
       subject.authentication?.should be_true
     end
 
-    it "should only accept a username & password pairs" do
+    it "should only accept username & password pairs" do
       expect {
         subject.authenticate_with :username => "kitty"
       }.to raise_error(ArgumentError)

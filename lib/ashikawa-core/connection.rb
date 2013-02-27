@@ -46,28 +46,6 @@ module Ashikawa
       #   connection.port # => 8529
       def_delegator :@connection, :port
 
-      # Username of the connection if using authentication
-      # @note you can set these properties with the `authenticate_with` method
-      #
-      # @return String
-      # @api public
-      # @example Get the username of the connection
-      #   connection = Connection.new("http://localhost:8529")
-      #   connection.authenticate_with(:username => 'james', :password => 'bond')
-      #   connection.username # => 'james'
-      attr_reader :username
-
-      # Password of the connection if using authentication
-      # @note you can set these properties with the `authenticate_with` method
-      #
-      # @return String
-      # @api public
-      # @example Get the password of the connection
-      #   connection = Connection.new("http://localhost:8529")
-      #   connection.authenticate_with(:username => 'james', :password => 'bond')
-      #   connection.password # => 'bond'
-      attr_reader :password
-
       # Initialize a Connection with a given API String
       #
       # @param [String] api_string scheme, hostname and port as a String
