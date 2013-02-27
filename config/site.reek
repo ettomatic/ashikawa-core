@@ -63,6 +63,7 @@ NestedIterators:
 LongMethod:
   max_statements: 4
   exclude:
+  - Ashikawa::Core::ResponsePreprocessor#handle_status
   - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Cursor#parse_raw_cursor
   - Ashikawa::Core::Document#parse_raw_document

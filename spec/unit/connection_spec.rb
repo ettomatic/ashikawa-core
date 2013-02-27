@@ -54,18 +54,6 @@ describe Ashikawa::Core::Connection do
     request_stub.verify_stubbed_calls
   end
 
-  it "should throw its own exception when doing a bad request" do
-    request_stub.get("/_api/bad/request") do
-      [400, response_headers, ""]
-    end
-
-    expect do
-      subject.send_request("bad/request")
-    end.to raise_error(Ashikawa::Core::BadSyntax)
-
-    request_stub.verify_stubbed_calls
-  end
-
   it "should write JSON request" do
     request_stub.post("/_api/my/path") do |req|
       req[:body].should == "{\"test\":1}"
@@ -124,6 +112,42 @@ describe Ashikawa::Core::Connection do
   end
 
   describe "exception handling" do
+    it "should throw a general client error for I'm a teapot" do
+      request_stub.get("/_api/bad/request") do
+        [418, response_headers, ""]
+      end
+
+      expect do
+        subject.send_request("bad/request")
+      end.to raise_error(Ashikawa::Core::ClientError)
+
+      request_stub.verify_stubbed_calls
+    end
+
+    it "should throw its own exception when doing a bad request" do
+      request_stub.get("/_api/bad/request") do
+        [400, response_headers, ""]
+      end
+
+      expect do
+        subject.send_request("bad/request")
+      end.to raise_error(Ashikawa::Core::BadSyntax)
+
+      request_stub.verify_stubbed_calls
+    end
+
+    it "should throw a general server error for the generic server error" do
+      request_stub.get("/_api/bad/request") do
+        [500, response_headers, ""]
+      end
+
+      expect do
+        subject.send_request("bad/request")
+      end.to raise_error(Ashikawa::Core::ServerError)
+
+      request_stub.verify_stubbed_calls
+    end
+
     it "should raise an exception if a document is not found" do
       request_stub.get("/_api/document/4590/333") do
         [404, response_headers, ""]

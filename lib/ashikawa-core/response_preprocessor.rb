@@ -1,17 +1,22 @@
 require "faraday"
 require "multi_json"
+require "ashikawa-core/exceptions/client_error"
+require "ashikawa-core/exceptions/client_error/resource_not_found"
 require "ashikawa-core/exceptions/client_error/resource_not_found/index_not_found"
 require "ashikawa-core/exceptions/client_error/resource_not_found/document_not_found"
 require "ashikawa-core/exceptions/client_error/resource_not_found/collection_not_found"
-require "ashikawa-core/exceptions/client_error/resource_not_found"
 require "ashikawa-core/exceptions/client_error/bad_syntax"
+require "ashikawa-core/exceptions/server_error"
 require "ashikawa-core/exceptions/server_error/json_error"
 
 module Ashikawa
   module Core
     # Preprocessor for Faraday Requests
     class ResponsePreprocessor < Faraday::Middleware
-      ClientErrorStatuses = 400...600
+      ClientErrorStatuses = 400...499
+      ServerErrorStatuses = 500...599
+      BadSyntaxStatus = 400
+      ResourceNotFoundErrorError = 404
 
       # Create a new Response Preprocessor
       #
@@ -82,9 +87,10 @@ module Ashikawa
       def handle_status(env)
         status = env[:status]
         case status
-        when 400 then raise Ashikawa::Core::BadSyntax
-        when 404 then raise resource_not_found_for(env)
-        when ClientErrorStatuses then raise Faraday::Error::ClientError, status
+        when BadSyntaxStatus then raise Ashikawa::Core::BadSyntax
+        when ResourceNotFoundErrorError then raise resource_not_found_for(env)
+        when ClientErrorStatuses then raise Ashikawa::Core::ClientError, status
+        when ServerErrorStatuses then raise Ashikawa::Core::ServerError, status
         end
       end
 
