@@ -22,7 +22,9 @@ module Ashikawa
       # @api private
       def call(env)
         @app.call(env).on_complete do
-          log(env[:status], env[:body])
+          body = env[:body]
+          log(env[:status], body)
+          env[:body] = JSON.parse(body)
         end
       end
 

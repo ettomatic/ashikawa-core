@@ -83,7 +83,6 @@ module Ashikawa
         @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :ashikawa_request, logger
           connection.response :ashikawa_response, logger
-          connection.response :json
           connection.use Faraday::Response::RaiseError
           connection.adapter *opts[:adapter] || Faraday.default_adapter
         end
