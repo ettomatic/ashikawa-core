@@ -98,10 +98,8 @@ module Ashikawa
       # @example post request
       #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       def send_request(path, params = {})
-        bubblewrap_request(path) do
-          raw = raw_result_for(path, params)
-          raw.body
-        end
+        raw = raw_result_for(path, params)
+        raw.body
       end
 
       # Checks if authentication for this Connection is active or not
@@ -147,33 +145,6 @@ module Ashikawa
         [:post, :put, :delete].find { |method_name|
           params.has_key?(method_name)
         } || :get
-      end
-
-      # Raise the fitting ResourceNotFoundException
-      #
-      # @raise [DocumentNotFoundException, CollectionNotFoundException, IndexNotFoundException]
-      # @return nil
-      # @api private
-      def resource_not_found_for(path)
-        raise case path
-          when /\A\/?document/ then DocumentNotFoundException
-          when /\A\/?collection/ then CollectionNotFoundException
-          when /\A\/?index/ then IndexNotFoundException
-          else UnknownPath
-        end
-      end
-
-      # Executes the block and translates the exceptions
-      #
-      # @param [string] path the path you wish to send a request to.
-      # @return [Object] The response from the block
-      # @api private
-      def bubblewrap_request(path)
-        yield
-      rescue Faraday::Error::ResourceNotFound
-        resource_not_found_for(path)
-      rescue Faraday::Error::ClientError
-        raise Ashikawa::Core::BadRequest
       end
 
       # Sends a request to a given path returning the raw result

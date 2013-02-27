@@ -33,6 +33,20 @@ module Ashikawa
 
       private
 
+      # Raise the fitting ResourceNotFoundException
+      #
+      # @raise [DocumentNotFoundException, CollectionNotFoundException, IndexNotFoundException]
+      # @return nil
+      # @api private
+      def resource_not_found_for(env)
+        raise case env[:url].path
+          when /\A\/_api\/document/ then Ashikawa::Core::DocumentNotFoundException
+          when /\A\/_api\/collection/ then Ashikawa::Core::CollectionNotFoundException
+          when /\A\/_api\/index/ then Ashikawa::Core::IndexNotFoundException
+          else Ashikawa::Core::UnknownPath
+        end
+      end
+
       # Parse the JSON
       #
       # @param [Hash] env Environment info
@@ -50,7 +64,8 @@ module Ashikawa
       def handle_status(env)
         status = env[:status]
         case status
-        when 404 then raise Faraday::Error::ResourceNotFound, status
+        when 400 then raise Ashikawa::Core::BadRequest
+        when 404 then raise resource_not_found_for(env)
         when ClientErrorStatuses then raise Faraday::Error::ClientError, status
         end
       end
