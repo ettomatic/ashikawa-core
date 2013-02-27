@@ -55,7 +55,7 @@ describe Ashikawa::Core::Connection do
 
   it "should throw its own exception when doing a bad request" do
     request_stub.get("/_api/bad/request") do
-      raise Faraday::Error::ClientError.new(RuntimeError)
+      [400, {}, ""]
     end
 
     expect do
@@ -119,7 +119,7 @@ describe Ashikawa::Core::Connection do
       pending "Find out how to check for basic auth via Faraday Stubs"
 
       request_stub.get("/_api/my/path") do |request|
-        [200, {}, { "name" => "dude" }]
+        [200, {}, MultiJson.dump({ "name" => "dude" })]
       end
 
       subject.authenticate_with :username => "user", :password => "pass"
@@ -132,7 +132,7 @@ describe Ashikawa::Core::Connection do
   describe "exception handling" do
     it "should raise an exception if a document is not found" do
       request_stub.get("/_api/document/4590/333") do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        [404, {}, ""]
       end
 
       expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
@@ -142,7 +142,7 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception if a collection is not found" do
       request_stub.get("/_api/collection/4590") do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        [404, {}, ""]
       end
 
       expect { subject.send_request "collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
@@ -152,7 +152,7 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception if an index is not found" do
       request_stub.get("/_api/index/4590/333") do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        [404, {}, ""]
       end
 
       expect { subject.send_request "index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
@@ -162,7 +162,7 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception for unknown pathes" do
       request_stub.get("/_api/unknown_path/4590/333") do
-        raise Faraday::Error::ResourceNotFound.new(RuntimeError)
+        [404, {}, ""]
       end
 
       expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
