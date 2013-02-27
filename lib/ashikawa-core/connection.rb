@@ -2,11 +2,6 @@ require "forwardable"
 require "faraday"
 require "null_logger"
 require "uri"
-require "ashikawa-core/exceptions/index_not_found"
-require "ashikawa-core/exceptions/document_not_found"
-require "ashikawa-core/exceptions/collection_not_found"
-require "ashikawa-core/exceptions/unknown_path"
-require "ashikawa-core/exceptions/bad_request"
 require "ashikawa-core/request_preprocessor"
 require "ashikawa-core/response_preprocessor"
 
@@ -55,10 +50,10 @@ module Ashikawa
       # @example Create a new Connection
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string, opts = {})
-        logger = opts[:logger] || NullLogger.instance
+        logger  = opts[:logger]  || NullLogger.instance
         adapter = opts[:adapter] || Faraday.default_adapter
         @connection = Faraday.new("#{api_string}/_api") do |connection|
-          connection.request :ashikawa_request, logger
+          connection.request  :ashikawa_request,  logger
           connection.response :ashikawa_response, logger
           connection.adapter *adapter
         end
@@ -76,8 +71,9 @@ module Ashikawa
       # @example post request
       #   connection.send_request('/collection/new_collection', :post => { :name => 'new_collection' })
       def send_request(path, params = {})
-        raw = raw_result_for(path, params)
-        raw.body
+        method = http_verb(params)
+        result = @connection.public_send(method, path, params[method])
+        result.body
       end
 
       # Checks if authentication for this Connection is active or not
@@ -90,7 +86,7 @@ module Ashikawa
       #   connection.authenticate_with(:username => 'james', :password => 'bond')
       #   connection.authentication? #=> true
       def authentication?
-        !!@username
+        !!@authentication
       end
 
       # Authenticate with given username and password
@@ -105,10 +101,7 @@ module Ashikawa
       #   connection.authenticate_with(:username => 'james', :password => 'bond')
       def authenticate_with(options = {})
         raise ArgumentError, 'missing username or password' unless options.key? :username and options.key? :password
-        @username = options[:username]
-        @password = options[:password]
-        @connection.basic_auth(@username, @password)
-
+        @authentication = @connection.basic_auth(options[:username], options[:password])
         self
       end
 
@@ -123,22 +116,6 @@ module Ashikawa
         [:post, :put, :delete].find { |method_name|
           params.has_key?(method_name)
         } || :get
-      end
-
-      # Sends a request to a given path returning the raw result
-      # @note prepends the api_string automatically
-      #
-      # @example get request
-      #   connection.raw_result_for('/collection/new_collection')
-      # @example post request
-      #   connection.raw_result_for('/collection/new_collection', :post => { :name => 'new_collection' })
-      # @param [String] path the path you wish to send a request to.
-      # @option params [Hash] :post POST data in case you want to send a POST request.
-      # @return [String] raw response from the server
-      # @api private
-      def raw_result_for(path, params = {})
-        method = http_verb(params)
-        @connection.public_send(method, path, params[method])
       end
     end
   end
