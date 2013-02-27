@@ -1,8 +1,6 @@
 require "forwardable"
 require "faraday"
 require "null_logger"
-require "faraday_middleware"
-require "json"
 require "uri"
 require "ashikawa-core/exceptions/index_not_found"
 require "ashikawa-core/exceptions/document_not_found"
@@ -80,11 +78,12 @@ module Ashikawa
       #  connection = Connection.new("http://localhost:8529")
       def initialize(api_string, opts = {})
         logger = opts[:logger] || NullLogger.instance
+        adapter = opts[:adapter] || Faraday.default_adapter
         @connection = Faraday.new("#{api_string}/_api") do |connection|
           connection.request :ashikawa_request, logger
           connection.response :ashikawa_response, logger
           connection.use Faraday::Response::RaiseError
-          connection.adapter *opts[:adapter] || Faraday.default_adapter
+          connection.adapter *adapter
         end
       end
 
