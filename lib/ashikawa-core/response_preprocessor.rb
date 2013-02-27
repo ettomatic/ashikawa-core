@@ -1,5 +1,5 @@
 require "faraday"
-require "json"
+require "multi_json"
 
 module Ashikawa
   module Core
@@ -25,7 +25,7 @@ module Ashikawa
         @app.call(env).on_complete do
           body = env[:body]
           log(env[:status], body)
-          env[:body] = JSON.parse(body)
+          env[:body] = MultiJson.load(body)
         end
       end
 
