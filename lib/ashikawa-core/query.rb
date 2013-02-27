@@ -1,7 +1,7 @@
 require 'ashikawa-core/cursor'
 require 'ashikawa-core/document'
 require 'ashikawa-core/exceptions/no_collection_provided'
-require 'ashikawa-core/exceptions/bad_request'
+require 'ashikawa-core/exceptions/client_error/bad_syntax'
 require 'forwardable'
 require 'backports'
 
@@ -164,7 +164,7 @@ module Ashikawa
       #   query.valid?("FOR u IN users LIMIT 2") # => true
       def valid?(query)
         !!post_request("query", { :query => query })
-      rescue Ashikawa::Core::BadRequest
+      rescue Ashikawa::Core::BadSyntax
         false
       end
 

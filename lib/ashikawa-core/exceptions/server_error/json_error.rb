@@ -1,8 +1,10 @@
+require "ashikawa-core/exceptions/server_error"
+
 module Ashikawa
   module Core
     # This Exception is thrown when the Json
     # from the server was malformed
-    class JsonError < RuntimeError
+    class JsonError < ServerError
       # String representation of the exception
       #
       # @return String

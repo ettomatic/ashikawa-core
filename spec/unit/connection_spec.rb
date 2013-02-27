@@ -61,7 +61,7 @@ describe Ashikawa::Core::Connection do
 
     expect do
       subject.send_request("bad/request")
-    end.to raise_error(Ashikawa::Core::BadRequest)
+    end.to raise_error(Ashikawa::Core::BadSyntax)
 
     request_stub.verify_stubbed_calls
   end
@@ -159,7 +159,7 @@ describe Ashikawa::Core::Connection do
         [404, response_headers, ""]
       end
 
-      expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+      expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::ResourceNotFound)
 
       request_stub.verify_stubbed_calls
     end

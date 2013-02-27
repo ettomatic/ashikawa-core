@@ -1,13 +1,13 @@
 module Ashikawa
   module Core
-    # This Exception is thrown when you request something that does not exist
-    class BadRequest < RuntimeError
+    # The client had an error in the request
+    class ClientError < RuntimeError
       # String representation of the exception
       #
       # @return String
       # @api private
       def to_s
-        "The path is unknown"
+        "An Error occured in the client"
       end
     end
   end

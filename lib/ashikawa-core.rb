@@ -3,7 +3,6 @@ require "ashikawa-core/connection"
 require "ashikawa-core/database"
 require "ashikawa-core/document"
 require "ashikawa-core/version"
-require "ashikawa-core/exceptions/document_not_found"
 
 # Ashikawa is a project dedicated to connect Ruby and ArangoDB
 module Ashikawa

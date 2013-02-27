@@ -1,4 +1,4 @@
-require 'ashikawa-core/exceptions/document_not_found'
+require 'ashikawa-core/exceptions/client_error/resource_not_found/document_not_found'
 
 module Ashikawa
   module Core

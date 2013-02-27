@@ -1,11 +1,11 @@
 require "faraday"
 require "multi_json"
-require "ashikawa-core/exceptions/index_not_found"
-require "ashikawa-core/exceptions/document_not_found"
-require "ashikawa-core/exceptions/collection_not_found"
-require "ashikawa-core/exceptions/unknown_path"
-require "ashikawa-core/exceptions/bad_request"
-require "ashikawa-core/exceptions/json_error"
+require "ashikawa-core/exceptions/client_error/resource_not_found/index_not_found"
+require "ashikawa-core/exceptions/client_error/resource_not_found/document_not_found"
+require "ashikawa-core/exceptions/client_error/resource_not_found/collection_not_found"
+require "ashikawa-core/exceptions/client_error/resource_not_found"
+require "ashikawa-core/exceptions/client_error/bad_syntax"
+require "ashikawa-core/exceptions/server_error/json_error"
 
 module Ashikawa
   module Core
@@ -49,7 +49,7 @@ module Ashikawa
           when /\A\/_api\/document/ then Ashikawa::Core::DocumentNotFoundException
           when /\A\/_api\/collection/ then Ashikawa::Core::CollectionNotFoundException
           when /\A\/_api\/index/ then Ashikawa::Core::IndexNotFoundException
-          else Ashikawa::Core::UnknownPath
+          else Ashikawa::Core::ResourceNotFound
         end
       end
 
@@ -82,7 +82,7 @@ module Ashikawa
       def handle_status(env)
         status = env[:status]
         case status
-        when 400 then raise Ashikawa::Core::BadRequest
+        when 400 then raise Ashikawa::Core::BadSyntax
         when 404 then raise resource_not_found_for(env)
         when ClientErrorStatuses then raise Faraday::Error::ClientError, status
         end
