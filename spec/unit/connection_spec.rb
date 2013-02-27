@@ -3,6 +3,7 @@ require 'ashikawa-core/connection'
 
 describe Ashikawa::Core::Connection do
   let(:request_stub) { Faraday::Adapter::Test::Stubs.new }
+  let(:response_headers) { {"content-type" => "application/json; charset=utf-8" } }
   subject { Ashikawa::Core::Connection.new(ARANGO_HOST, :adapter => [:test, request_stub]) }
 
   it "should have a scheme, hostname and port" do
@@ -13,7 +14,7 @@ describe Ashikawa::Core::Connection do
 
   it "should send a get request" do
     request_stub.get("/_api/my/path") do
-      [200, {}, MultiJson.dump({ "name" => "dude" })]
+      [200, response_headers, MultiJson.dump({ "name" => "dude" })]
     end
 
     subject.send_request "my/path"
@@ -24,7 +25,7 @@ describe Ashikawa::Core::Connection do
   it "should send a post request" do
     request_stub.post("/_api/my/path") do |request|
       request[:body].should == "{\"name\":\"new_collection\"}"
-      [200, {}, MultiJson.dump({ "name" => "dude" })]
+      [200, response_headers, MultiJson.dump({ "name" => "dude" })]
     end
 
     subject.send_request "my/path", :post => { :name => 'new_collection' }
@@ -35,7 +36,7 @@ describe Ashikawa::Core::Connection do
   it "should send a put request" do
     request_stub.put("/_api/my/path") do |request|
       request[:body].should == '{"name":"new_collection"}'
-      [200, {}, MultiJson.dump({ "name" => "dude" })]
+      [200, response_headers, MultiJson.dump({ "name" => "dude" })]
     end
 
     subject.send_request "my/path", :put => { :name => 'new_collection' }
@@ -45,7 +46,7 @@ describe Ashikawa::Core::Connection do
 
   it "should send a delete request" do
     request_stub.delete("/_api/my/path") do |request|
-      [200, {}, MultiJson.dump({ "name" => "dude" })]
+      [200, response_headers, MultiJson.dump({ "name" => "dude" })]
     end
 
     subject.send_request "my/path", :delete => { }
@@ -55,7 +56,7 @@ describe Ashikawa::Core::Connection do
 
   it "should throw its own exception when doing a bad request" do
     request_stub.get("/_api/bad/request") do
-      [400, {}, ""]
+      [400, response_headers, ""]
     end
 
     expect do
@@ -68,7 +69,7 @@ describe Ashikawa::Core::Connection do
   it "should write JSON request" do
     request_stub.post("/_api/my/path") do |req|
       req[:body].should == "{\"test\":1}"
-      [200, {}, MultiJson.dump({ "name" => "dude" })]
+      [200, response_headers, MultiJson.dump({ "name" => "dude" })]
     end
 
     subject.send_request("my/path", :post => { "test" => 1})
@@ -77,7 +78,7 @@ describe Ashikawa::Core::Connection do
 
   it "should parse JSON response" do
     request_stub.get("/_api/my/path") do
-      [200, {}, "{\"name\":\"dude\"}"]
+      [200, response_headers, "{\"name\":\"dude\"}"]
     end
 
     subject.send_request("my/path").should == {"name" => "dude"}
@@ -112,7 +113,7 @@ describe Ashikawa::Core::Connection do
       pending "Find out how to check for basic auth via Faraday Stubs"
 
       request_stub.get("/_api/my/path") do |request|
-        [200, {}, MultiJson.dump({ "name" => "dude" })]
+        [200, response_headers, MultiJson.dump({ "name" => "dude" })]
       end
 
       subject.authenticate_with :username => "user", :password => "pass"
@@ -125,7 +126,7 @@ describe Ashikawa::Core::Connection do
   describe "exception handling" do
     it "should raise an exception if a document is not found" do
       request_stub.get("/_api/document/4590/333") do
-        [404, {}, ""]
+        [404, response_headers, ""]
       end
 
       expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::DocumentNotFoundException)
@@ -135,7 +136,7 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception if a collection is not found" do
       request_stub.get("/_api/collection/4590") do
-        [404, {}, ""]
+        [404, response_headers, ""]
       end
 
       expect { subject.send_request "collection/4590" }.to raise_error(Ashikawa::Core::CollectionNotFoundException)
@@ -145,7 +146,7 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception if an index is not found" do
       request_stub.get("/_api/index/4590/333") do
-        [404, {}, ""]
+        [404, response_headers, ""]
       end
 
       expect { subject.send_request "index/4590/333" }.to raise_error(Ashikawa::Core::IndexNotFoundException)
@@ -155,10 +156,30 @@ describe Ashikawa::Core::Connection do
 
     it "should raise an exception for unknown pathes" do
       request_stub.get("/_api/unknown_path/4590/333") do
-        [404, {}, ""]
+        [404, response_headers, ""]
       end
 
       expect { subject.send_request "unknown_path/4590/333" }.to raise_error(Ashikawa::Core::UnknownPath)
+
+      request_stub.verify_stubbed_calls
+    end
+
+    it "should raise an error if a malformed JSON was returned from the server" do
+      request_stub.get("/_api/document/4590/333") do
+        [200, response_headers, "{\"a\":1"]
+      end
+
+      expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::JsonError)
+
+      request_stub.verify_stubbed_calls
+    end
+
+    it "should raise an error if the content type of the response is not JSON" do
+      request_stub.get("/_api/document/4590/333") do
+        [200, {"content-type" => "text/html; charset=utf-8"}, ""]
+      end
+
+      expect { subject.send_request "document/4590/333" }.to raise_error(Ashikawa::Core::JsonError)
 
       request_stub.verify_stubbed_calls
     end
@@ -173,7 +194,7 @@ describe Ashikawa::Core::Connection do
 
     it "should log a get request" do
       request_stub.get("/_api/test") do
-        [200, {}, MultiJson.dump({:a => 1})]
+        [200, response_headers, MultiJson.dump({:a => 1})]
       end
       logger.should_receive(:info).with("GET #{ARANGO_HOST}/_api/test ")
       logger.should_receive(:info).with("200 {\"a\":1}")
@@ -184,7 +205,7 @@ describe Ashikawa::Core::Connection do
       pending "This fails on 1.8.7 for unknown reasons. Will investigate." if RUBY_VERSION == "1.8.7"
 
       request_stub.post("/_api/test") do
-        [201, {}, MultiJson.dump({:b => 2})]
+        [201, response_headers, MultiJson.dump({:b => 2})]
       end
       logger.should_receive(:info).with("POST #{ARANGO_HOST}/_api/test {:a=>2}")
       logger.should_receive(:info).with("201 {\"b\":2}")

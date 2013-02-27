@@ -5,6 +5,7 @@ require "ashikawa-core/exceptions/document_not_found"
 require "ashikawa-core/exceptions/collection_not_found"
 require "ashikawa-core/exceptions/unknown_path"
 require "ashikawa-core/exceptions/bad_request"
+require "ashikawa-core/exceptions/json_error"
 
 module Ashikawa
   module Core
@@ -58,7 +59,19 @@ module Ashikawa
       # @return [Hash] The parsed body
       # @api private
       def parse_json(env)
+        raise MultiJson::LoadError unless json_content_type?(env[:response_headers]["content-type"])
         MultiJson.load(env[:body])
+      rescue MultiJson::LoadError
+        raise Ashikawa::Core::JsonError
+      end
+
+      # Check if the Content Type is JSON
+      #
+      # @param [String] content_type
+      # @return [Boolean]
+      # @api private
+      def json_content_type?(content_type)
+        content_type == "application/json; charset=utf-8"
       end
 
       # Handle the status code
