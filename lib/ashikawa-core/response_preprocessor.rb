@@ -5,6 +5,8 @@ module Ashikawa
   module Core
     # Preprocessor for Faraday Requests
     class ResponsePreprocessor < Faraday::Middleware
+      ClientErrorStatuses = 400...600
+
       # Create a new Response Preprocessor
       #
       # @param [Object] app Faraday internal
@@ -23,22 +25,43 @@ module Ashikawa
       # @api private
       def call(env)
         @app.call(env).on_complete do
-          body = env[:body]
-          log(env[:status], body)
-          env[:body] = MultiJson.load(body)
+          log(env)
+          handle_status(env)
+          env[:body] = parse_json(env)
         end
       end
 
       private
 
-      # Log a Request
+      # Parse the JSON
       #
-      # @param [String] status
-      # @param [String] body
+      # @param [Hash] env Environment info
+      # @return [Hash] The parsed body
+      # @api private
+      def parse_json(env)
+        MultiJson.load(env[:body])
+      end
+
+      # Handle the status code
+      #
+      # @param [Hash] env Environment info
       # @return [nil]
       # @api private
-      def log(status, body)
-        @logger.info("#{status} #{body}")
+      def handle_status(env)
+        status = env[:status]
+        case status
+        when 404 then raise Faraday::Error::ResourceNotFound, status
+        when ClientErrorStatuses then raise Faraday::Error::ClientError, status
+        end
+      end
+
+      # Log a Request
+      #
+      # @param [Hash] env Environment info
+      # @return [nil]
+      # @api private
+      def log(env)
+        @logger.info("#{env[:status]} #{env[:body]}")
         nil
       end
     end

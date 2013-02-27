@@ -32,7 +32,8 @@ LongParameterList:
 FeatureEnvy:
   exclude:
   - Ashikawa::Core::RequestPreprocessor#call
-  - Ashikawa::Core::ResponsePreprocessor#call
+  - Ashikawa::Core::ResponsePreprocessor#log
+  - Ashikawa::Core::ResponsePreprocessor#parse_json
   - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Connection#http_verb
   - Ashikawa::Core::Connection#initialize
