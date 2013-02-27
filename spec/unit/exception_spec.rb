@@ -16,7 +16,7 @@ end
 
 describe Ashikawa::Core::ClientError do
   it "should have a good explanation" do
-    subject.to_s.should include "client"
+    Ashikawa::Core::ClientError.new(411).to_s.should include "client"
   end
 end
 
@@ -52,7 +52,7 @@ end
 
 describe Ashikawa::Core::ServerError do
   it "should have a good explanation" do
-    subject.to_s.should include "server"
+    Ashikawa::Core::ServerError.new(511).to_s.should include "server"
   end
 end
 

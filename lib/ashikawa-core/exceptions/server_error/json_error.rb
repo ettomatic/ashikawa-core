@@ -5,6 +5,14 @@ module Ashikawa
     # This Exception is thrown when the Json
     # from the server was malformed
     class JsonError < ServerError
+      # Create a new instance
+      #
+      # @return RuntimeError
+      # @api private
+      def initialize
+        super(nil)
+      end
+
       # String representation of the exception
       #
       # @return String

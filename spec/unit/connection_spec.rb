@@ -119,7 +119,7 @@ describe Ashikawa::Core::Connection do
 
       expect do
         subject.send_request("bad/request")
-      end.to raise_error(Ashikawa::Core::ClientError)
+      end.to raise_error(Ashikawa::Core::ClientError, /418/)
 
       request_stub.verify_stubbed_calls
     end
@@ -143,7 +143,7 @@ describe Ashikawa::Core::Connection do
 
       expect do
         subject.send_request("bad/request")
-      end.to raise_error(Ashikawa::Core::ServerError)
+      end.to raise_error(Ashikawa::Core::ServerError, /500/)
 
       request_stub.verify_stubbed_calls
     end
