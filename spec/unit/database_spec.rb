@@ -23,12 +23,64 @@ describe Ashikawa::Core::Database do
   end
 
   it "should initialize with a connection string" do
-    Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529").and_return(double())
-    Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529")
+    Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529", {
+      :logger => nil,
+      :adapter => nil
+    }).and_return(double())
+    Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529", {
+      :logger => nil,
+      :adapter => nil
+    })
 
     database = subject.new do |config|
       config.url = "http://localhost:8529"
     end
+  end
+
+  it "should initialize with a connection string and logger" do
+    logger = double
+    Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529", {
+      :logger => logger,
+      :adapter => nil
+    }).and_return(double())
+    Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529", {
+      :logger => logger,
+      :adapter => nil
+    })
+
+    database = subject.new do |config|
+      config.url = "http://localhost:8529"
+      config.logger = logger
+    end
+  end
+
+  it "should initialize with a connection string and adapter" do
+    adapter = double
+    Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529", {
+      :logger => nil,
+      :adapter => adapter
+    }).and_return(double())
+    Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529", {
+      :logger => nil,
+      :adapter => adapter
+    })
+
+    database = subject.new do |config|
+      config.url = "http://localhost:8529"
+      config.adapter = adapter
+    end
+  end
+
+  it "should throw an argument error when neither url nor connection was provided" do
+    adapter = double
+    logger = double
+
+    expect {
+      database = subject.new do |config|
+        config.adapter = adapter
+        config.logger = logger
+      end
+    }.to raise_error(ArgumentError, /either an url or a connection/)
   end
 
   it "should create a query" do

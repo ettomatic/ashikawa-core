@@ -7,7 +7,7 @@ require "forwardable"
 module Ashikawa
   module Core
     # Configuration of Ashikawa::Core
-    Configuration = Struct.new(:url, :connection)
+    Configuration = Struct.new(:url, :connection, :logger, :adapter)
 
     # An ArangoDB database
     class Database
@@ -36,14 +36,7 @@ module Ashikawa
       def initialize()
         configuration = Ashikawa::Core::Configuration.new
         yield(configuration)
-
-        if !configuration.url.nil?
-          @connection = Ashikawa::Core::Connection.new(configuration.url)
-        elsif !configuration.connection.nil?
-          @connection = configuration.connection
-        #else
-          #throw ArgumentError
-        end
+        @connection = setup_connection(configuration)
       end
 
       # Returns a list of all collections defined in the database
@@ -110,6 +103,23 @@ module Ashikawa
       #   database.query.execute "FOR u IN users LIMIT 2" # => #<Cursor id=33>
       def query
         Query.new(self)
+      end
+
+      # Setup the connection object
+      #
+      # @return [Connection]
+      # @api private
+      def setup_connection(configuration)
+        if !configuration.url.nil?
+          options = {}
+          options[:logger] = configuration.logger
+          options[:adapter] = configuration.adapter
+          Ashikawa::Core::Connection.new(configuration.url, options)
+        elsif !configuration.connection.nil?
+          configuration.connection
+        else
+          raise ArgumentError, "Please provide either an url or a connection to setup the database"
+        end
       end
     end
   end
