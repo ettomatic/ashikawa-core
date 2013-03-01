@@ -1,10 +1,12 @@
 require 'acceptance/spec_helper'
 
 describe "Basics" do
-  subject { ARANGO_HOST }
-
-  describe "initialized database" do
-    subject { Ashikawa::Core::Database.new ARANGO_HOST }
+  describe "for an initialized database" do
+    subject {
+      Ashikawa::Core::Database.new do |config|
+        config.url = ARANGO_HOST
+      end
+    }
 
     after :each do
       subject.collections.each { |collection| collection.delete }
@@ -130,8 +132,12 @@ describe "Basics" do
     end
   end
 
-  describe "created document" do
-    let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
+  describe "for a created document" do
+    let(:database) {
+      Ashikawa::Core::Database.new do |config|
+        config.url = ARANGO_HOST
+      end
+    }
     let(:collection) { database["documenttests"] }
     subject { collection.create_document(:name => "The Dude") }
     let(:document_key) { subject.key }

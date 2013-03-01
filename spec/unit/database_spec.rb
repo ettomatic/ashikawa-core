@@ -15,7 +15,9 @@ describe Ashikawa::Core::Database do
     @connection.stub(:host) { "localhost" }
     @connection.stub(:port) { 8529 }
 
-    database = subject.new @connection
+    database = subject.new do |config|
+      config.connection = @connection
+    end
     database.host.should == "localhost"
     database.port.should == 8529
   end
@@ -24,11 +26,15 @@ describe Ashikawa::Core::Database do
     Ashikawa::Core::Connection.stub(:new).with("http://localhost:8529").and_return(double())
     Ashikawa::Core::Connection.should_receive(:new).with("http://localhost:8529")
 
-    database = subject.new "http://localhost:8529"
+    database = subject.new do |config|
+      config.url = "http://localhost:8529"
+    end
   end
 
   it "should create a query" do
-    database = subject.new @connection
+    database = subject.new do |config|
+      config.connection = @connection
+    end
 
     mock Ashikawa::Core::Query
     Ashikawa::Core::Query.stub(:new)
@@ -38,7 +44,10 @@ describe Ashikawa::Core::Database do
   end
 
   describe "initialized database" do
-    subject { Ashikawa::Core::Database.new @connection }
+    subject { Ashikawa::Core::Database.new do |config|
+        config.connection = @connection
+      end
+    }
 
     it "should delegate authentication to the connection" do
       @connection.should_receive(:authenticate_with).with({ :username => "user", :password => "password" })

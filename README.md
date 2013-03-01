@@ -23,7 +23,9 @@ Please note that the [`master`](https://github.com/triAGENS/ashikawa-core) branc
 For a detailed description of Ashikawa::Core please refer to the [documentation](http://rdoc.info/github/triAGENS/ashikawa-core/master/frames). An example:
 
 ```ruby
-database = Ashikawa::Core::Database.new("http://localhost:8529")
+database = Ashikawa::Core::Database.new do |config|
+  config.url = "http://localhost:8529"
+end
 
 database["my_collection"] # => Returns the collection my_collection – creates it, if it doesn't exist
 database["my_collection"].name = "new_name"

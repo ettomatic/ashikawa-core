@@ -6,6 +6,9 @@ require "forwardable"
 
 module Ashikawa
   module Core
+    # Configuration of Ashikawa::Core
+    Configuration = Struct.new(:url, :connection)
+
     # An ArangoDB database
     class Database
       COLLECTION_TYPES = {
@@ -24,18 +27,22 @@ module Ashikawa
 
       # Initializes the connection to the database
       #
-      # @param [Connection, String] connection A Connection object or a String to create a Connection object.
       # @api public
       # @example Access a Database by providing the URL
       #  database = Ashikawa::Core::Database.new("http://localhost:8529")
       # @example Access a Database by providing a Connection
       #  connection = Connection.new("http://localhost:8529")
       #  database = Ashikawa::Core::Database.new connection
-      def initialize(connection)
-        if connection.class == String
-          @connection = Ashikawa::Core::Connection.new(connection)
-        else
-          @connection = connection
+      def initialize()
+        configuration = Ashikawa::Core::Configuration.new
+        yield(configuration)
+
+        if !configuration.url.nil?
+          @connection = Ashikawa::Core::Connection.new(configuration.url)
+        elsif !configuration.connection.nil?
+          @connection = configuration.connection
+        #else
+          #throw ArgumentError
         end
       end
 

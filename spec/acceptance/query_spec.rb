@@ -1,7 +1,10 @@
 require 'acceptance/spec_helper'
 
 describe "Queries" do
-  let(:database) { Ashikawa::Core::Database.new ARANGO_HOST }
+  let(:database) { Ashikawa::Core::Database.new do |config|
+      config.url = ARANGO_HOST
+    end
+  }
   let(:collection) { database["my_collection"] }
 
   describe "AQL query via the database" do
