@@ -33,6 +33,7 @@ FeatureEnvy:
   exclude:
   - Ashikawa::Core::RequestPreprocessor
   - Ashikawa::Core::ResponsePreprocessor
+  - Ashikawa::Core::Database#initialize
   - Ashikawa::Core::Database#create_collection
   - Ashikawa::Core::Connection#http_verb
   - Ashikawa::Core::Connection#initialize
@@ -109,6 +110,7 @@ UtilityFunction:
 NilCheck:
   enabled: true
   exclude:
+  - Ashikawa::Core::Database#setup_new_connection
   - Ashikawa::Core::Document#check_if_persisted!
   - Ashikawa::Core::Query#prepare_request_data
   - Ashikawa::Core::Query#wrapped_request
