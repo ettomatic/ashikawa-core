@@ -9,7 +9,7 @@ Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level a
 
 All tests run on Travis CI for the following versions of Ruby:
 
-* MRI 1.8.7, 1.9.2 and 1.9.3
+* MRI 1.8.7, 1.9.2, 1.9.3 and 2.0.0
 * Rubinius 1.8 and 1.9 mode
 * JRuby 1.8 and 1.9 mode
 * REE
@@ -18,15 +18,34 @@ We also run on JRuby and MRI Head, but they are allowed failures (Please see [Tr
 
 Please note that the [`master`](https://github.com/triAGENS/ashikawa-core) branch is always the stable version released on Ruby Gems and documented on RDoc. If you want the most recent version, please refer to the [`development`](https://github.com/triAGENS/ashikawa-core/tree/development) branch.
 
-## How to use it
+## How to Setup a Connection
 
-For a detailed description of Ashikawa::Core please refer to the [documentation](http://rdoc.info/github/triAGENS/ashikawa-core/master/frames). An example:
+We want to provide you with as much flexibility as possible. So you can choose which adapter to use for HTTP (choose from the adapters available for [Faraday](https://github.com/lostisland/faraday)) and what you want to use for logging (basically anything that has an `info` method that takes a String). It defaults to Net::HTTP and no logging:
 
 ```ruby
 database = Ashikawa::Core::Database.new do |config|
   config.url = "http://localhost:8529"
 end
+```
 
+But you could for example use Typhoeus for HTTP and yell for logging:
+
+```ruby
+require "typhoeus"
+require "yell"
+
+logger = Yell.new(STDOUT)
+
+database = Ashikawa::Core::Database.new do |config|
+  config.url = "http://localhost:8529"
+  config.adapter = :typhoeus
+  config.logger = logger
+end
+```
+
+For a detailed description on how to use Ashikawa::Core please refer to the [documentation](http://rdoc.info/github/triAGENS/ashikawa-core/master/frames). An example:
+
+```ruby
 database["my_collection"] # => Returns the collection my_collection – creates it, if it doesn't exist
 database["my_collection"].name = "new_name"
 database["new_name"].delete

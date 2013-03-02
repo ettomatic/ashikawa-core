@@ -29,10 +29,20 @@ module Ashikawa
       #
       # @api public
       # @example Access a Database by providing the URL
-      #  database = Ashikawa::Core::Database.new("http://localhost:8529")
+      #   database = Ashikawa::Core::Database.new do |config|
+      #     config.url = "http://localhost:8529"
+      #   end
       # @example Access a Database by providing a Connection
-      #  connection = Connection.new("http://localhost:8529")
-      #  database = Ashikawa::Core::Database.new connection
+      #   connection = Connection.new("http://localhost:8529")
+      #   database = Ashikawa::Core::Database.new do |config|
+      #     config.connection = connection
+      #   end
+      # @example Access a Database with a logger and custom HTTP adapter
+      #   database = Ashikawa::Core::Database.new do |config|
+      #     config.url = "http://localhost:8529"
+      #     config.adapter = my_adapter
+      #     config.logger = my_logger
+      #   end
       def initialize()
         configuration = Ashikawa::Core::Configuration.new
         yield(configuration)
