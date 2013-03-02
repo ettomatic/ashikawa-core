@@ -40,7 +40,7 @@
 
         <h1>Ashikawa Core</h1>
 
-<p>Ashikawa Core is a wrapper around the <a href="http://www.arangodb.org">ArangoDB</a> REST API. It provides low level access and will be used in different ArangoDB ODMs.</p>
+<p>Ashikawa Core is a Wrapper around the ArangoDB Rest API. It provides low level access and will be used in different ArangoDB ODMs and other projects related to the database. It is always working with the stable version of ArangoDB, this is currently version <strong>1.2</strong>. If you want to access an ArangoDB instance running version <strong>1.1.2</strong> refer to version <a href="https://github.com/triAGENS/ashikawa-core/tree/0.6.0">0.6</a> of this gem (or just update ;) ). It runs on all Rubies available on Travis CI.</p>
 
 <h2>How to install it?</h2>
 
@@ -49,33 +49,66 @@
 
 <p>or, when using bundler:</p>
 
-<pre><code>gem "ashikawa-core", "~&gt; 0.2"
+<pre><code>gem "ashikawa-core", "~&gt; 0.7"
 </code></pre>
 
-<h2>How to use it?</h2>
+<h2>How to Setup a Connection</h2>
 
-<p>For a detailed description of Ashikawa::Core please refer to the <a href="http://rdoc.info/github/triAGENS/ashikawa-core/master/frames">documentation</a>. An example:</p>
+<p>We want to provide you with as much flexibility as possible. So you can choose which adapter to use for HTTP (choose from the adapters available for <a href="https://github.com/lostisland/faraday">Faraday</a>) and what you want to use for logging (basically anything that has an <code>info</code> method that takes a String). It defaults to Net::HTTP and no logging:</p>
 
-<div class="highlight"><pre><span class="nb">require</span> <span class="s2">"ashikawa-core"</span>
+<div class="highlight"><pre><span class="n">database</span> <span class="o">=</span> <span class="no">Ashikawa</span><span class="o">::</span><span class="no">Core</span><span class="o">::</span><span class="no">Database</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">"http://localhost:8529"</span>
+<span class="k">end</span>
+</pre></div>
 
-<span class="n">database</span> <span class="o">=</span> <span class="no">Ashikawa</span><span class="o">::</span><span class="no">Core</span><span class="o">::</span><span class="no">Database</span><span class="o">.</span><span class="n">new</span> <span class="s2">"http://localhost:8529"</span>
+<p>But you could for example use Typhoeus for HTTP and yell for logging:</p>
 
-<span class="n">database</span><span class="o">[</span><span class="s2">"my_collection"</span><span class="o">]</span> <span class="c1"># =&gt; Returns the collection my_collection – creates it, if it doesn't exist</span>
+<div class="highlight"><pre><span class="nb">require</span> <span class="s2">"typhoeus"</span>
+<span class="nb">require</span> <span class="s2">"yell"</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="no">Yell</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">STDOUT</span><span class="p">)</span>
+
+<span class="n">database</span> <span class="o">=</span> <span class="no">Ashikawa</span><span class="o">::</span><span class="no">Core</span><span class="o">::</span><span class="no">Database</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">"http://localhost:8529"</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="ss">:typhoeus</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>For a detailed description on how to use Ashikawa::Core please refer to the <a href="http://rdoc.info/github/triAGENS/ashikawa-core/master/frames">documentation</a>. An example:</p>
+
+<div class="highlight"><pre><span class="n">database</span><span class="o">[</span><span class="s2">"my_collection"</span><span class="o">]</span> <span class="c1"># =&gt; Returns the collection my_collection – creates it, if it doesn't exist</span>
 <span class="n">database</span><span class="o">[</span><span class="s2">"my_collection"</span><span class="o">].</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"new_name"</span>
 <span class="n">database</span><span class="o">[</span><span class="s2">"new_name"</span><span class="o">].</span><span class="n">delete</span>
 </pre></div>
 
-<h2>Found a bug or do you have any feedback?</h2>
+<h1>Issues or Questions</h1>
 
-<p>That's great! Leave us a message in <a href="https://github.com/triAGENS/ashikawa-core/issues">our tracker</a>.</p>
+<p>If you find a bug in this gem, please report it on <a href="https://github.com/triAGENS/ashikawa-core/issues">our tracker</a>. If you have a question, just contact us via the <a href="https://groups.google.com/forum/?fromgroups#!forum/ashikawa">mailing list</a> – we are happy to help you :)</p>
 
-<h2>How to contribute?</h2>
+<h1>Contributing</h1>
 
-<p>This is an open source project :) Just drop by at <a href="https://github.com/triAGENS/ashikawa-core">our repo</a> and send us a pull request!</p>
+<p>If you want to contribute to the project, see CONTRIBUTING.md for details. It contains information on our process and how to set up everything. The following people have contributed to this project:</p>
+
+<ul>
+<li>Lucas Dohmen (<a href="https://github.com/moonglum">@moonglum</a>): Developer</li>
+<li>Tobias Eilert (<a href="https://github.com/EinLama">@EinLama</a>): Contributor</li>
+<li>Markus Schirp (<a href="https://github.com/mbj">@mbj</a>): Contributor</li>
+</ul>
       </section>
 
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-38955688-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
