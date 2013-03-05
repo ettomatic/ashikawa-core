@@ -24,8 +24,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "faraday", "~> 0.8.6"
   gem.add_dependency "multi_json", "~> 1.6.1"
   gem.add_dependency "null_logger", "~> 0.0.1"
-
-  # Set to 2.8.2 because of Devtools
-  # Needs an upgrade, because of an error in this version
-  gem.add_dependency "backports", "~> 2.8.2"
+  gem.add_dependency "backports", [ '~> 3.0', '>= 3.0.3' ]
 end
